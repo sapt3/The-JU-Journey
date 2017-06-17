@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "579911941754",
+    "firebase_url": "https://the-ju-app.firebaseio.com",
+    "project_id": "the-ju-app",
+    "storage_bucket": "the-ju-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:579911941754:android:80a6cfc836ef57e4",
+        "android_client_info": {
+          "package_name": "com.hash.android.thejuapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "579911941754-gj6fc0rbcv7jk554qhsjap2vr7lthipa.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.hash.android.thejuapp",
+            "certificate_hash": "4760a5b705f2c37b4b146f5746e1d8d54e78a17b"
+          }
+        },
+        {
+          "client_id": "579911941754-pbeh3569lbc65qcoqb0oa2qm6gvkiutj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBuBcztzOIFWYZZhB65RTFaBaHd0fmFHsU"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "579911941754-pbeh3569lbc65qcoqb0oa2qm6gvkiutj.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
