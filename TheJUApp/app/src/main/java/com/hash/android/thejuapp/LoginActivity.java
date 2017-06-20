@@ -129,17 +129,21 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
     private void savePrefs() {
 
         String university = universityET.getText().toString().trim();
-        if (TextUtils.isEmpty(university)) {
-            Toast.makeText(this, "Please enter your university.", Toast.LENGTH_SHORT).show();
-            return;
-        }
+
 
         String phoneNumber = phoneET.getText().toString().trim();
         if (TextUtils.isEmpty(phoneNumber)) {
-
-            Toast.makeText(this, "Please enter your phone number.", Toast.LENGTH_SHORT).show();
+            phoneET.setError("REQUIRED");
+//            Toast.makeText(this, "Please enter your phone number.", Toast.LENGTH_SHORT).show();
             return;
         }
+
+        if (TextUtils.isEmpty(university)) {
+            universityET.setError("REQUIRED");
+//            Toast.makeText(this, "Please enter your university.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         if (phoneNumber.length() != 10) {
             Toast.makeText(this, "Phone Number should be 10 digits", Toast.LENGTH_SHORT).show();
             return;
@@ -163,6 +167,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
         boolean isAgreeToTerms = termsCB.isChecked();
 
         if (!isAgreeToTerms) {
+            termsCB.setError("ERROR");
             Toast.makeText(this, "You must agree to the terms before proceeding.", Toast.LENGTH_SHORT).show();
             return;
         }

@@ -1,18 +1,93 @@
 package com.hash.android.thejuapp.adapter;
 
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
+import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.util.Pair;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.hash.android.thejuapp.DetailsFeedActivity;
+import com.hash.android.thejuapp.Model.Feed;
 import com.hash.android.thejuapp.R;
+
+import org.ocpsoft.prettytime.PrettyTime;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
 
 /**
  * Created by Spandita Ghosh on 6/17/2017.
  */
 
 public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedRecyclerAdapter.ViewHolder> {
+
+    public static final String TAG = "FeedRecyclerView";
+    public static final String INTENT_EXTRA_FEED = "extraParcelableFeed";
+    public static ArrayList<Feed> mFeedList = new ArrayList<>();
+    private SimpleDateFormat simpleDateFormat;
+    private DatabaseReference mRef;
+    private ArrayList<String> mFeedIds = new ArrayList<>();
+    private Context mContext;
+
+
+    public FeedRecyclerAdapter(SimpleDateFormat simpleDateFormat, DatabaseReference mRef, Context context) {
+        this.simpleDateFormat = simpleDateFormat;
+        this.mRef = mRef;
+        this.mContext = context;
+
+        ChildEventListener childEventListener = new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                Feed feed = dataSnapshot.getValue(Feed.class);
+                String key = dataSnapshot.getKey();
+                mFeedIds.add(0, key);
+                mFeedList.add(0, feed);
+//                notifyItemInserted(mFeedList.size());
+                notifyDataSetChanged();
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        };
+
+        this.mRef.addChildEventListener(childEventListener);
+    }
+
+
     /**
      * Called when RecyclerView needs a new {@link ViewHolder} of the given type to represent
      * an item.
@@ -35,7 +110,8 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedRecyclerAdapte
      */
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_child_feed, parent, false));
+        View view = (LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_child_feed, parent, false));
+        return new ViewHolder(view);
     }
 
     /**
@@ -60,7 +136,7 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedRecyclerAdapte
      */
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-
+        holder.bind(position);
     }
 
     /**
@@ -70,12 +146,61 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedRecyclerAdapte
      */
     @Override
     public int getItemCount() {
-        return 5;
+        return mFeedList.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+        ImageView image;
+        TextView author, time, heading, shortDesc, ad;
+
         public ViewHolder(View itemView) {
             super(itemView);
+            itemView.setOnClickListener(this);
+            image = (ImageView) itemView.findViewById(R.id.postImageView);
+            author = (TextView) itemView.findViewById(R.id.authorTextView);
+            time = (TextView) itemView.findViewById(R.id.timeTextView);
+            heading = (TextView) itemView.findViewById(R.id.headingTextView);
+            shortDesc = (TextView) itemView.findViewById(R.id.shortDescTextView);
+            ad = (TextView) itemView.findViewById(R.id.adTextView);
+        }
+
+        public void bind(int pos) {
+            Glide.with(image.getContext())
+                    .load(mFeedList.get(pos).getImageURL())
+                    .placeholder(R.drawable.placeholder)
+                    .crossFade()
+                    .centerCrop()
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .into(image);
+            author.setText(mFeedList.get(pos).getAuthor());
+            heading.setText(mFeedList.get(pos).getHeading());
+            shortDesc.setText(mFeedList.get(pos).getShortDesc());
+            try {
+                long timeNow = simpleDateFormat.parse(mFeedList.get(pos).getTime()).getTime();
+                PrettyTime prettyTime = new PrettyTime(Locale.getDefault());
+                String ago = prettyTime.format(new Date(timeNow));
+                time.setText(ago);
+
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
+
+        @Override
+        public void onClick(View view) {
+            Log.d(TAG, "onClick::" + ((TextView) view.findViewById(R.id.headingTextView)).getText().toString());
+            for (Feed feed : mFeedList) {
+                if ((feed.getHeading().equalsIgnoreCase(((TextView) view.findViewById(R.id.headingTextView)).getText().toString())) && (feed.getAuthor().equalsIgnoreCase(((TextView) view.findViewById(R.id.authorTextView)).getText().toString()))) {
+                    //Object found
+                    Intent i = new Intent(mContext, DetailsFeedActivity.class);
+                    Pair<View, String> pair1 = Pair.create(view.findViewById(R.id.postImageView), "sharedImage");
+                    i.putExtra(INTENT_EXTRA_FEED, feed);
+                    mContext.startActivity(i);
+                    ActivityOptionsCompat optionsCompat = ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) mContext, pair1);
+                    mContext.startActivity(i, optionsCompat.toBundle());
+                }
+            }
         }
     }
 }
