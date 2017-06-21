@@ -2,9 +2,12 @@ package com.hash.android.thejuapp;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.util.Pair;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -15,22 +18,26 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.hash.android.thejuapp.HelperClass.CircleTransform;
 import com.hash.android.thejuapp.HelperClass.PreferenceManager;
 import com.hash.android.thejuapp.Model.Feed;
 import com.hash.android.thejuapp.Model.Topic;
 import com.hash.android.thejuapp.Model.User;
-import com.hash.android.thejuapp.adapter.FeedRecyclerAdapter;
+import com.hash.android.thejuapp.ViewHolder.FeedHolder;
 import com.hash.android.thejuapp.adapter.TopicsRecyclerAdapter;
 
 import java.text.SimpleDateFormat;
@@ -38,16 +45,38 @@ import java.util.ArrayList;
 import java.util.Locale;
 import java.util.TimeZone;
 
+import static com.hash.android.thejuapp.adapter.FeedRecyclerAdapter.INTENT_EXTRA_FEED;
+
 public class DashboardActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener {
 
     ArrayList<Feed> mFeedList = new ArrayList<>();
-
+    private RecyclerView feedRecyclerView;
     PreferenceManager mPrefsManager;
     private final String TAG = DashboardActivity.class.getSimpleName();
     private ArrayList<Topic> topicsArrayList = new ArrayList<>();
-    private static final String URL_NAV_BACKGROUND = "http://api.androidhive.info/images/nav-menu-header-bg.jpg";
+    private final String URL_NAV_BACKGROUND = "http://api.androidhive.info/images/nav-menu-header-bg.jpg";
     private CardView cardView;
+    public static FirebaseRecyclerAdapter<Feed, FeedHolder> mAdapter;
+
+    private static final String BUNDLE_RECYCLER_LAYOUT = "classname.recycler.layout";
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+
+        if (savedInstanceState != null) {
+            Parcelable savedRecyclerLayoutState = savedInstanceState.getParcelable(BUNDLE_RECYCLER_LAYOUT);
+            feedRecyclerView.getLayoutManager().onRestoreInstanceState(savedRecyclerLayoutState);
+        }
+    }
+
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelable(BUNDLE_RECYCLER_LAYOUT, feedRecyclerView.getLayoutManager().onSaveInstanceState());
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -136,17 +165,59 @@ public class DashboardActivity extends AppCompatActivity
         updateData(); //Call the function to update the data set.
         mRecyclerView.setAdapter(new TopicsRecyclerAdapter(topicsArrayList));
 
-        RecyclerView feedRecyclerView = (RecyclerView) findViewById(R.id.feedRecyclerView);
-        feedRecyclerView.setHasFixedSize(true);
-        feedRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        feedRecyclerView = (RecyclerView) findViewById(R.id.feedRecyclerView);
+//        feedRecyclerView.setHasFixedSize(true);
+        LinearLayoutManager manager = new LinearLayoutManager(this);
+        manager.setReverseLayout(true);
+        manager.setStackFromEnd(true);
+        feedRecyclerView.setLayoutManager(manager);
         feedRecyclerView.setItemAnimator(new DefaultItemAnimator());
         feedRecyclerView.setNestedScrollingEnabled(false);
         feedRecyclerView.addItemDecoration(new DividerItemDecoration(feedRecyclerView.getContext(), DividerItemDecoration.VERTICAL));
-        updateList();
+//        updateList();
         //2017-06-19T14:13:24.100Z
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault());
+        DatabaseReference mRef = FirebaseDatabase.getInstance().getReference();
+
+        final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault());
         sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
-        feedRecyclerView.setAdapter(new FeedRecyclerAdapter(sdf, FirebaseDatabase.getInstance().getReference("posts"), this));
+        mAdapter = new FirebaseRecyclerAdapter<Feed, FeedHolder>(
+                Feed.class,
+                R.layout.recycler_child_feed,
+                FeedHolder.class,
+                mRef.child("posts").getRef()) {
+            @Override
+            protected void populateViewHolder(FeedHolder viewHolder, Feed model, int position) {
+                Log.d(TAG, "populateViewHolder:: " + model.getHeading());
+                viewHolder.setAuthor(model.getAuthor());
+                viewHolder.setImage(model.getImageURL(), DashboardActivity.this);
+                viewHolder.setHeading(model.getHeading());
+                viewHolder.setShortDesc(model.getShortDesc());
+                viewHolder.setTime(model.getTime(), sdf);
+            }
+
+            @Override
+            public FeedHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+                FeedHolder viewHolder = super.onCreateViewHolder(parent, viewType);
+                viewHolder.setOnClickListener(new FeedHolder.ClickListener() {
+                    @Override
+                    public void onItemClick(View view, int position) {
+                        Log.d(TAG, "onClick::" + position);
+                        Intent i = new Intent(DashboardActivity.this, DetailsFeedActivity.class);
+                        i.putExtra(INTENT_EXTRA_FEED, mAdapter.getItem(position));
+                        Pair<View, String> pair1 = Pair.create(view.findViewById(R.id.postImageView), "sharedImage");
+                        ActivityOptionsCompat optionsCompat = ActivityOptionsCompat.makeSceneTransitionAnimation(DashboardActivity.this, pair1);
+                        startActivity(i, optionsCompat.toBundle());
+                    }
+                });
+                return viewHolder;
+            }
+
+
+        };
+
+        mAdapter.notifyDataSetChanged();
+        feedRecyclerView.setAdapter(mAdapter);
 
 //        "2016-06-18T19:43:03Z"
 //        try {
@@ -163,11 +234,12 @@ public class DashboardActivity extends AppCompatActivity
 
     }
 
-    private void updateList() {
 
-        mFeedList.add(new Feed("2017-06-18T23:43:03Z", "https://firebasestorage.googleapis.com/v0/b/the-ju-app.appspot.com/o/brooke-lark-250695%20(Small).jpg?alt=media&token=83298d64-0ab4-4eda-bebd-d22fcb3b9cd4", "The JU Journal -", "Jadvpur University ranks 9th", "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut consectetur ipsum et tellus sollicitudin, non gravida leo fringilla. Nulla at massa quis erat lacinia egestas. Nam ac enim ante. Ut eu porttitor est, non venenatis nunc.", "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut consectetur ipsum et tellus sollicitudin, non gravida leo fringilla. Nulla at massa quis erat lacinia egestas. Nam ac enim ante. Ut eu porttitor est, non venenatis nunc. Nunc vitae diam sed dui ornare efficitur eu at dolor. Ut a molestie enim. Vestibulum laoreet non velit sit amet molestie. Suspendisse sit amet vulputate ligula. Vivamus volutpat quam eu metus placerat posuere. Aenean vel varius arcu."));
-        mFeedList.add(new Feed("2017-06-18T19:43:03Z", "https://firebasestorage.googleapis.com/v0/b/srijan-17-e257c.appspot.com/o/ui_start%2Fmanageeimage.webp?alt=media&token=8ba6a505-e6e3-4cc0-9018-300e81b0ff85", "The JU Journal -", "Jadvpur University ranks 9th", "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut consectetur ipsum et tellus sollicitudin, non gravida leo fringilla. Nulla at massa quis erat lacinia egestas. Nam ac enim ante. Ut eu porttitor est, non venenatis nunc.", "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut consectetur ipsum et tellus sollicitudin, non gravida leo fringilla. Nulla at massa quis erat lacinia egestas. Nam ac enim ante. Ut eu porttitor est, non venenatis nunc. Nunc vitae diam sed dui ornare efficitur eu at dolor. Ut a molestie enim. Vestibulum laoreet non velit sit amet molestie. Suspendisse sit amet vulputate ligula. Vivamus volutpat quam eu metus placerat posuere. Aenean vel varius arcu."));
-    }
+//    private void updateList() {
+//
+//        mFeedList.add(new Feed("2017-06-18T23:43:03Z", "https://firebasestorage.googleapis.com/v0/b/the-ju-app.appspot.com/o/brooke-lark-250695%20(Small).jpg?alt=media&token=83298d64-0ab4-4eda-bebd-d22fcb3b9cd4", "The JU Journal -", "Jadvpur University ranks 9th", "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut consectetur ipsum et tellus sollicitudin, non gravida leo fringilla. Nulla at massa quis erat lacinia egestas. Nam ac enim ante. Ut eu porttitor est, non venenatis nunc.", "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut consectetur ipsum et tellus sollicitudin, non gravida leo fringilla. Nulla at massa quis erat lacinia egestas. Nam ac enim ante. Ut eu porttitor est, non venenatis nunc. Nunc vitae diam sed dui ornare efficitur eu at dolor. Ut a molestie enim. Vestibulum laoreet non velit sit amet molestie. Suspendisse sit amet vulputate ligula. Vivamus volutpat quam eu metus placerat posuere. Aenean vel varius arcu."));
+//        mFeedList.add(new Feed("2017-06-18T19:43:03Z", "https://firebasestorage.googleapis.com/v0/b/srijan-17-e257c.appspot.com/o/ui_start%2Fmanageeimage.webp?alt=media&token=8ba6a505-e6e3-4cc0-9018-300e81b0ff85", "The JU Journal -", "Jadvpur University ranks 9th", "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut consectetur ipsum et tellus sollicitudin, non gravida leo fringilla. Nulla at massa quis erat lacinia egestas. Nam ac enim ante. Ut eu porttitor est, non venenatis nunc.", "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut consectetur ipsum et tellus sollicitudin, non gravida leo fringilla. Nulla at massa quis erat lacinia egestas. Nam ac enim ante. Ut eu porttitor est, non venenatis nunc. Nunc vitae diam sed dui ornare efficitur eu at dolor. Ut a molestie enim. Vestibulum laoreet non velit sit amet molestie. Suspendisse sit amet vulputate ligula. Vivamus volutpat quam eu metus placerat posuere. Aenean vel varius arcu."));
+//    }
 
     private void updateData() {
         topicsArrayList = new ArrayList<>();

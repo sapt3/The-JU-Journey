@@ -1,5 +1,6 @@
 package com.hash.android.thejuapp.ViewHolder;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
@@ -16,8 +17,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-import static com.hash.android.thejuapp.adapter.FeedRecyclerAdapter.mFeedList;
-
 /**
  * Created by Spandita Ghosh on 6/20/2017.
  */
@@ -25,9 +24,10 @@ import static com.hash.android.thejuapp.adapter.FeedRecyclerAdapter.mFeedList;
 public class FeedHolder extends RecyclerView.ViewHolder {
     private ImageView image;
     private TextView author, time, heading, shortDesc, ad;
-    private SimpleDateFormat simpleDateFormat;
+    private FeedHolder.ClickListener mClickListener;
 
-    public FeedHolder(View itemView, SimpleDateFormat simpleDateFormat) {
+
+    public FeedHolder(View itemView) {
         super(itemView);
         image = (ImageView) itemView.findViewById(R.id.postImageView);
         author = (TextView) itemView.findViewById(R.id.authorTextView);
@@ -35,22 +35,42 @@ public class FeedHolder extends RecyclerView.ViewHolder {
         heading = (TextView) itemView.findViewById(R.id.headingTextView);
         shortDesc = (TextView) itemView.findViewById(R.id.shortDescTextView);
         ad = (TextView) itemView.findViewById(R.id.adTextView);
-        this.simpleDateFormat = simpleDateFormat;
+
+        itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mClickListener.onItemClick(v, getAdapterPosition());
+
+            }
+        });
+
     }
 
-    public void bind(int pos) {
-        Glide.with(image.getContext())
-                .load(mFeedList.get(pos).getImageURL())
+    public void setAuthor(String string) {
+        author.setText(string);
+    }
+
+    public void setImage(String string, Context context) {
+        Glide.with(context)
+                .load(string)
                 .placeholder(R.drawable.placeholder)
                 .crossFade()
                 .centerCrop()
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(image);
-        author.setText(mFeedList.get(pos).getAuthor());
-        heading.setText(mFeedList.get(pos).getHeading());
-        shortDesc.setText(mFeedList.get(pos).getShortDesc());
+    }
+
+    public void setHeading(String string) {
+        heading.setText(string);
+    }
+
+    public void setShortDesc(String string) {
+        shortDesc.setText(string);
+    }
+
+    public void setTime(String string, SimpleDateFormat simpleDateFormat) {
         try {
-            long timeNow = simpleDateFormat.parse(mFeedList.get(pos).getTime()).getTime();
+            long timeNow = simpleDateFormat.parse(string).getTime();
             PrettyTime prettyTime = new PrettyTime(Locale.getDefault());
             String ago = prettyTime.format(new Date(timeNow));
             time.setText(ago);
@@ -59,4 +79,33 @@ public class FeedHolder extends RecyclerView.ViewHolder {
             e.printStackTrace();
         }
     }
+
+    public interface ClickListener {
+        public void onItemClick(View view, int position);
+    }
+
+    public void setOnClickListener(FeedHolder.ClickListener clickListener) {
+        mClickListener = clickListener;
+    }
 }
+//    public void bind(int pos) {
+//        Glide.with(image.getContext())
+//                .load(mFeedList.get(pos).getImageURL())
+//                .placeholder(R.drawable.placeholder)
+//                .crossFade()
+//                .centerCrop()
+//                .diskCacheStrategy(DiskCacheStrategy.ALL)
+//                .into(image);
+//        author.setText(mFeedList.get(pos).getAuthor());
+//        heading.setText(mFeedList.get(pos).getHeading());
+//        shortDesc.setText(mFeedList.get(pos).getShortDesc());
+//        try {
+//            long timeNow = simpleDateFormat.parse(mFeedList.get(pos).getTime()).getTime();
+//            PrettyTime prettyTime = new PrettyTime(Locale.getDefault());
+//            String ago = prettyTime.format(new Date(timeNow));
+//            time.setText(ago);
+//
+//        } catch (ParseException e) {
+//            e.printStackTrace();
+//        }
+//    }

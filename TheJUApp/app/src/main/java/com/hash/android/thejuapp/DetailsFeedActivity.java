@@ -5,6 +5,7 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.view.Window;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -31,7 +32,7 @@ public class DetailsFeedActivity extends AppCompatActivity {
 
 
         TextView tx = (TextView) findViewById(R.id.contentTextView);
-
+        tx.setTextSize(16f);
         Typeface custom_font = Typeface.createFromAsset(getAssets(), "fonts/opensans.ttf");
 
         tx.setTypeface(custom_font);
@@ -55,5 +56,13 @@ public class DetailsFeedActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            onBackPressed();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
 
+    }
 }
