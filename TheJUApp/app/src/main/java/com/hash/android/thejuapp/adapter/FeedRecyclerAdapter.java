@@ -32,6 +32,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
+import static android.support.v4.app.ActivityOptionsCompat.makeSceneTransitionAnimation;
+
 /**
  * Created by Spandita Ghosh on 6/17/2017.
  */
@@ -40,7 +42,7 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedRecyclerAdapte
 
     public static final String TAG = "FeedRecyclerView";
     public static final String INTENT_EXTRA_FEED = "extraParcelableFeed";
-    public static ArrayList<Feed> mFeedList = new ArrayList<>();
+    public ArrayList<Feed> mFeedList = new ArrayList<>();
     private SimpleDateFormat simpleDateFormat;
     private DatabaseReference mRef;
     private ArrayList<String> mFeedIds = new ArrayList<>();
@@ -197,7 +199,7 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedRecyclerAdapte
                     Pair<View, String> pair1 = Pair.create(view.findViewById(R.id.postImageView), "sharedImage");
                     i.putExtra(INTENT_EXTRA_FEED, feed);
                     mContext.startActivity(i);
-                    ActivityOptionsCompat optionsCompat = ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) mContext, pair1);
+                    ActivityOptionsCompat optionsCompat = makeSceneTransitionAnimation((Activity) mContext, pair1);
                     mContext.startActivity(i, optionsCompat.toBundle());
                 }
             }

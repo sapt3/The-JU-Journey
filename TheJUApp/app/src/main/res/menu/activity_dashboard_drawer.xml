@@ -3,33 +3,59 @@
 
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/nav_camera"
-            android:icon="@drawable/ic_menu_camera"
-            android:title="Import" />
+            android:id="@+id/nav_dashboard"
+            android:icon="@drawable/ic_dashboard_black_24dp"
+            android:title="Dashboard" />
         <item
             android:id="@+id/nav_gallery"
-            android:icon="@drawable/ic_menu_gallery"
-            android:title="Gallery" />
-        <item
-            android:id="@+id/nav_slideshow"
-            android:icon="@drawable/ic_menu_slideshow"
-            android:title="Slideshow" />
-        <item
-            android:id="@+id/nav_manage"
-            android:icon="@drawable/ic_menu_manage"
-            android:title="Tools" />
+            android:icon="@drawable/ic_bookmark_black_24dp"
+            android:title="Bookmarks" />
     </group>
 
-    <item android:title="Communicate">
+    <item
+        android:id="@+id/explore"
+        android:title="Explore">
         <menu>
             <item
-                android:id="@+id/nav_share"
-                android:icon="@drawable/ic_menu_share"
-                android:title="Share" />
+                android:id="@+id/nav_canteen"
+                android:icon="@drawable/ic_local_dining_black_24dp"
+                android:title="Canteen" />
             <item
-                android:id="@+id/nav_send"
-                android:icon="@drawable/ic_menu_send"
-                android:title="Send" />
+                android:id="@+id/nav_photo"
+                android:icon="@drawable/ic_photo_library_black_24dp"
+                android:title="Photography" />
+            <item
+                android:id="@+id/nav_profile"
+                android:icon="@drawable/ic_person_black_24dp"
+                android:title="Profile" />
+
+            <item
+                android:id="@+id/nav_eMagazine"
+                android:icon="@drawable/ic_import_contacts_black_24dp"
+                android:title="e-Magazine" />
+
+            <item
+                android:id="@+id/nav_events"
+                android:icon="@drawable/ic_event_black_24dp"
+                android:title="Events" />
+
+        </menu>
+    </item>
+
+    <item android:title="Others">
+        <menu>
+            <item
+                android:id="@+id/nav_settings"
+                android:icon="@drawable/ic_settings_black_24dp"
+                android:title="Settings" />
+            <item
+                android:id="@+id/nav_bug"
+                android:icon="@drawable/ic_bug_report_black_24dp"
+                android:title="Report" />
+            <item
+                android:id="@+id/nav_logout"
+                android:icon="@drawable/ic_power_settings_new_black_24dp"
+                android:title="Log Out" />
         </menu>
     </item>
 

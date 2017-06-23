@@ -16,6 +16,7 @@ public class PreferenceManager {
     private static final String PREFS_USER_UID = "uid";
     private static final String PREFS_USER_EMAIL = "mail";
     private static final String PREFS_USER_NOTIFICATION = "notification7";
+    private static final String PREFS_LOCATION_ENABLED = "location";
 
     private SharedPreferences mPrefs;
     private SharedPreferences.Editor mEditor;
@@ -33,6 +34,17 @@ public class PreferenceManager {
         mEditor.putBoolean(PREFS_FIRST_TIME_LAUNCH, isFirstTime);
         mEditor.apply();
     }
+
+    public void setLocationEnabled(boolean name) {
+        mEditor = mPrefs.edit();
+        mEditor.putBoolean(PREFS_LOCATION_ENABLED, name);
+        mEditor.apply();
+    }
+
+    public boolean isLocationEnabled() {
+        return mPrefs.getBoolean(PREFS_LOCATION_ENABLED, true);
+    }
+
 
     public void setName(String name) {
         mEditor = mPrefs.edit();

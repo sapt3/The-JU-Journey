@@ -64,6 +64,9 @@ public class LoginActivityPre extends AppCompatActivity {
         super.onStart();
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         FirebaseUser user = mAuth.getCurrentUser();
+        startActivity(new Intent(this, DashboardActivity.class));
+
+        //TODO: Replace the dummy sign in logic later
         if (user != null) {
             startActivity(new Intent(this, DashboardActivity.class));
             LoginActivityPre.this.overridePendingTransition(0, 0);

@@ -1,11 +1,11 @@
 package com.hash.android.thejuapp;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.util.Pair;
 import android.support.v4.view.GravityCompat;
@@ -19,11 +19,14 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -44,11 +47,18 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Locale;
 import java.util.TimeZone;
+import java.util.concurrent.ExecutionException;
 
 import static com.hash.android.thejuapp.adapter.FeedRecyclerAdapter.INTENT_EXTRA_FEED;
 
 public class DashboardActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener {
+
+    private static final int TAG_CANTEEN = 1;
+    private static final int TAG_PHOTO = 2;
+    private static final int TAG_STUDENT = 3;
+    private static final int TAG_MAGAZINE = 4;
+    private static final int TAG_EVENTS = 5;
 
     ArrayList<Feed> mFeedList = new ArrayList<>();
     private RecyclerView feedRecyclerView;
@@ -57,7 +67,8 @@ public class DashboardActivity extends AppCompatActivity
     private ArrayList<Topic> topicsArrayList = new ArrayList<>();
     private final String URL_NAV_BACKGROUND = "http://api.androidhive.info/images/nav-menu-header-bg.jpg";
     private CardView cardView;
-    public static FirebaseRecyclerAdapter<Feed, FeedHolder> mAdapter;
+    public FirebaseRecyclerAdapter<Feed, FeedHolder> mAdapter;
+    private FirebaseAuth mAuth;
 
     private static final String BUNDLE_RECYCLER_LAYOUT = "classname.recycler.layout";
 
@@ -90,17 +101,19 @@ public class DashboardActivity extends AppCompatActivity
             e.printStackTrace();
         }
 
+        mAuth = FirebaseAuth.getInstance();
         mPrefsManager = new PreferenceManager(this);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-                FirebaseAuth.getInstance().signOut();
-                finish();
-                startActivity(new Intent(DashboardActivity.this, LoginActivityPre.class));
+//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+//                        .setAction("Action", null).show();
+//                FirebaseAuth.getInstance().signOut();
+//                finish();
+//                startActivity(new Intent(DashboardActivity.this, LoginActivityPre.class));
+                startActivity(new Intent(DashboardActivity.this, TestActivity.class));
             }
         });
 
@@ -134,6 +147,9 @@ public class DashboardActivity extends AppCompatActivity
             cardView.setVisibility(View.GONE);
         }
 
+        final ProgressBar progressBar = (ProgressBar) findViewById(R.id.feedRecyclerViewProgressView);
+//        progressBar.setVisibility(View.VISIBLE);
+
 //        StreamAnalyticsAuth auth = new StreamAnalyticsAuth(getString(R.string.API_KEY),getString(R.string.API_TOKEN));
 //        StreamAnalytics client = StreamAnalyticsImpl.getInstance(auth);
 
@@ -164,6 +180,22 @@ public class DashboardActivity extends AppCompatActivity
         mRecyclerView.setItemAnimator(new DefaultItemAnimator()); //Create a default item animater when the view comes to range
         updateData(); //Call the function to update the data set.
         mRecyclerView.setAdapter(new TopicsRecyclerAdapter(topicsArrayList));
+        mRecyclerView.addOnItemTouchListener(new RecyclerItemClickListener(this, mRecyclerView, new RecyclerItemClickListener.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) throws ExecutionException, InterruptedException {
+                int tag = (int) view.getTag();
+                Log.d(TAG, "postion:: " + tag);
+                switch (tag) {
+                    case TAG_CANTEEN:
+                        startActivity(new Intent(DashboardActivity.this, CanteenListActivity.class));
+                }
+            }
+
+            @Override
+            public void onLongItemClick(View view, int position) {
+
+            }
+        }));
 
 
         feedRecyclerView = (RecyclerView) findViewById(R.id.feedRecyclerView);
@@ -177,23 +209,27 @@ public class DashboardActivity extends AppCompatActivity
         feedRecyclerView.addItemDecoration(new DividerItemDecoration(feedRecyclerView.getContext(), DividerItemDecoration.VERTICAL));
 //        updateList();
         //2017-06-19T14:13:24.100Z
-        DatabaseReference mRef = FirebaseDatabase.getInstance().getReference();
-
+        final DatabaseReference mRef = FirebaseDatabase.getInstance().getReference();
+        DatabaseReference ref = mRef.child("posts").getRef();
+        String uid = new PreferenceManager(this).getUID();
+        DatabaseReference keyRef = mRef.child("users").child(uid).child("bookmarks").getRef();
         final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault());
         sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
         mAdapter = new FirebaseRecyclerAdapter<Feed, FeedHolder>(
                 Feed.class,
                 R.layout.recycler_child_feed,
                 FeedHolder.class,
-                mRef.child("posts").getRef()) {
+                ref) {
             @Override
             protected void populateViewHolder(FeedHolder viewHolder, Feed model, int position) {
+                progressBar.setVisibility(View.GONE);
                 Log.d(TAG, "populateViewHolder:: " + model.getHeading());
                 viewHolder.setAuthor(model.getAuthor());
                 viewHolder.setImage(model.getImageURL(), DashboardActivity.this);
                 viewHolder.setHeading(model.getHeading());
                 viewHolder.setShortDesc(model.getShortDesc());
                 viewHolder.setTime(model.getTime(), sdf);
+
             }
 
             @Override
@@ -205,6 +241,7 @@ public class DashboardActivity extends AppCompatActivity
                         Log.d(TAG, "onClick::" + position);
                         Intent i = new Intent(DashboardActivity.this, DetailsFeedActivity.class);
                         i.putExtra(INTENT_EXTRA_FEED, mAdapter.getItem(position));
+                        i.putExtra(Intent.EXTRA_TEXT, mAdapter.getRef(position).getKey());
                         Pair<View, String> pair1 = Pair.create(view.findViewById(R.id.postImageView), "sharedImage");
                         ActivityOptionsCompat optionsCompat = ActivityOptionsCompat.makeSceneTransitionAnimation(DashboardActivity.this, pair1);
                         startActivity(i, optionsCompat.toBundle());
@@ -216,8 +253,10 @@ public class DashboardActivity extends AppCompatActivity
 
         };
 
+
         mAdapter.notifyDataSetChanged();
         feedRecyclerView.setAdapter(mAdapter);
+
 
 //        "2016-06-18T19:43:03Z"
 //        try {
@@ -244,11 +283,11 @@ public class DashboardActivity extends AppCompatActivity
     private void updateData() {
         topicsArrayList = new ArrayList<>();
         topicsArrayList.clear();
-        topicsArrayList.add(new Topic(R.drawable.canteen, "Canteen"));
-        topicsArrayList.add(new Topic(R.drawable.photography, "Photography"));
-        topicsArrayList.add(new Topic(R.drawable.student, "Student Profile"));
-        topicsArrayList.add(new Topic(R.drawable.magazine, "e-Magazine"));
-        topicsArrayList.add(new Topic(R.drawable.events4, "Events"));
+        topicsArrayList.add(new Topic(R.drawable.canteen, "Canteen", TAG_CANTEEN));
+        topicsArrayList.add(new Topic(R.drawable.photography, "Photography", TAG_PHOTO));
+        topicsArrayList.add(new Topic(R.drawable.student, "Student Profile", TAG_STUDENT));
+        topicsArrayList.add(new Topic(R.drawable.magazine, "e-Magazine", TAG_MAGAZINE));
+        topicsArrayList.add(new Topic(R.drawable.events4, "Events", TAG_EVENTS));
     }
 
 
@@ -290,19 +329,28 @@ public class DashboardActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
+        switch (id) {
+            case R.id.nav_logout:
+                FirebaseAuth.getInstance().signOut();
+                startActivity(new Intent(DashboardActivity.this, LoginActivityPre.class));
+                finish();
+                break;
 
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
 
         }
+//        if (id == R.id.nav_camera) {
+//            // Handle the camera action
+//        } else if (id == R.id.nav_gallery) {
+//
+//        } else if (id == R.id.nav_slideshow) {
+//
+//        } else if (id == R.id.nav_manage) {
+//
+//        } else if (id == R.id.nav_share) {
+//
+//        } else if (id == R.id.nav_send) {
+//
+//        }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
@@ -338,4 +386,64 @@ public class DashboardActivity extends AppCompatActivity
         }
 
     }
+
+    public static class RecyclerItemClickListener implements RecyclerView.OnItemTouchListener {
+
+
+        GestureDetector mGestureDetector;
+        private OnItemClickListener mListener;
+
+        public RecyclerItemClickListener(Context context, final RecyclerView recyclerView, OnItemClickListener listener) {
+            mListener = listener;
+            mGestureDetector = new GestureDetector(context, new GestureDetector.SimpleOnGestureListener() {
+                @Override
+                public boolean onSingleTapUp(MotionEvent e) {
+                    return true;
+                }
+
+                @Override
+                public void onLongPress(MotionEvent e) {
+                    try {
+                        View child = recyclerView.findChildViewUnder(e.getX(), e.getY());
+                        if (child != null && mListener != null) {
+                            mListener.onLongItemClick(child, recyclerView.getChildAdapterPosition(child));
+                        }
+                    } catch (Exception ec) {
+                        ec.printStackTrace();
+                    }
+                }
+            });
+        }
+
+        @Override
+        public boolean onInterceptTouchEvent(RecyclerView view, MotionEvent e) {
+            View childView = view.findChildViewUnder(e.getX(), e.getY());
+            if (childView != null && mListener != null && mGestureDetector.onTouchEvent(e)) {
+                try {
+                    mListener.onItemClick(childView, view.getChildAdapterPosition(childView));
+                } catch (ExecutionException | InterruptedException e1) {
+                    e1.printStackTrace();
+                }
+                return true;
+            }
+            return false;
+        }
+
+
+        @Override
+        public void onTouchEvent(RecyclerView view, MotionEvent motionEvent) {
+        }
+
+        @Override
+        public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
+        }
+
+        public interface OnItemClickListener {
+            void onItemClick(View view, int position) throws ExecutionException, InterruptedException;
+
+            void onLongItemClick(View view, int position);
+        }
+
+    }
+
 }

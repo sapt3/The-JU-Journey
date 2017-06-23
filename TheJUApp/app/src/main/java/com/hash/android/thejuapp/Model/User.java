@@ -3,6 +3,9 @@ package com.hash.android.thejuapp.Model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Created by Spandita Ghosh on 6/13/2017.
  */
@@ -17,6 +20,7 @@ public class User implements Parcelable {
     private String UID;
     private boolean targetPromo;
     private String email;
+    public Map<String, Boolean> bookmarks = new HashMap<>();
 
     protected User(Parcel in) {
         name = in.readString();

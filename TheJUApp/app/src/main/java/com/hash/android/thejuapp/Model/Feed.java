@@ -3,10 +3,17 @@ package com.hash.android.thejuapp.Model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.google.firebase.database.Exclude;
+import com.google.firebase.database.IgnoreExtraProperties;
+
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Created by Spandita Ghosh on 6/19/2017.
  */
 
+@IgnoreExtraProperties
 public class Feed implements Parcelable {
 
     private String time;
@@ -15,10 +22,27 @@ public class Feed implements Parcelable {
     private String heading;
     private String shortDesc;
     private String longDesc;
+    public int starCount = 0;
+    public Map<String, Boolean> stars = new HashMap<>();
+
 
     public Feed() {
     }
 
+    @Exclude
+    public Map<String, Object> toMap() {
+        HashMap<String, Object> result = new HashMap<>();
+        result.put("time", time);
+        result.put("author", author);
+        result.put("imageURL", imageURL);
+        result.put("heading", heading);
+        result.put("shortDesc", shortDesc);
+        result.put("longDesc", longDesc);
+        result.put("starCount", starCount);
+        result.put("stars", stars);
+
+        return result;
+    }
     public Feed(String time, String imageURL, String author, String heading, String shortDesc, String longDesc) {
         this.time = time;
         this.imageURL = imageURL;

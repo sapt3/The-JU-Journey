@@ -139,5 +139,13 @@
         "when a user tries to pick up one of cards.\n\n"
     </string>
     <string name="title_activity_details">DetailsActivity</string>
+    <string name="title_activity_canteen_list">Canteens</string>
+    <string name="title_location_permission">Need location access</string>
+    <string name="text_location_permission">We require the location to find the nearest canteens around you.</string>
+    <string name="ok">OK</string>
+    <string name="share">Share</string>
+    <string name="bookmark">Bookmark</string>
+    <string name="title_activity_bookmarks">BookmarksActivity</string>
+    <string name="title_activity_test">TestActivity</string>
 
 </resources>

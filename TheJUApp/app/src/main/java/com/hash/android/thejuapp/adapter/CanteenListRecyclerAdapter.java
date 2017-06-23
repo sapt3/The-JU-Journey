@@ -4,21 +4,35 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.hash.android.thejuapp.Model.Topic;
+import com.hash.android.thejuapp.Model.Canteen;
 import com.hash.android.thejuapp.R;
+import com.hash.android.thejuapp.ViewHolder.FeedHolder;
 
 import java.util.ArrayList;
 
-public class TopicsRecyclerAdapter extends RecyclerView.Adapter<TopicsRecyclerAdapter.ViewHolder> {
+/**
+ * Created by Spandita Ghosh on 6/21/2017.
+ */
 
-    private ArrayList<Topic> mArrayList;
+public class CanteenListRecyclerAdapter extends RecyclerView.Adapter<CanteenListRecyclerAdapter.ViewHolder> {
+    private static final String TAG = CanteenListRecyclerAdapter.class.getSimpleName();
+    private ArrayList<Canteen> mArrayList;
+    private FeedHolder.ClickListener mClickListener;
 
-    public TopicsRecyclerAdapter(ArrayList<Topic> mArrayList) {
+    public CanteenListRecyclerAdapter(ArrayList<Canteen> mArrayList) {
         this.mArrayList = mArrayList;
+    }
+
+    public interface ClickListener {
+        public void onItemClick(View view, int position);
+    }
+
+    public void setOnClickListener(FeedHolder.ClickListener clickListener) {
+        mClickListener = clickListener;
     }
 
     /**
@@ -43,7 +57,10 @@ public class TopicsRecyclerAdapter extends RecyclerView.Adapter<TopicsRecyclerAd
      */
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_child_main, parent, false));
+
+        CanteenListRecyclerAdapter.ViewHolder vh = new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_child_canteen_item, parent, false));
+
+        return vh;
     }
 
     /**
@@ -81,22 +98,40 @@ public class TopicsRecyclerAdapter extends RecyclerView.Adapter<TopicsRecyclerAd
         return mArrayList.size();
     }
 
+    public void filter(ArrayList<Canteen> mArrayListNew) {
+        mArrayList.clear();
+        mArrayList.addAll(mArrayListNew);
+        notifyDataSetChanged();
+    }
+
     public class ViewHolder extends RecyclerView.ViewHolder {
-        ImageView image;
-        TextView topicName;
-        View view;
+        TextView canteenNameTextView, campusTextView, locationTextView;
+        Button naviagateButton;
 
         public ViewHolder(View itemView) {
             super(itemView);
-            image = (ImageView) itemView.findViewById(R.id.topicsImageView);
-            topicName = (TextView) itemView.findViewById(R.id.topicNameTextView);
-            view = itemView;
+            canteenNameTextView = (TextView) itemView.findViewById(R.id.canteenNameTextView);
+            campusTextView = (TextView) itemView.findViewById(R.id.campusTextView);
+            locationTextView = (TextView) itemView.findViewById(R.id.locationTextView);
+            naviagateButton = (Button) itemView.findViewById(R.id.navigateButton);
+
+            naviagateButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mClickListener.onItemClick(view, getAdapterPosition());
+                }
+            });
         }
 
-        public void bind(int postion) {
-            image.setImageResource(mArrayList.get(postion).getImage());
-            topicName.setText(mArrayList.get(postion).getTopicName());
-            view.setTag(mArrayList.get(postion).getTag());
+        public void bind(int position) {
+            canteenNameTextView.setText(mArrayList.get(position).getCanteenName());
+            campusTextView.setText(mArrayList.get(position).getCampus());
+            try {
+                locationTextView.setText(String.format("%.1f", mArrayList.get(position).getLocation()) + " Km away");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
         }
     }
 }

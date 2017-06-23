@@ -190,6 +190,14 @@
                 app:layout_constraintTop_toBottomOf="@+id/topicsRecyclerView" />
 
 
+            <ProgressBar
+                android:id="@+id/feedRecyclerViewProgressView"
+                style="?android:attr/progressBarStyle"
+                android:layout_width="match_parent"
+                android:indeterminate="true"
+                android:layout_height="wrap_content"
+                android:visibility="visible" />
+
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/feedRecyclerView"
                 android:layout_width="match_parent"
