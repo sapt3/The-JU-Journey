@@ -52,10 +52,6 @@
                 android:value="com.hash.android.thejuapp.DashboardActivity" />
         </activity>
         <activity
-            android:name=".BookmarksActivity"
-            android:label="@string/title_activity_bookmarks"
-            android:theme="@style/AppTheme" />
-        <activity
             android:name=".TestActivity"
             android:label="@string/title_activity_test"
             android:theme="@style/AppTheme"></activity>

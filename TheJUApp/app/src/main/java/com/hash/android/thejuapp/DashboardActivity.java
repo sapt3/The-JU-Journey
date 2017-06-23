@@ -3,119 +3,50 @@ package com.hash.android.thejuapp;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Parcelable;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.v4.app.ActivityOptionsCompat;
-import android.support.v4.util.Pair;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.CardView;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.DividerItemDecoration;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.GestureDetector;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.hash.android.thejuapp.HelperClass.CircleTransform;
 import com.hash.android.thejuapp.HelperClass.PreferenceManager;
-import com.hash.android.thejuapp.Model.Feed;
-import com.hash.android.thejuapp.Model.Topic;
 import com.hash.android.thejuapp.Model.User;
-import com.hash.android.thejuapp.ViewHolder.FeedHolder;
-import com.hash.android.thejuapp.adapter.TopicsRecyclerAdapter;
+import com.hash.android.thejuapp.fragment.BookmarksFragment;
+import com.hash.android.thejuapp.fragment.DashboardFragment;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Locale;
-import java.util.TimeZone;
 import java.util.concurrent.ExecutionException;
 
-import static com.hash.android.thejuapp.adapter.FeedRecyclerAdapter.INTENT_EXTRA_FEED;
-
 public class DashboardActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener {
+        implements NavigationView.OnNavigationItemSelectedListener {
 
-    private static final int TAG_CANTEEN = 1;
-    private static final int TAG_PHOTO = 2;
-    private static final int TAG_STUDENT = 3;
-    private static final int TAG_MAGAZINE = 4;
-    private static final int TAG_EVENTS = 5;
-
-    ArrayList<Feed> mFeedList = new ArrayList<>();
-    private RecyclerView feedRecyclerView;
-    PreferenceManager mPrefsManager;
-    private final String TAG = DashboardActivity.class.getSimpleName();
-    private ArrayList<Topic> topicsArrayList = new ArrayList<>();
-    private final String URL_NAV_BACKGROUND = "http://api.androidhive.info/images/nav-menu-header-bg.jpg";
-    private CardView cardView;
-    public FirebaseRecyclerAdapter<Feed, FeedHolder> mAdapter;
-    private FirebaseAuth mAuth;
-
-    private static final String BUNDLE_RECYCLER_LAYOUT = "classname.recycler.layout";
-
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-
-        if (savedInstanceState != null) {
-            Parcelable savedRecyclerLayoutState = savedInstanceState.getParcelable(BUNDLE_RECYCLER_LAYOUT);
-            feedRecyclerView.getLayoutManager().onRestoreInstanceState(savedRecyclerLayoutState);
-        }
-    }
-
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putParcelable(BUNDLE_RECYCLER_LAYOUT, feedRecyclerView.getLayoutManager().onSaveInstanceState());
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard);
+
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.beginTransaction()
+                .replace(R.id.frame_container, new DashboardFragment())
+                .commit();
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        try {
-            FirebaseDatabase.getInstance().setPersistenceEnabled(true);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        mAuth = FirebaseAuth.getInstance();
-        mPrefsManager = new PreferenceManager(this);
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
-//                FirebaseAuth.getInstance().signOut();
-//                finish();
-//                startActivity(new Intent(DashboardActivity.this, LoginActivityPre.class));
-                startActivity(new Intent(DashboardActivity.this, TestActivity.class));
-            }
-        });
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -123,37 +54,17 @@ public class DashboardActivity extends AppCompatActivity
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
+
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-
-
-        //If this message has been shown before then quickly skip this when layout is inflated.
-
-        final PreferenceManager mPrefsManager = new PreferenceManager(this);
-        User user = mPrefsManager.getUser();
-        //User class has access to all the variables accessed by the user.
-
         View navHeader = navigationView.getHeaderView(0);
+
         TextView txtName = (TextView) navHeader.findViewById(R.id.name);
         TextView emailTextView = (TextView) navHeader.findViewById(R.id.website);
         ImageView header = (ImageView) navHeader.findViewById(R.id.img_header_bg);
         ImageView profileImage = (ImageView) navHeader.findViewById(R.id.img_profile);
-        ImageView noNotificationIV = (ImageView) findViewById(R.id.noNotifcationImageView);
-        ImageView yesNotificationIV = (ImageView) findViewById(R.id.yesNotifcationImageView);
-        TextView noNotificationTV = (TextView) findViewById(R.id.noNotificationsTextView);
-        TextView yesNotificationTV = (TextView) findViewById(R.id.yesNotificationsTextView);
-        cardView = (CardView) findViewById(R.id.cardView);
-        if (mPrefsManager.isNotificationEnabled()) {
-            cardView.setVisibility(View.GONE);
-        }
 
-        final ProgressBar progressBar = (ProgressBar) findViewById(R.id.feedRecyclerViewProgressView);
-//        progressBar.setVisibility(View.VISIBLE);
-
-//        StreamAnalyticsAuth auth = new StreamAnalyticsAuth(getString(R.string.API_KEY),getString(R.string.API_TOKEN));
-//        StreamAnalytics client = StreamAnalyticsImpl.getInstance(auth);
-
-
+        User user = new PreferenceManager(this).getUser();
         txtName.setText(user.getName());
         emailTextView.setText(user.getEmail());
 
@@ -167,95 +78,11 @@ public class DashboardActivity extends AppCompatActivity
                 .into(profileImage);
 
 
-        noNotificationIV.setOnClickListener(this);
-        noNotificationTV.setOnClickListener(this);
-        yesNotificationIV.setOnClickListener(this);
-        yesNotificationTV.setOnClickListener(this);
-
-        RecyclerView mRecyclerView = (RecyclerView) findViewById(R.id.topicsRecyclerView);
-//        LinearSnapHelper helper = new LinearSnapHelper();
-//        helper.attachToRecyclerView(mRecyclerView); //Attaching a linear helper to allow the vertical recycler view to snap to center.
-        mRecyclerView.setHasFixedSize(true);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
-        mRecyclerView.setItemAnimator(new DefaultItemAnimator()); //Create a default item animater when the view comes to range
-        updateData(); //Call the function to update the data set.
-        mRecyclerView.setAdapter(new TopicsRecyclerAdapter(topicsArrayList));
-        mRecyclerView.addOnItemTouchListener(new RecyclerItemClickListener(this, mRecyclerView, new RecyclerItemClickListener.OnItemClickListener() {
-            @Override
-            public void onItemClick(View view, int position) throws ExecutionException, InterruptedException {
-                int tag = (int) view.getTag();
-                Log.d(TAG, "postion:: " + tag);
-                switch (tag) {
-                    case TAG_CANTEEN:
-                        startActivity(new Intent(DashboardActivity.this, CanteenListActivity.class));
-                }
-            }
-
-            @Override
-            public void onLongItemClick(View view, int position) {
-
-            }
-        }));
-
-
-        feedRecyclerView = (RecyclerView) findViewById(R.id.feedRecyclerView);
-//        feedRecyclerView.setHasFixedSize(true);
-        LinearLayoutManager manager = new LinearLayoutManager(this);
-        manager.setReverseLayout(true);
-        manager.setStackFromEnd(true);
-        feedRecyclerView.setLayoutManager(manager);
-        feedRecyclerView.setItemAnimator(new DefaultItemAnimator());
-        feedRecyclerView.setNestedScrollingEnabled(false);
-        feedRecyclerView.addItemDecoration(new DividerItemDecoration(feedRecyclerView.getContext(), DividerItemDecoration.VERTICAL));
-//        updateList();
-        //2017-06-19T14:13:24.100Z
-        final DatabaseReference mRef = FirebaseDatabase.getInstance().getReference();
-        DatabaseReference ref = mRef.child("posts").getRef();
-        String uid = new PreferenceManager(this).getUID();
-        DatabaseReference keyRef = mRef.child("users").child(uid).child("bookmarks").getRef();
-        final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault());
-        sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
-        mAdapter = new FirebaseRecyclerAdapter<Feed, FeedHolder>(
-                Feed.class,
-                R.layout.recycler_child_feed,
-                FeedHolder.class,
-                ref) {
-            @Override
-            protected void populateViewHolder(FeedHolder viewHolder, Feed model, int position) {
-                progressBar.setVisibility(View.GONE);
-                Log.d(TAG, "populateViewHolder:: " + model.getHeading());
-                viewHolder.setAuthor(model.getAuthor());
-                viewHolder.setImage(model.getImageURL(), DashboardActivity.this);
-                viewHolder.setHeading(model.getHeading());
-                viewHolder.setShortDesc(model.getShortDesc());
-                viewHolder.setTime(model.getTime(), sdf);
-
-            }
-
-            @Override
-            public FeedHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-                FeedHolder viewHolder = super.onCreateViewHolder(parent, viewType);
-                viewHolder.setOnClickListener(new FeedHolder.ClickListener() {
-                    @Override
-                    public void onItemClick(View view, int position) {
-                        Log.d(TAG, "onClick::" + position);
-                        Intent i = new Intent(DashboardActivity.this, DetailsFeedActivity.class);
-                        i.putExtra(INTENT_EXTRA_FEED, mAdapter.getItem(position));
-                        i.putExtra(Intent.EXTRA_TEXT, mAdapter.getRef(position).getKey());
-                        Pair<View, String> pair1 = Pair.create(view.findViewById(R.id.postImageView), "sharedImage");
-                        ActivityOptionsCompat optionsCompat = ActivityOptionsCompat.makeSceneTransitionAnimation(DashboardActivity.this, pair1);
-                        startActivity(i, optionsCompat.toBundle());
-                    }
-                });
-                return viewHolder;
-            }
-
-
-        };
-
-
-        mAdapter.notifyDataSetChanged();
-        feedRecyclerView.setAdapter(mAdapter);
+        try {
+            FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
 
 //        "2016-06-18T19:43:03Z"
@@ -280,16 +107,6 @@ public class DashboardActivity extends AppCompatActivity
 //        mFeedList.add(new Feed("2017-06-18T19:43:03Z", "https://firebasestorage.googleapis.com/v0/b/srijan-17-e257c.appspot.com/o/ui_start%2Fmanageeimage.webp?alt=media&token=8ba6a505-e6e3-4cc0-9018-300e81b0ff85", "The JU Journal -", "Jadvpur University ranks 9th", "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut consectetur ipsum et tellus sollicitudin, non gravida leo fringilla. Nulla at massa quis erat lacinia egestas. Nam ac enim ante. Ut eu porttitor est, non venenatis nunc.", "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut consectetur ipsum et tellus sollicitudin, non gravida leo fringilla. Nulla at massa quis erat lacinia egestas. Nam ac enim ante. Ut eu porttitor est, non venenatis nunc. Nunc vitae diam sed dui ornare efficitur eu at dolor. Ut a molestie enim. Vestibulum laoreet non velit sit amet molestie. Suspendisse sit amet vulputate ligula. Vivamus volutpat quam eu metus placerat posuere. Aenean vel varius arcu."));
 //    }
 
-    private void updateData() {
-        topicsArrayList = new ArrayList<>();
-        topicsArrayList.clear();
-        topicsArrayList.add(new Topic(R.drawable.canteen, "Canteen", TAG_CANTEEN));
-        topicsArrayList.add(new Topic(R.drawable.photography, "Photography", TAG_PHOTO));
-        topicsArrayList.add(new Topic(R.drawable.student, "Student Profile", TAG_STUDENT));
-        topicsArrayList.add(new Topic(R.drawable.magazine, "e-Magazine", TAG_MAGAZINE));
-        topicsArrayList.add(new Topic(R.drawable.events4, "Events", TAG_EVENTS));
-    }
-
 
     @Override
     public void onBackPressed() {
@@ -301,33 +118,13 @@ public class DashboardActivity extends AppCompatActivity
         }
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.dashboard, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
+        Fragment fragment = null;
 
         switch (id) {
             case R.id.nav_logout:
@@ -336,56 +133,28 @@ public class DashboardActivity extends AppCompatActivity
                 finish();
                 break;
 
+            case R.id.nav_dashboard:
+                fragment = new DashboardFragment();
+                break;
+
+            case R.id.nav_bookmarks:
+                fragment = new BookmarksFragment();
+
 
         }
-//        if (id == R.id.nav_camera) {
-//            // Handle the camera action
-//        } else if (id == R.id.nav_gallery) {
-//
-//        } else if (id == R.id.nav_slideshow) {
-//
-//        } else if (id == R.id.nav_manage) {
-//
-//        } else if (id == R.id.nav_share) {
-//
-//        } else if (id == R.id.nav_send) {
-//
-//        }
+
+        if (fragment != null) {
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            fragmentManager.beginTransaction()
+                    .replace(R.id.frame_container, fragment).commit();
+        }
+
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
 
-    @Override
-    public void onClick(View view) {
-
-        switch (view.getId()) {
-            case R.id.noNotifcationImageView:
-                cardView.setVisibility(View.GONE);
-                mPrefsManager.setNotificationPrefs(false);
-                break;
-
-            case R.id.noNotificationsTextView:
-                cardView.setVisibility(View.GONE);
-                mPrefsManager.setNotificationPrefs(false);
-                break;
-
-            case R.id.yesNotifcationImageView:
-                cardView.setVisibility(View.GONE);
-                mPrefsManager.setNotificationPrefs(true);
-                break;
-
-            case R.id.yesNotificationsTextView:
-                cardView.setVisibility(View.GONE);
-                mPrefsManager.setNotificationPrefs(true);
-                break;
-
-            default:
-                break;
-        }
-
-    }
 
     public static class RecyclerItemClickListener implements RecyclerView.OnItemTouchListener {
 
