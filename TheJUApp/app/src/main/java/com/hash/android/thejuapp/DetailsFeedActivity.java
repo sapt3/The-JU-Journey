@@ -30,12 +30,32 @@ import static com.hash.android.thejuapp.adapter.FeedRecyclerAdapter.INTENT_EXTRA
 
 public class DetailsFeedActivity extends AppCompatActivity {
     private static final String TAG = DetailsFeedActivity.class.getSimpleName();
-    private String key;
-    private String uid;
+    private static boolean isBookmarked = false;
     TextView favouritesTextView;
     DatabaseReference starPostRef;
     DatabaseReference globalPostRef;
+    ValueEventListener valueEventListener = new ValueEventListener() {
+        @Override
+        public void onDataChange(DataSnapshot dataSnapshot) {
+            try {
+                int count = dataSnapshot.getValue(Integer.class);
+                Log.d(TAG, "onDataChange ::" + count);
+                favouritesTextView.setText(count + " Favourites");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        }
+
+        @Override
+        public void onCancelled(DatabaseError databaseError) {
+
+        }
+    };
+    private String key;
+    private String uid;
     private Feed feed;
+    private DatabaseReference bookmarksRef;
 
     @Override
     protected void onPause() {
@@ -50,6 +70,32 @@ public class DetailsFeedActivity extends AppCompatActivity {
 //        return super.onCreateOptionsMenu(menu);
     }
 
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        final MenuItem item = menu.getItem(0);
+        ValueEventListener bookmarksEventListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Boolean isFav = (Boolean) dataSnapshot.getValue();
+                if (isFav != null) {
+                    isBookmarked = true;
+                    item.setIcon(R.drawable.ic_bookmark_white_24px);
+                } else {
+                    isBookmarked = false;
+                    item.setIcon(R.drawable.ic_bookmark_border_white_24px);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        };
+        bookmarksRef.addValueEventListener(bookmarksEventListener);
+
+
+        return super.onPrepareOptionsMenu(menu);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,7 +134,6 @@ public class DetailsFeedActivity extends AppCompatActivity {
         heading.setText(feed.getHeading());
         author.setText(feed.getAuthor());
         try {
-            getSupportActionBar().setElevation(0);
             getSupportActionBar().setDisplayShowTitleEnabled(false);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         } catch (Exception e) {
@@ -96,6 +141,7 @@ public class DetailsFeedActivity extends AppCompatActivity {
         }
 
         uid = new PreferenceManager(this).getUID();
+        bookmarksRef = FirebaseDatabase.getInstance().getReference().child("users").child(uid).child("bookmarks").child(key).getRef();
 
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.floatingActionButton3);
@@ -106,7 +152,6 @@ public class DetailsFeedActivity extends AppCompatActivity {
             }
         });
     }
-
 
     private void onStarClicked(DatabaseReference postRef) {
         postRef.runTransaction(new Transaction.Handler() {
@@ -158,36 +203,29 @@ public class DetailsFeedActivity extends AppCompatActivity {
         if (item.getItemId() == android.R.id.home) {
             onBackPressed();
             return true;
-        }
-        if (item.getItemId() == R.id.bookmarkMenu) {
+        } else if (item.getItemId() == R.id.bookmarkMenu) {
             saveToDatabase();
+        } else if (item.getItemId() == R.id.shareMenu) {
+            Intent sendIntent = new Intent();
+            sendIntent.setAction(Intent.ACTION_SEND);
+            sendIntent.putExtra(Intent.EXTRA_TEXT, feed.getHeading() + "\n" + "By " + feed.getAuthor() + "-  \n"
+                    + "\n\n" + feed.getShortDesc() + "\n" + "To know more download the app at https//www.play.google.com?apps+dasd\n");
+            sendIntent.setType("text/plain");
+            startActivity(sendIntent);
+
         }
         return super.onOptionsItemSelected(item);
 
     }
 
     private void saveToDatabase() {
-        DatabaseReference mRef = FirebaseDatabase.getInstance().getReference().child("users").child(uid).child("bookmarks").child(key).getRef();
-        mRef.setValue(true);
+        if (isBookmarked) {
+            bookmarksRef.removeValue();
+        } else {
+            bookmarksRef.setValue(true);
+        }
+
+
         //        mRef.setValue()
     }
-
-    ValueEventListener valueEventListener = new ValueEventListener() {
-        @Override
-        public void onDataChange(DataSnapshot dataSnapshot) {
-            try {
-                int count = dataSnapshot.getValue(Integer.class);
-                Log.d(TAG, "onDataChange ::" + count);
-                favouritesTextView.setText(count + " Favourites");
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-        }
-
-        @Override
-        public void onCancelled(DatabaseError databaseError) {
-
-        }
-    };
 }

@@ -1,65 +1,53 @@
-package com.hash.android.thejuapp;
+package com.hash.android.thejuapp.fragment;
 
 import android.Manifest;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
-import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
 
 import com.hash.android.thejuapp.HelperClass.PreferenceManager;
 import com.hash.android.thejuapp.Model.Canteen;
+import com.hash.android.thejuapp.R;
 import com.hash.android.thejuapp.adapter.CanteenListRecyclerAdapter;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
-public class CanteenListActivity extends AppCompatActivity implements LocationListener {
+public class CanteenListFragment extends android.support.v4.app.Fragment implements LocationListener {
 
-    private static final String TAG = CanteenListActivity.class.getSimpleName();
+    public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
+    private static final String TAG = CanteenListFragment.class.getSimpleName();
     private static final String KEY_SURUCHI = "suruchi";
     private LocationManager locationManager;
     private String provider;
-    public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
     private Location location;
     private ArrayList<Canteen> mCanteenArrayList = new ArrayList<>();
     private CanteenListRecyclerAdapter adapter;
 
+    public CanteenListFragment() {
+    }
 
-    /**
-     * Callback for the result from requesting permissions. This method
-     * is invoked for every call on {@link #requestPermissions(String[], int)}.
-     * <p>
-     * <strong>Note:</strong> It is possible that the permissions request interaction
-     * with the user is interrupted. In this case you will receive empty permissions
-     * and results arrays which should be treated as a cancellation.
-     * </p>
-     *
-     * @param requestCode  The request code passed in {@link #requestPermissions(String[], int)}.
-     * @param permissions  The requested permissions. Never null.
-     * @param grantResults The grant results for the corresponding permissions
-     *                     which is either {@link PackageManager#PERMISSION_GRANTED}
-     *                     or {@link PackageManager#PERMISSION_DENIED}. Never null.
-     * @see #requestPermissions(String[], int)
-     */
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode) {
@@ -70,7 +58,7 @@ public class CanteenListActivity extends AppCompatActivity implements LocationLi
 
                     // permission was granted, yay! Do the
                     // location-related task you need to do.
-                    if (ContextCompat.checkSelfPermission(this,
+                    if (ContextCompat.checkSelfPermission(getActivity(),
                             Manifest.permission.ACCESS_FINE_LOCATION)
                             == PackageManager.PERMISSION_GRANTED) {
 
@@ -79,7 +67,7 @@ public class CanteenListActivity extends AppCompatActivity implements LocationLi
                     }
 
                 } else {
-                    new PreferenceManager(this).setLocationEnabled(false);
+                    new PreferenceManager(getActivity()).setLocationEnabled(false);
                     // permission denied, boo! Disable the
                     // functionality that depends on this permission.
 
@@ -90,27 +78,26 @@ public class CanteenListActivity extends AppCompatActivity implements LocationLi
 
     }
 
-
     public boolean checkLocationPermission() {
-        if (ContextCompat.checkSelfPermission(this,
+        if (ContextCompat.checkSelfPermission(getActivity(),
                 Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
 
             // Should we show an explanation?
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+            if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),
                     Manifest.permission.ACCESS_FINE_LOCATION)) {
 
                 // Show an explanation to the user *asynchronously* -- don't block
                 // this thread waiting for the user's response! After the user
                 // sees the explanation, try again to request the permission.
-                new AlertDialog.Builder(this)
+                new AlertDialog.Builder(getActivity())
                         .setTitle(R.string.title_location_permission)
                         .setMessage(R.string.text_location_permission)
                         .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 //Prompt the user once explanation has been shown
-                                ActivityCompat.requestPermissions(CanteenListActivity.this,
+                                ActivityCompat.requestPermissions(getActivity(),
                                         new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                                         MY_PERMISSIONS_REQUEST_LOCATION);
                             }
@@ -121,7 +108,7 @@ public class CanteenListActivity extends AppCompatActivity implements LocationLi
 
             } else {
                 // No explanation needed, we can request the permission.
-                ActivityCompat.requestPermissions(this,
+                ActivityCompat.requestPermissions(getActivity(),
                         new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                         MY_PERMISSIONS_REQUEST_LOCATION);
             }
@@ -131,17 +118,43 @@ public class CanteenListActivity extends AppCompatActivity implements LocationLi
         }
     }
 
+    /**
+     * Called to do initial creation of a fragment.  This is called after
+     * and before
+     * {@link #onCreateView(LayoutInflater, ViewGroup, Bundle)}.
+     * <p>
+     * <p>Note that this can be called while the fragment's activity is
+     * still in the process of being created.  As such, you can not rely
+     * on things like the activity's content view hierarchy being initialized
+     * at this point.  If you want to do work once the activity itself is
+     * created, see {@link #onActivityCreated(Bundle)}.
+     * <p>
+     * <p>Any restored child fragments will be created before the base
+     * <code>Fragment.onCreate</code> method returns.</p>
+     *
+     * @param savedInstanceState If the fragment is being re-created from
+     *                           a previous saved state, this is the state.
+     */
     @Override
-    protected void onResume() {
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        this.setHasOptionsMenu(true);
+        getActivity().setTitle("My Canteens");
+    }
+
+
+    @Override
+    public void onResume() {
         super.onResume();
 
         if (checkLocationPermission()) {
-            if (ContextCompat.checkSelfPermission(this,
+            if (ContextCompat.checkSelfPermission(getActivity(),
                     Manifest.permission.ACCESS_FINE_LOCATION)
                     == PackageManager.PERMISSION_GRANTED) {
 
                 //Request location updates:
                 try {
+//                    locationManager.requestLocationUpdates();
                     locationManager.requestLocationUpdates(provider, 400, 1, this);
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -152,12 +165,13 @@ public class CanteenListActivity extends AppCompatActivity implements LocationLi
 
     }
 
+
     public void updateCanteen() {
         mCanteenArrayList.clear();
 
-        mCanteenArrayList.add(new Canteen("Staff Canteen", "SL Campus", findDistance(22.560916d, 88.412865d, location), KEY_SURUCHI));
-        mCanteenArrayList.add(new Canteen("Suruchi Canteen", "Jadavpur University", findDistance(22.499757d, 88.370122, location), KEY_SURUCHI));
-        mCanteenArrayList.add(new Canteen("Aahar Canteen", "Jadavpur University", findDistance(22.496600d, 88.371966d, location), KEY_SURUCHI));
+        mCanteenArrayList.add(new Canteen("Staff Canteen", getString(R.string.sl_canteen), findDistance(22.560916d, 88.412865d, location), KEY_SURUCHI, 22.560916d, 88.412865d));
+        mCanteenArrayList.add(new Canteen("Suruchi Canteen", getString(R.string.ju_canteen), findDistance(22.499757d, 88.370122, location), KEY_SURUCHI, 22.499757d, 88.370122));
+        mCanteenArrayList.add(new Canteen("Aahar Canteen", getString(R.string.ju_canteen), findDistance(22.496600d, 88.371966d, location), KEY_SURUCHI, 22.496600d, 88.371966d));
 
     }
 
@@ -169,49 +183,77 @@ public class CanteenListActivity extends AppCompatActivity implements LocationLi
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.canteen_menu, menu);
-        return true;
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.canteen_menu, menu);
     }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.menuSortDistance) {
             sortByDistance();
-        } else if (id == R.id.menuSortDefault) {
-            if (mCanteenArrayList == null) updateCanteen();
-            if (adapter != null)
-                adapter.notifyDataSetChanged();
-            else adapter = new CanteenListRecyclerAdapter(mCanteenArrayList);
+        } else if (id == R.id.menuSortJU) {
+            sortJU();
         } else if (id == R.id.menuSortatoz) {
             sortAlphabetically();
+        } else if (id == R.id.menuSortSL) {
+            sortSL();
         }
 
         return super.onOptionsItemSelected(item);
     }
 
+    private void sortSL() {
+        updateCanteen();
+
+        ArrayList<Canteen> mArrayList = new ArrayList<>();
+        mArrayList.clear();
+        for (Canteen canteen : mCanteenArrayList) {
+            if (canteen.getCampus().equals(getString(R.string.sl_canteen))) {
+                mArrayList.add(canteen);
+            }
+        }
+
+        adapter.filter(mArrayList);
+
+    }
+
+    private void sortJU() {
+        updateCanteen();
+
+        ArrayList<Canteen> mArrayList = new ArrayList<>();
+        mArrayList.clear();
+        for (Canteen canteen : mCanteenArrayList) {
+            if (canteen.getCampus().equals(getString(R.string.ju_canteen))) {
+                mArrayList.add(canteen);
+            }
+        }
+
+        adapter.filter(mArrayList);
+
+    }
+
     private void sortAlphabetically() {
 
-        if (mCanteenArrayList == null) updateCanteen();
+        updateCanteen();
         Collections.sort(mCanteenArrayList, new Comparator<Canteen>() {
             @Override
             public int compare(Canteen canteen, Canteen t1) {
                 return canteen.getCanteenName().compareToIgnoreCase(t1.getCanteenName());
             }
         });
-
-        if (adapter != null)
-            adapter.notifyDataSetChanged();
-        else {
-            adapter = new CanteenListRecyclerAdapter(mCanteenArrayList);
-        }
+        ArrayList<Canteen> mArrayList = new ArrayList<>();
+        mArrayList.clear();
+        mArrayList.addAll(mCanteenArrayList);
+        adapter.filter(mArrayList);
 
     }
 
     private void sortByDistance() {
 
-        if (mCanteenArrayList == null) updateCanteen();
+        updateCanteen();
         Collections.sort(mCanteenArrayList, new Comparator<Canteen>() {
             @Override
             public int compare(Canteen canteen, Canteen t1) {
@@ -219,43 +261,59 @@ public class CanteenListActivity extends AppCompatActivity implements LocationLi
             }
         });
 
-        if (adapter != null)
-            adapter.notifyDataSetChanged();
-        else {
-            adapter = new CanteenListRecyclerAdapter(mCanteenArrayList);
-        }
+        ArrayList<Canteen> mArrayList = new ArrayList<>();
+        mArrayList.clear();
+        mArrayList.addAll(mCanteenArrayList);
+        adapter.filter(mArrayList);
 
 
     }
 
+    /**
+     * Called to have the fragment instantiate its user interface view.
+     * This is optional, and non-graphical fragments can return null (which
+     * is the default implementation).  This will be called between
+     * {@link #onCreate(Bundle)} and {@link #onActivityCreated(Bundle)}.
+     * <p>
+     * <p>If you return a View from here, you will later be called in
+     * {@link #onDestroyView} when the view is being released.
+     *
+     * @param inflater           The LayoutInflater object that can be used to inflate
+     *                           any views in the fragment,
+     * @param container          If non-null, this is the parent view that the fragment's
+     *                           UI should be attached to.  The fragment should not add the view itself,
+     *                           but this can be used to generate the LayoutParams of the view.
+     * @param savedInstanceState If non-null, this fragment is being re-constructed
+     *                           from a previous saved state as given here.
+     * @return Return the View for the fragment's UI, or null.
+     */
+    @Nullable
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_canteen_list);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+//        return super.onCreateView(inflater, container, savedInstanceState);
+        View rootView = inflater.inflate(R.layout.content_canteen_list, container, false);
+        locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
         provider = locationManager.getBestProvider(new Criteria(), false);
 
 
         if (ActivityCompat.checkSelfPermission(
-                this,
+                getActivity(),
                 Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
                 ActivityCompat.checkSelfPermission(
-                        this,
+                        getActivity(),
                         Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED
                 ) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
+//             COMPLETED: Consider calling
+//                ActivityCompat#requestPermissions
             // here to request the missing permissions, and then overriding
             //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
             //                                          int[] grantResults)
             // to handle the case where the user grants the permission. See the documentation
             // for ActivityCompat#requestPermissions for more details.
-            return;
+            return rootView;
         }
         location = locationManager.getLastKnownLocation(provider);
-        Log.d(TAG, "last Position:: " + location.getLongitude() + ":: " + location.getLongitude());
+//        Log.d(TAG, "last Position:: " + location.getLongitude() + ":: " + location.getLongitude());
 
 
 //        Location canteenLocation = new Location("");
@@ -277,26 +335,20 @@ public class CanteenListActivity extends AppCompatActivity implements LocationLi
 //            }
 //        });
 
-        RecyclerView mRecyclerView = (RecyclerView) findViewById(R.id.canteenRecyclerView);
+        RecyclerView mRecyclerView = rootView.findViewById(R.id.canteenRecyclerView);
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mRecyclerView.setHasFixedSize(true);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerView.setNestedScrollingEnabled(false);
         updateCanteen();
-        adapter = new CanteenListRecyclerAdapter(mCanteenArrayList);
+        adapter = new CanteenListRecyclerAdapter(mCanteenArrayList, getActivity());
         mRecyclerView.setAdapter(adapter);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+
+//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 //        mRecyclerView.setOnClickListener();
 
-    }
-
-    private void navigateTo(double lat, double lng, String name) {
-        String format = "geo:0,0?q=" + lat + "," + lng + "";
-        Uri uri = Uri.parse(format);
-
-        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        startActivity(intent);
+        return rootView;
     }
 
     @Override

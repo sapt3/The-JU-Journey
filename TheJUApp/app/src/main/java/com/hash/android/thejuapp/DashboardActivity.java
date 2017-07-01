@@ -23,11 +23,14 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.hash.android.thejuapp.HelperClass.CircleTransform;
 import com.hash.android.thejuapp.HelperClass.PreferenceManager;
 import com.hash.android.thejuapp.Model.User;
 import com.hash.android.thejuapp.fragment.BookmarksFragment;
+import com.hash.android.thejuapp.fragment.CanteenListFragment;
 import com.hash.android.thejuapp.fragment.DashboardFragment;
+import com.hash.android.thejuapp.fragment.ProfileFragment;
 
 import java.util.concurrent.ExecutionException;
 
@@ -48,6 +51,11 @@ public class DashboardActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        String token = FirebaseInstanceId.getInstance().getToken();
+        if (token != null) {
+            FirebaseDatabase.getInstance().getReference().child("notificationTokens").child(token).setValue(true);
+        }
+
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -59,10 +67,10 @@ public class DashboardActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
         View navHeader = navigationView.getHeaderView(0);
 
-        TextView txtName = (TextView) navHeader.findViewById(R.id.name);
-        TextView emailTextView = (TextView) navHeader.findViewById(R.id.website);
-        ImageView header = (ImageView) navHeader.findViewById(R.id.img_header_bg);
-        ImageView profileImage = (ImageView) navHeader.findViewById(R.id.img_profile);
+        TextView txtName = navHeader.findViewById(R.id.name);
+        TextView emailTextView = navHeader.findViewById(R.id.website);
+        ImageView header = navHeader.findViewById(R.id.img_header_bg);
+        ImageView profileImage = navHeader.findViewById(R.id.img_profile);
 
         User user = new PreferenceManager(this).getUser();
         txtName.setText(user.getName());
@@ -78,11 +86,7 @@ public class DashboardActivity extends AppCompatActivity
                 .into(profileImage);
 
 
-        try {
-            FirebaseDatabase.getInstance().setPersistenceEnabled(true);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+
 
 
 //        "2016-06-18T19:43:03Z"
@@ -139,6 +143,14 @@ public class DashboardActivity extends AppCompatActivity
 
             case R.id.nav_bookmarks:
                 fragment = new BookmarksFragment();
+                break;
+            case R.id.nav_canteen:
+                fragment = new CanteenListFragment();
+                break;
+
+            case R.id.nav_profile:
+                fragment = new ProfileFragment();
+
 
 
         }

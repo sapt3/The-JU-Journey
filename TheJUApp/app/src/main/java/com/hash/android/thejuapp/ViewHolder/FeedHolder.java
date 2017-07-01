@@ -17,9 +17,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-/**
- * Created by Spandita Ghosh on 6/20/2017.
- */
+
 
 public class FeedHolder extends RecyclerView.ViewHolder {
     private ImageView image;
@@ -29,12 +27,12 @@ public class FeedHolder extends RecyclerView.ViewHolder {
 
     public FeedHolder(View itemView) {
         super(itemView);
-        image = (ImageView) itemView.findViewById(R.id.postImageView);
-        author = (TextView) itemView.findViewById(R.id.authorTextView);
-        time = (TextView) itemView.findViewById(R.id.timeTextView);
-        heading = (TextView) itemView.findViewById(R.id.headingTextView);
-        shortDesc = (TextView) itemView.findViewById(R.id.shortDescTextView);
-        ad = (TextView) itemView.findViewById(R.id.adTextView);
+        image = itemView.findViewById(R.id.postImageView);
+        author = itemView.findViewById(R.id.authorTextView);
+        time = itemView.findViewById(R.id.timeTextView);
+        heading = itemView.findViewById(R.id.headingTextView);
+        shortDesc = itemView.findViewById(R.id.shortDescTextView);
+        ad = itemView.findViewById(R.id.adTextView);
 
         itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -80,12 +78,12 @@ public class FeedHolder extends RecyclerView.ViewHolder {
         }
     }
 
-    public interface ClickListener {
-        public void onItemClick(View view, int position);
-    }
-
     public void setOnClickListener(FeedHolder.ClickListener clickListener) {
         mClickListener = clickListener;
+    }
+
+    public interface ClickListener {
+        void onItemClick(View view, int position);
     }
 }
 //    public void bind(int pos) {

@@ -147,5 +147,9 @@
     <string name="bookmark">Bookmark</string>
     <string name="title_activity_bookmarks">BookmarksActivity</string>
     <string name="title_activity_test">TestActivity</string>
+    <string name="title_activity_explore">ExploreActivity</string>
+    <string name="edit">Edit</string>
+    <string name="sl_canteen">SL Campus</string>
+    <string name="ju_canteen">Jadavpur University</string>
 
 </resources>

@@ -32,29 +32,42 @@
             android:label="@string/title_activity_dashboard"
             android:theme="@style/AppTheme" />
         <activity
-            android:name=".DetailsActivity"
-            android:label="@string/title_activity_details"
-            android:theme="@style/AppTheme">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.hash.android.thejuapp.DashboardActivity" />
-        </activity>
-        <activity
             android:name=".DetailsFeedActivity"
             android:parentActivityName=".DashboardActivity" />
+
+
         <activity
-            android:name=".CanteenListActivity"
-            android:label="@string/title_activity_canteen_list"
+            android:name=".TestActivity"
+            android:label="@string/title_activity_test"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".fragment.ExploreActivity"
+            android:label="@string/title_activity_explore"
             android:parentActivityName=".DashboardActivity"
             android:theme="@style/AppTheme">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.hash.android.thejuapp.DashboardActivity" />
         </activity>
-        <activity
-            android:name=".TestActivity"
-            android:label="@string/title_activity_test"
-            android:theme="@style/AppTheme"></activity>
+
+        <service android:name=".messaging.MyFirebaseMessagingService">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+
+        <service android:name=".messaging.MyFirebaseInstanceIdService">
+            <intent-filter>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
+            </intent-filter>
+        </service>
+
+        <receiver android:name=".messaging.NotificationReciever">
+            <intent-filter>
+                <action android:name="shareAction" />
+                <action android:name="bookmarkAction" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

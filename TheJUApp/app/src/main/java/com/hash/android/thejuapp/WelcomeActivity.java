@@ -23,11 +23,21 @@ import com.hash.android.thejuapp.HelperClass.PreferenceManager;
 
 public class WelcomeActivity extends AppCompatActivity {
 
+    ImageView imgView;
     private ViewPager viewPager;
     private LinearLayout dotsLayout;
     private int[] layouts;
     private Button btnSkip, btnNext;
-    ImageView imgView;
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (!new PreferenceManager(this).isFirstTimeLaunch()) {
+            startActivity(new Intent(this, LoginActivityPre.class));
+            WelcomeActivity.this.overridePendingTransition(0, 0);
+
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

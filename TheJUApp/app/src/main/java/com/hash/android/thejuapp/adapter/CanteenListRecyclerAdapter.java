@@ -1,6 +1,10 @@
 package com.hash.android.thejuapp.adapter;
 
+import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,30 +14,19 @@ import android.widget.TextView;
 
 import com.hash.android.thejuapp.Model.Canteen;
 import com.hash.android.thejuapp.R;
-import com.hash.android.thejuapp.ViewHolder.FeedHolder;
 
 import java.util.ArrayList;
-
-/**
- * Created by Spandita Ghosh on 6/21/2017.
- */
 
 public class CanteenListRecyclerAdapter extends RecyclerView.Adapter<CanteenListRecyclerAdapter.ViewHolder> {
     private static final String TAG = CanteenListRecyclerAdapter.class.getSimpleName();
     private ArrayList<Canteen> mArrayList;
-    private FeedHolder.ClickListener mClickListener;
+    private Context context;
 
-    public CanteenListRecyclerAdapter(ArrayList<Canteen> mArrayList) {
+    public CanteenListRecyclerAdapter(ArrayList<Canteen> mArrayList, Context context) {
         this.mArrayList = mArrayList;
+        this.context = context;
     }
 
-    public interface ClickListener {
-        public void onItemClick(View view, int position);
-    }
-
-    public void setOnClickListener(FeedHolder.ClickListener clickListener) {
-        mClickListener = clickListener;
-    }
 
     /**
      * Called when RecyclerView needs a new {@link ViewHolder} of the given type to represent
@@ -58,9 +51,7 @@ public class CanteenListRecyclerAdapter extends RecyclerView.Adapter<CanteenList
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
-        CanteenListRecyclerAdapter.ViewHolder vh = new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_child_canteen_item, parent, false));
-
-        return vh;
+        return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_child_canteen_item, parent, false));
     }
 
     /**
@@ -84,8 +75,30 @@ public class CanteenListRecyclerAdapter extends RecyclerView.Adapter<CanteenList
      * @param position The position of the item within the adapter's data set.
      */
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(final ViewHolder holder, final int position) {
         holder.bind(position);
+        holder.naviagateButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.d(TAG, "navigate Position:: " + position);
+                navigateTo(mArrayList.get(position).getLatitude(), mArrayList.get(position).getLongitude(), mArrayList.get(position).getCanteenName());
+            }
+        });
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.d(TAG, "itemView:: " + position);
+            }
+        });
+    }
+
+    private void navigateTo(double lat, double lng, String canteenName) {
+        String format = "geo:0,0?q=" + lat + "," + lng + "(" + canteenName + ")";
+        Uri uri = Uri.parse(format);
+
+        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        context.startActivity(intent);
     }
 
     /**
@@ -104,26 +117,21 @@ public class CanteenListRecyclerAdapter extends RecyclerView.Adapter<CanteenList
         notifyDataSetChanged();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    class ViewHolder extends RecyclerView.ViewHolder {
         TextView canteenNameTextView, campusTextView, locationTextView;
         Button naviagateButton;
 
-        public ViewHolder(View itemView) {
+        ViewHolder(View itemView) {
             super(itemView);
-            canteenNameTextView = (TextView) itemView.findViewById(R.id.canteenNameTextView);
-            campusTextView = (TextView) itemView.findViewById(R.id.campusTextView);
-            locationTextView = (TextView) itemView.findViewById(R.id.locationTextView);
-            naviagateButton = (Button) itemView.findViewById(R.id.navigateButton);
+            canteenNameTextView = itemView.findViewById(R.id.canteenNameTextView);
+            campusTextView = itemView.findViewById(R.id.campusTextView);
+            locationTextView = itemView.findViewById(R.id.locationTextView);
+            naviagateButton = itemView.findViewById(R.id.navigateButton);
 
-            naviagateButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    mClickListener.onItemClick(view, getAdapterPosition());
-                }
-            });
         }
 
-        public void bind(int position) {
+
+        void bind(int position) {
             canteenNameTextView.setText(mArrayList.get(position).getCanteenName());
             campusTextView.setText(mArrayList.get(position).getCampus());
             try {
@@ -133,5 +141,7 @@ public class CanteenListRecyclerAdapter extends RecyclerView.Adapter<CanteenList
             }
 
         }
+
+
     }
 }

@@ -3,17 +3,22 @@ package com.hash.android.thejuapp.fragment;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.util.Pair;
 import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.firebase.ui.database.FirebaseIndexRecyclerAdapter;
 import com.google.firebase.database.DatabaseReference;
@@ -29,10 +34,6 @@ import java.util.Locale;
 import java.util.TimeZone;
 
 import static com.hash.android.thejuapp.adapter.FeedRecyclerAdapter.INTENT_EXTRA_FEED;
-
-/**
- * Created by Spandita Ghosh on 6/23/2017.
- */
 
 public class BookmarksFragment extends Fragment {
 
@@ -90,30 +91,52 @@ public class BookmarksFragment extends Fragment {
 //        View rootView = inflater.inflate(android.R.layout)
         View rootView = inflater.inflate(R.layout.fragment_bookmarks, container, false);
 
-        RecyclerView mRecyclerView = (RecyclerView) rootView.findViewById(R.id.bookmarksRecyclerView);
+        final RecyclerView mRecyclerView = rootView.findViewById(R.id.bookmarkRecyclerView);
         LinearLayoutManager manager = new LinearLayoutManager(getActivity());
         manager.setReverseLayout(true);
         manager.setStackFromEnd(true);
         mRecyclerView.setLayoutManager(manager);
+        mRecyclerView.setNestedScrollingEnabled(false);
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
-        mRecyclerView.setHasFixedSize(true);
+        mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL));
+
+//        mRecyclerView.setHasFixedSize(true);
+        final ProgressBar pb = rootView.findViewById(R.id.progressBarBookmark);
+
+        new CountDownTimer(2000, 1000) {
+
+            @Override
+            public void onTick(long l) {
+
+            }
+
+            @Override
+            public void onFinish() {
+                pb.setVisibility(View.GONE);
+                mRecyclerView.setVisibility(View.VISIBLE);
+            }
+        }.start();
+
+        final ImageView img = rootView.findViewById(R.id.bookmarkImageViewPlaceHolder);
+        final TextView txt = rootView.findViewById(R.id.bookmarkTextViewPlaceHolder);
 
         DatabaseReference mRef = FirebaseDatabase.getInstance().getReference();
         DatabaseReference ref = mRef.child("posts").getRef();
         String uid = new PreferenceManager(getActivity()).getUID();
-        DatabaseReference keyRef = mRef.child("users").child(uid).child("bookmarks").getRef();
+        DatabaseReference keyRef = mRef.child("users").child(uid).child("bookmarks").orderByValue().getRef();
         final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault());
         sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
 
         mAdapter = new FirebaseIndexRecyclerAdapter<Feed, FeedHolder>(
                 Feed.class,
-                R.layout.recycler_child_feed,
+                R.layout.recycler_child_feed_bookmark,
                 FeedHolder.class,
                 keyRef,
                 ref) {
             @Override
             protected void populateViewHolder(FeedHolder viewHolder, Feed model, int position) {
-//                progressBar.setVisibility(View.GONE);
+                img.setVisibility(View.GONE);
+                txt.setVisibility(View.GONE);
                 Log.d(TAG, "populateViewHolder:: " + model.getHeading());
                 viewHolder.setAuthor(model.getAuthor());
                 viewHolder.setImage(model.getImageURL(), getActivity());
@@ -147,8 +170,6 @@ public class BookmarksFragment extends Fragment {
 
         mAdapter.notifyDataSetChanged();
         mRecyclerView.setAdapter(mAdapter);
-
-
         return rootView;
     }
 

@@ -16,15 +16,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
+import android.widget.Button;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.hash.android.thejuapp.CanteenListActivity;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.hash.android.thejuapp.DashboardActivity;
 import com.hash.android.thejuapp.DetailsFeedActivity;
 import com.hash.android.thejuapp.HelperClass.PreferenceManager;
@@ -42,30 +40,25 @@ import java.util.TimeZone;
 import java.util.concurrent.ExecutionException;
 
 import static com.hash.android.thejuapp.adapter.FeedRecyclerAdapter.INTENT_EXTRA_FEED;
+import static com.hash.android.thejuapp.fragment.ExploreActivity.CANTEEN_FRAGMENT;
+import static com.hash.android.thejuapp.fragment.ExploreActivity.EXTRA_CLASS_NAME;
 
-/**
- * Created by Spandita Ghosh on 6/23/2017.
- */
 
-public class DashboardFragment extends Fragment implements View.OnClickListener {
+public class DashboardFragment extends Fragment {
 
     private static final int TAG_CANTEEN = 1;
     private static final int TAG_PHOTO = 2;
     private static final int TAG_STUDENT = 3;
     private static final int TAG_MAGAZINE = 4;
     private static final int TAG_EVENTS = 5;
-
-    ArrayList<Feed> mFeedList = new ArrayList<>();
-    private RecyclerView feedRecyclerView;
-    PreferenceManager mPrefsManager;
-    private final String TAG = DashboardActivity.class.getSimpleName();
-    private ArrayList<Topic> topicsArrayList = new ArrayList<>();
-    private final String URL_NAV_BACKGROUND = "http://api.androidhive.info/images/nav-menu-header-bg.jpg";
-    private CardView cardView;
-    public FirebaseRecyclerAdapter<Feed, FeedHolder> mAdapter;
-    private FirebaseAuth mAuth;
-
     private static final String BUNDLE_RECYCLER_LAYOUT = "classname.recycler.layout";
+    private final String TAG = DashboardActivity.class.getSimpleName();
+    private final String URL_NAV_BACKGROUND = "http://api.androidhive.info/images/nav-menu-header-bg.jpg";
+    public FirebaseRecyclerAdapter<Feed, FeedHolder> mAdapter;
+    ArrayList<Feed> mFeedList = new ArrayList<>();
+    PreferenceManager mPrefsManager;
+    private ArrayList<Topic> topicsArrayList = new ArrayList<>();
+    private CardView cardView;
 
     public DashboardFragment() {
     }
@@ -127,13 +120,8 @@ public class DashboardFragment extends Fragment implements View.OnClickListener 
 //        return super.onCreateView(inflater, container, savedInstanceState);
         View rootView = inflater.inflate(R.layout.fragment_dashboard, container, false);
 
-
-        mAuth = FirebaseAuth.getInstance();
+        FirebaseMessaging.getInstance().subscribeToTopic("news");
         mPrefsManager = new PreferenceManager(getActivity());
-
-
-
-
 
 
         //If this message has been shown before then quickly skip this when layout is inflated.
@@ -143,35 +131,35 @@ public class DashboardFragment extends Fragment implements View.OnClickListener 
         //User class has access to all the variables accessed by the user.
 
 
-
-        ImageView noNotificationIV = (ImageView) rootView.findViewById(R.id.noNotifcationImageView);
-        ImageView yesNotificationIV = (ImageView) rootView.findViewById(R.id.yesNotifcationImageView);
-        TextView noNotificationTV = (TextView) rootView.findViewById(R.id.noNotificationsTextView);
-        TextView yesNotificationTV = (TextView) rootView.findViewById(R.id.yesNotificationsTextView);
-        cardView = (CardView) rootView.findViewById(R.id.cardView);
+        Button yesNotifications = rootView.findViewById(R.id.yesNotificationsButton);
+        Button noNotifications = rootView.findViewById(R.id.noNotificationsButton);
+        cardView = rootView.findViewById(R.id.cardView);
         if (mPrefsManager.isNotificationEnabled()) {
             cardView.setVisibility(View.GONE);
         }
 
-        final ProgressBar progressBar = (ProgressBar) rootView.findViewById(R.id.feedRecyclerViewProgressView);
-//        progressBar.setVisibility(View.VISIBLE);
+        final ProgressBar progressBar = rootView.findViewById(R.id.feedRecyclerViewProgressView);
 
-//        StreamAnalyticsAuth auth = new StreamAnalyticsAuth(getString(R.string.API_KEY),getString(R.string.API_TOKEN));
-//        StreamAnalytics client = StreamAnalyticsImpl.getInstance(auth);
+        yesNotifications.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
 
+                cardView.setVisibility(View.GONE);
+                mPrefsManager.setNotificationPrefs(true);
+            }
+        });
 
+        noNotifications.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                cardView.setVisibility(View.GONE);
+                mPrefsManager.setNotificationPrefs(false);
+            }
+        });
 
-
-        noNotificationIV.setOnClickListener(this);
-        noNotificationTV.setOnClickListener(this);
-        yesNotificationIV.setOnClickListener(this);
-        yesNotificationTV.setOnClickListener(this);
-
-        RecyclerView mRecyclerView = (RecyclerView) rootView.findViewById(R.id.topicsRecyclerView);
-//        LinearSnapHelper helper = new LinearSnapHelper();
-//        helper.attachToRecyclerView(mRecyclerView); //Attaching a linear helper to allow the vertical recycler view to snap to center.
+        RecyclerView mRecyclerView = rootView.findViewById(R.id.topicsRecyclerView);
         mRecyclerView.setHasFixedSize(true);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()   , LinearLayoutManager.HORIZONTAL, false));
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
         mRecyclerView.setItemAnimator(new DefaultItemAnimator()); //Create a default item animater when the view comes to range
         updateData(); //Call the function to update the data set.
         mRecyclerView.setAdapter(new TopicsRecyclerAdapter(topicsArrayList));
@@ -182,8 +170,11 @@ public class DashboardFragment extends Fragment implements View.OnClickListener 
                 Log.d(TAG, "postion:: " + tag);
                 switch (tag) {
                     case TAG_CANTEEN:
-                        startActivity(new Intent(getActivity(), CanteenListActivity.class));
+                        Intent i = new Intent(getActivity(), ExploreActivity.class);
+                        i.putExtra(EXTRA_CLASS_NAME, CANTEEN_FRAGMENT);
+                        startActivity(i);
                 }
+
             }
 
             @Override
@@ -193,8 +184,7 @@ public class DashboardFragment extends Fragment implements View.OnClickListener 
         }));
 
 
-        feedRecyclerView = (RecyclerView) rootView.findViewById(R.id.feedRecyclerView);
-//        feedRecyclerView.setHasFixedSize(true);
+        RecyclerView feedRecyclerView = rootView.findViewById(R.id.feedRecyclerView);
         LinearLayoutManager manager = new LinearLayoutManager(getActivity());
         manager.setReverseLayout(true);
         manager.setStackFromEnd(true);
@@ -202,14 +192,14 @@ public class DashboardFragment extends Fragment implements View.OnClickListener 
         feedRecyclerView.setItemAnimator(new DefaultItemAnimator());
         feedRecyclerView.setNestedScrollingEnabled(false);
         feedRecyclerView.addItemDecoration(new DividerItemDecoration(feedRecyclerView.getContext(), DividerItemDecoration.VERTICAL));
-//        updateList();
         //2017-06-19T14:13:24.100Z
         final DatabaseReference mRef = FirebaseDatabase.getInstance().getReference();
         DatabaseReference ref = mRef.child("posts").getRef();
-        String uid = new PreferenceManager(getActivity()).getUID();
-        DatabaseReference keyRef = mRef.child("users").child(uid).child("bookmarks").getRef();
         final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault());
         sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+        String uid = new PreferenceManager(getActivity()).getUID();
+        DatabaseReference keyRef = mRef.child("users").child(uid).child("bookmarks").getRef();
+
         mAdapter = new FirebaseRecyclerAdapter<Feed, FeedHolder>(
                 Feed.class,
                 R.layout.recycler_child_feed,
@@ -256,33 +246,5 @@ public class DashboardFragment extends Fragment implements View.OnClickListener 
         return rootView;
     }
 
-    @Override
-    public void onClick(View view) {
 
-        switch (view.getId()) {
-            case R.id.noNotifcationImageView:
-                cardView.setVisibility(View.GONE);
-                mPrefsManager.setNotificationPrefs(false);
-                break;
-
-            case R.id.noNotificationsTextView:
-                cardView.setVisibility(View.GONE);
-                mPrefsManager.setNotificationPrefs(false);
-                break;
-
-            case R.id.yesNotifcationImageView:
-                cardView.setVisibility(View.GONE);
-                mPrefsManager.setNotificationPrefs(true);
-                break;
-
-            case R.id.yesNotificationsTextView:
-                cardView.setVisibility(View.GONE);
-                mPrefsManager.setNotificationPrefs(true);
-                break;
-
-            default:
-                break;
-        }
-
-    }
 }

@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class LoginActivityPre extends AppCompatActivity {
 
@@ -64,7 +65,13 @@ public class LoginActivityPre extends AppCompatActivity {
         super.onStart();
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         FirebaseUser user = mAuth.getCurrentUser();
-        startActivity(new Intent(this, DashboardActivity.class));
+//        startActivity(new Intent(this, DashboardActivity.class));
+
+        try {
+            FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         //TODO: Replace the dummy sign in logic later
         if (user != null) {

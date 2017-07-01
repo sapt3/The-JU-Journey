@@ -2,10 +2,10 @@
 <resources>
     <color name="colorPrimary">#1B3242</color>
     <color name="colorPrimaryDark">#202F32</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="colorAccent">#ff4081</color>
 
     <color name="notificationPrimary">#4285f4</color>
-    <color name="notificationSecondary">#5A95F5</color>
+    <color name="notificationSecondary">#5a95f5</color>
     <!-- Screens background color-->
     <color name="bg_screen1">#f64c73</color>
     <color name="bg_screen2">#20d2bb</color>

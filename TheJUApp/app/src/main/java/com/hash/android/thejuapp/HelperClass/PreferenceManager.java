@@ -15,13 +15,13 @@ public class PreferenceManager {
     private static final String PREFS_USER_PHOTO_URL = "photo";
     private static final String PREFS_USER_UID = "uid";
     private static final String PREFS_USER_EMAIL = "mail";
-    private static final String PREFS_USER_NOTIFICATION = "notification7";
+    private static final String PREFS_USER_NOTIFICATION = "notification9";
     private static final String PREFS_LOCATION_ENABLED = "location";
-
+    private static final String PREFS_NOTIFICATION_ID = "notificationID";
+    private static final String PREFS_PENDING_INTENT_ID = "pendingIntentId";
+    private final static String PREFS_FIRST_TIME_LAUNCH = "firstTimeLaunch";
     private SharedPreferences mPrefs;
     private SharedPreferences.Editor mEditor;
-
-    private final static String PREFS_FIRST_TIME_LAUNCH = "firstTimeLaunch";
 
     public PreferenceManager(Context context) {
         String PREFS_NAME_STRING = "JUAppPreferences";
@@ -29,26 +29,13 @@ public class PreferenceManager {
         mPrefs = context.getSharedPreferences(PREFS_NAME_STRING, PREFS_ACCESS_MODE);
     }
 
-    public void setFirstTimeLaunch(boolean isFirstTime) {
-        mEditor = mPrefs.edit();
-        mEditor.putBoolean(PREFS_FIRST_TIME_LAUNCH, isFirstTime);
-        mEditor.apply();
+    public boolean isLocationEnabled() {
+        return mPrefs.getBoolean(PREFS_LOCATION_ENABLED, true);
     }
 
     public void setLocationEnabled(boolean name) {
         mEditor = mPrefs.edit();
         mEditor.putBoolean(PREFS_LOCATION_ENABLED, name);
-        mEditor.apply();
-    }
-
-    public boolean isLocationEnabled() {
-        return mPrefs.getBoolean(PREFS_LOCATION_ENABLED, true);
-    }
-
-
-    public void setName(String name) {
-        mEditor = mPrefs.edit();
-        mEditor.putString(PREFS_USER_NAME, name);
         mEditor.apply();
     }
 
@@ -66,10 +53,9 @@ public class PreferenceManager {
         return mPrefs.getString(PREFS_USER_NAME, "");
     }
 
-
-    public void setPhoneNumber(String number) {
+    public void setName(String name) {
         mEditor = mPrefs.edit();
-        mEditor.putString(PREFS_USER_PHONE, number);
+        mEditor.putString(PREFS_USER_NAME, name);
         mEditor.apply();
     }
 
@@ -77,10 +63,9 @@ public class PreferenceManager {
         return mPrefs.getString(PREFS_USER_PHONE, "");
     }
 
-
-    public void setUniversity(String university) {
+    public void setPhoneNumber(String number) {
         mEditor = mPrefs.edit();
-        mEditor.putString(PREFS_USER_UNIVERSITY, university);
+        mEditor.putString(PREFS_USER_PHONE, number);
         mEditor.apply();
     }
 
@@ -88,10 +73,9 @@ public class PreferenceManager {
         return mPrefs.getString(PREFS_USER_UNIVERSITY, "");
     }
 
-
-    public void setGender(String gender) {
+    public void setUniversity(String university) {
         mEditor = mPrefs.edit();
-        mEditor.putString(PREFS_USER_GENDER, gender);
+        mEditor.putString(PREFS_USER_UNIVERSITY, university);
         mEditor.apply();
     }
 
@@ -99,6 +83,15 @@ public class PreferenceManager {
         return mPrefs.getString(PREFS_USER_GENDER, "");
     }
 
+    public void setGender(String gender) {
+        mEditor = mPrefs.edit();
+        mEditor.putString(PREFS_USER_GENDER, gender);
+        mEditor.apply();
+    }
+
+    public boolean getPromo() {
+        return mPrefs.getBoolean(PREFS_USER_PROMO, false);
+    }
 
     public void setPromo(boolean optInForPromo) {
         mEditor = mPrefs.edit();
@@ -106,16 +99,9 @@ public class PreferenceManager {
         mEditor.apply();
     }
 
-
-    public boolean getPromo() {
-        return mPrefs.getBoolean(PREFS_USER_PROMO, false);
-    }
-
-
     public String getEmail() {
         return mPrefs.getString(PREFS_USER_EMAIL, "");
     }
-
 
     public void setEmail(String email) {
         mEditor = mPrefs.edit();
@@ -123,11 +109,9 @@ public class PreferenceManager {
         mEditor.apply();
     }
 
-
     public String getUID() {
         return mPrefs.getString(PREFS_USER_UID, "");
     }
-
 
     public void setUID(String uid) {
         mEditor = mPrefs.edit();
@@ -135,18 +119,15 @@ public class PreferenceManager {
         mEditor.apply();
     }
 
-
     public String getPhotoURL() {
         return mPrefs.getString(PREFS_USER_PHOTO_URL, "");
     }
-
 
     public void setPhotoURL(String url) {
         mEditor = mPrefs.edit();
         mEditor.putString(PREFS_USER_PHOTO_URL, url);
         mEditor.apply();
     }
-
 
     public User getUser() {
         return new User(getName(), getPhoneNumber(), getUniversity(), getGender(), getPhotoURL(), getUID(), getPromo(), getEmail());
@@ -156,4 +137,25 @@ public class PreferenceManager {
         return mPrefs.getBoolean(PREFS_FIRST_TIME_LAUNCH, true);
     }
 
+    public void setFirstTimeLaunch(boolean isFirstTime) {
+        mEditor = mPrefs.edit();
+        mEditor.putBoolean(PREFS_FIRST_TIME_LAUNCH, isFirstTime);
+        mEditor.apply();
+    }
+
+    public int getNotificationId() {
+        mEditor = mPrefs.edit();
+        int notificationID = mPrefs.getInt(PREFS_NOTIFICATION_ID, 1331);
+        mEditor.putInt(PREFS_NOTIFICATION_ID, notificationID + 1);
+        mEditor.apply();
+        return notificationID;
+    }
+
+    public int getPendingIntentId() {
+        mEditor = mPrefs.edit();
+        int notificationID = mPrefs.getInt(PREFS_PENDING_INTENT_ID, 12345);
+        mEditor.putInt(PREFS_PENDING_INTENT_ID, notificationID + 1);
+        mEditor.apply();
+        return notificationID;
+    }
 }
