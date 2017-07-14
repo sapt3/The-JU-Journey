@@ -36,8 +36,8 @@ import java.util.Comparator;
 public class CanteenListFragment extends android.support.v4.app.Fragment implements LocationListener {
 
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
+    public static final String KEY_SURUCHI = "suruchi";
     private static final String TAG = CanteenListFragment.class.getSimpleName();
-    private static final String KEY_SURUCHI = "suruchi";
     private LocationManager locationManager;
     private String provider;
     private Location location;
@@ -290,11 +290,10 @@ public class CanteenListFragment extends android.support.v4.app.Fragment impleme
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-//        return super.onCreateView(inflater, container, savedInstanceState);
+
         View rootView = inflater.inflate(R.layout.content_canteen_list, container, false);
         locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
         provider = locationManager.getBestProvider(new Criteria(), false);
-
 
         if (ActivityCompat.checkSelfPermission(
                 getActivity(),
@@ -303,37 +302,10 @@ public class CanteenListFragment extends android.support.v4.app.Fragment impleme
                         getActivity(),
                         Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED
                 ) {
-//             COMPLETED: Consider calling
-//                ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
             return rootView;
         }
         location = locationManager.getLastKnownLocation(provider);
-//        Log.d(TAG, "last Position:: " + location.getLongitude() + ":: " + location.getLongitude());
 
-
-//        Location canteenLocation = new Location("");
-//        canteenLocation.setLatitude(22.560916d);
-//        canteenLocation.setLongitude(22.560916d);
-
-//        float distance = location.distanceTo(canteenLocation);
-//        Log.d(TAG, "distance:: " + distance);
-//        distance is in metres
-//        float distanceinKms = distance/1000;
-//        Log.d(TAG, "formated distance in Kms:: " +  String.format("%.1f", distanceinKms));
-
-//        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-//        fab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
-//            }
-//        });
 
         RecyclerView mRecyclerView = rootView.findViewById(R.id.canteenRecyclerView);
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -344,9 +316,6 @@ public class CanteenListFragment extends android.support.v4.app.Fragment impleme
         adapter = new CanteenListRecyclerAdapter(mCanteenArrayList, getActivity());
         mRecyclerView.setAdapter(adapter);
 
-
-//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-//        mRecyclerView.setOnClickListener();
 
         return rootView;
     }

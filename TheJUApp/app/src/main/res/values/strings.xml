@@ -16,6 +16,8 @@
     <string name="next">NEXT</string>
     <string name="skip">SKIP</string>
     <string name="start">GOT IT</string>
+    <string name="facebook_app_id">100294297303472</string>
+    <string name="fb_login_protocol_scheme">fb100294297303472</string>
 
 
     <string name="slide_1_title">Be Updated</string>
@@ -151,5 +153,7 @@
     <string name="edit">Edit</string>
     <string name="sl_canteen">SL Campus</string>
     <string name="ju_canteen">Jadavpur University</string>
+    <string name="title_activity_canteen_menu">CanteenMenu</string>
+    <string name="title_activity_magazine">MagazineActivity</string>
 
 </resources>

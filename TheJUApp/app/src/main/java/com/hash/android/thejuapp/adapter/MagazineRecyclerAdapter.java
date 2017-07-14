@@ -4,23 +4,11 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.TextView;
 
-import com.hash.android.thejuapp.Model.Topic;
 import com.hash.android.thejuapp.R;
 
-import java.util.ArrayList;
-
-public class TopicsRecyclerAdapter extends RecyclerView.Adapter<TopicsRecyclerAdapter.ViewHolder> {
-
-    private ArrayList<Topic> mArrayList;
-
-    public TopicsRecyclerAdapter(ArrayList<Topic> mArrayList) {
-        this.mArrayList = mArrayList;
-    }
-
+public class MagazineRecyclerAdapter extends RecyclerView.Adapter<MagazineRecyclerAdapter.ViewHolder> {
     /**
      * Called when RecyclerView needs a new {@link ViewHolder} of the given type to represent
      * an item.
@@ -42,8 +30,8 @@ public class TopicsRecyclerAdapter extends RecyclerView.Adapter<TopicsRecyclerAd
      * @see #onBindViewHolder(ViewHolder, int)
      */
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_child_main, parent, false));
+    public MagazineRecyclerAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_child_magazine, parent, false));
     }
 
     /**
@@ -67,8 +55,8 @@ public class TopicsRecyclerAdapter extends RecyclerView.Adapter<TopicsRecyclerAd
      * @param position The position of the item within the adapter's data set.
      */
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
-        holder.bind(position);
+    public void onBindViewHolder(MagazineRecyclerAdapter.ViewHolder holder, int position) {
+
     }
 
     /**
@@ -78,25 +66,12 @@ public class TopicsRecyclerAdapter extends RecyclerView.Adapter<TopicsRecyclerAd
      */
     @Override
     public int getItemCount() {
-        return mArrayList.size();
+        return 5;
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        ImageView image;
-        TextView topicName;
-        View view;
-
         public ViewHolder(View itemView) {
             super(itemView);
-            image = itemView.findViewById(R.id.topicsImageView);
-            topicName = itemView.findViewById(R.id.topicNameTextView);
-            view = itemView;
-        }
-
-        public void bind(int postion) {
-            image.setImageResource(mArrayList.get(postion).getImage());
-            topicName.setText(mArrayList.get(postion).getTopicName());
-            view.setTag(mArrayList.get(postion).getTag());
         }
     }
 }

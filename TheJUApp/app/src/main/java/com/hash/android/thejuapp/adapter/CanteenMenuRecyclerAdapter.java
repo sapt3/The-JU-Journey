@@ -4,21 +4,23 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.hash.android.thejuapp.Model.Topic;
+import com.hash.android.thejuapp.Model.MenuItem;
 import com.hash.android.thejuapp.R;
 
 import java.util.ArrayList;
 
-public class TopicsRecyclerAdapter extends RecyclerView.Adapter<TopicsRecyclerAdapter.ViewHolder> {
+/**
+ * Created by Spandita Ghosh on 7/11/2017.
+ */
 
-    private ArrayList<Topic> mArrayList;
+public class CanteenMenuRecyclerAdapter extends RecyclerView.Adapter<CanteenMenuRecyclerAdapter.ViewHolder> {
+    ArrayList<com.hash.android.thejuapp.Model.MenuItem> menuItemArrayList = new ArrayList<>();
 
-    public TopicsRecyclerAdapter(ArrayList<Topic> mArrayList) {
-        this.mArrayList = mArrayList;
+    public CanteenMenuRecyclerAdapter(ArrayList<MenuItem> menuItemArrayList) {
+        this.menuItemArrayList = menuItemArrayList;
     }
 
     /**
@@ -43,7 +45,7 @@ public class TopicsRecyclerAdapter extends RecyclerView.Adapter<TopicsRecyclerAd
      */
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_child_main, parent, false));
+        return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_menu_item, parent, false));
     }
 
     /**
@@ -68,7 +70,8 @@ public class TopicsRecyclerAdapter extends RecyclerView.Adapter<TopicsRecyclerAd
      */
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        holder.bind(position);
+        holder.itemPriceTV.setText(menuItemArrayList.get(position).itemPrice);
+        holder.itemNameTV.setText(menuItemArrayList.get(position).itemName);
     }
 
     /**
@@ -78,25 +81,16 @@ public class TopicsRecyclerAdapter extends RecyclerView.Adapter<TopicsRecyclerAd
      */
     @Override
     public int getItemCount() {
-        return mArrayList.size();
+        return menuItemArrayList.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        ImageView image;
-        TextView topicName;
-        View view;
+        TextView itemPriceTV, itemNameTV;
 
         public ViewHolder(View itemView) {
             super(itemView);
-            image = itemView.findViewById(R.id.topicsImageView);
-            topicName = itemView.findViewById(R.id.topicNameTextView);
-            view = itemView;
-        }
-
-        public void bind(int postion) {
-            image.setImageResource(mArrayList.get(postion).getImage());
-            topicName.setText(mArrayList.get(postion).getTopicName());
-            view.setTag(mArrayList.get(postion).getTag());
+            itemNameTV = itemView.findViewById(R.id.foodItemName);
+            itemPriceTV = itemView.findViewById(R.id.foodItemPrice);
         }
     }
 }

@@ -30,6 +30,7 @@ import com.hash.android.thejuapp.Model.User;
 import com.hash.android.thejuapp.fragment.BookmarksFragment;
 import com.hash.android.thejuapp.fragment.CanteenListFragment;
 import com.hash.android.thejuapp.fragment.DashboardFragment;
+import com.hash.android.thejuapp.fragment.MagazineFragment;
 import com.hash.android.thejuapp.fragment.ProfileFragment;
 
 import java.util.concurrent.ExecutionException;
@@ -37,6 +38,8 @@ import java.util.concurrent.ExecutionException;
 public class DashboardActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+
+    private static final String TAG = "DashboardActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,6 +80,15 @@ public class DashboardActivity extends AppCompatActivity
         emailTextView.setText(user.getEmail());
 
         header.setImageResource(R.drawable.navheader);
+//        Log.d(TAG, user.getCoverURL());
+//        Glide.with(this)
+//                .load(user.getCoverURL())
+//                .crossFade()
+//                .placeholder(R.drawable.navheader)
+//                .diskCacheStrategy(DiskCacheStrategy.ALL)
+//                .into(header);
+
+
         Glide.with(this)
                 .load(user.getPhotoURL())
                 .crossFade()
@@ -84,9 +96,6 @@ public class DashboardActivity extends AppCompatActivity
                 .bitmapTransform(new CircleTransform(this))
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(profileImage);
-
-
-
 
 
 //        "2016-06-18T19:43:03Z"
@@ -150,15 +159,21 @@ public class DashboardActivity extends AppCompatActivity
 
             case R.id.nav_profile:
                 fragment = new ProfileFragment();
+                break;
 
+
+            case R.id.nav_eMagazine:
+                fragment = new MagazineFragment();
 
 
         }
 
         if (fragment != null) {
             FragmentManager fragmentManager = getSupportFragmentManager();
-            fragmentManager.beginTransaction()
-                    .replace(R.id.frame_container, fragment).commit();
+            fragmentManager
+                    .beginTransaction()
+                    .replace(R.id.frame_container, fragment)
+                    .commit();
         }
 
 

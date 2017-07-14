@@ -9,17 +9,46 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <ImageView
-            android:id="@+id/imageView7"
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/holder"
             android:layout_width="0dp"
             android:layout_height="250dp"
             android:layout_marginTop="0dp"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@color/notificationSecondary" />
+            app:layout_constraintTop_toTopOf="parent">
 
+
+            <TextView
+                android:id="@+id/nameTextViewProfile"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginTop="8dp"
+                android:text="Saptarshi Ghosh"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/profileImageViewProfile" />
+
+            <ImageView
+                android:id="@+id/profileImageViewProfile"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:layout_marginBottom="8dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginTop="8dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.5"
+                app:srcCompat="@drawable/com_facebook_profile_picture_blank_square" />
+        </android.support.constraint.ConstraintLayout>
 
         <TextView
             android:id="@+id/textView5"
@@ -33,7 +62,7 @@
             android:textColor="@color/colorAccent"
             android:textStyle="bold"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/imageView7" />
+            app:layout_constraintTop_toBottomOf="@+id/holder" />
 
         <android.support.design.widget.TextInputLayout
             android:id="@+id/textInputLayout3"

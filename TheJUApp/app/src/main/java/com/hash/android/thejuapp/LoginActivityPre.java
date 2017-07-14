@@ -73,11 +73,10 @@ public class LoginActivityPre extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        //TODO: Replace the dummy sign in logic later
-        if (user != null) {
-            startActivity(new Intent(this, DashboardActivity.class));
-            LoginActivityPre.this.overridePendingTransition(0, 0);
-        }
+//        if (user != null) {
+//            startActivity(new Intent(this, DashboardActivity.class));
+//            LoginActivityPre.this.overridePendingTransition(0, 0);
+//        }
     }
 
     private void changeStatusBarColor() {

@@ -9,12 +9,16 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.hash.android.thejuapp.HelperClass.CircleTransform;
+import com.hash.android.thejuapp.HelperClass.PreferenceManager;
+import com.hash.android.thejuapp.Model.User;
 import com.hash.android.thejuapp.R;
 
-/**
- * Created by Spandita Ghosh on 6/24/2017.
- */
 
 public class ProfileFragment extends android.support.v4.app.Fragment {
 
@@ -98,7 +102,19 @@ public class ProfileFragment extends android.support.v4.app.Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 //        return super.onCreateView(inflater, container, savedInstanceState);
         View rootView = inflater.inflate(R.layout.fragment_profile, container, false);
-//        getActivity().getActionBar().setBackgroundDrawable(getResources().getDrawable(R.drawable.notification_blue));
+        ImageView profileImageView = rootView.findViewById(R.id.profileImageViewProfile);
+        User user = new PreferenceManager(getActivity()).getUser();
+        String profileImage = user.getPhotoURL();
+        String name = user.getName();
+        TextView nameTV = rootView.findViewById(R.id.nameTextViewProfile);
+        nameTV.setText(name);
+        Glide.with(this)
+                .load(profileImage)
+                .crossFade()
+                .bitmapTransform(new CircleTransform(getActivity()))
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .into(profileImageView);
+
         return rootView;
     }
 }

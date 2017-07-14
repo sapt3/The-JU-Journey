@@ -1,5 +1,8 @@
 package com.hash.android.thejuapp.adapter;
 
+import android.graphics.Bitmap;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,16 +11,18 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.hash.android.thejuapp.Model.Topic;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.BitmapImageViewTarget;
+import com.hash.android.thejuapp.Model.User;
 import com.hash.android.thejuapp.R;
 
 import java.util.ArrayList;
 
-public class TopicsRecyclerAdapter extends RecyclerView.Adapter<TopicsRecyclerAdapter.ViewHolder> {
 
-    private ArrayList<Topic> mArrayList;
+public class StudentProfileRecyclerAdapter extends RecyclerView.Adapter<StudentProfileRecyclerAdapter.ViewHolder> {
+    private ArrayList<User> mArrayList = new ArrayList<>();
 
-    public TopicsRecyclerAdapter(ArrayList<Topic> mArrayList) {
+    public StudentProfileRecyclerAdapter(ArrayList<User> mArrayList) {
         this.mArrayList = mArrayList;
     }
 
@@ -43,7 +48,7 @@ public class TopicsRecyclerAdapter extends RecyclerView.Adapter<TopicsRecyclerAd
      */
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_child_main, parent, false));
+        return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_student_item, parent, false));
     }
 
     /**
@@ -82,21 +87,41 @@ public class TopicsRecyclerAdapter extends RecyclerView.Adapter<TopicsRecyclerAd
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        ImageView image;
-        TextView topicName;
-        View view;
+        TextView nameTV, emailTV, classTV;
+        ImageView profileIV;
 
         public ViewHolder(View itemView) {
             super(itemView);
-            image = itemView.findViewById(R.id.topicsImageView);
-            topicName = itemView.findViewById(R.id.topicNameTextView);
-            view = itemView;
+            nameTV = itemView.findViewById(R.id.nameTextView);
+            emailTV = itemView.findViewById(R.id.emailTextView);
+            classTV = itemView.findViewById(R.id.classOfTextView);
+            profileIV = itemView.findViewById(R.id.profilePictureImageView);
         }
 
-        public void bind(int postion) {
-            image.setImageResource(mArrayList.get(postion).getImage());
-            topicName.setText(mArrayList.get(postion).getTopicName());
-            view.setTag(mArrayList.get(postion).getTag());
+        public void bind(int position) {
+            nameTV.setText(mArrayList.get(position).getName());
+            emailTV.setText(mArrayList.get(position).getEmail());
+            classTV.setText("Class of " + mArrayList.get(position).getYearOfPassing());
+            Glide.with(profileIV.getContext())
+                    .load(mArrayList.get(position).getPhotoURL())
+                    .asBitmap()
+                    .centerCrop()
+                    .into(new BitmapImageViewTarget(profileIV) {
+                        /**
+                         * Sets the {@link Bitmap} on the view using
+                         * {@link ImageView#setImageBitmap(Bitmap)}.
+                         *
+                         * @param resource The bitmap to display.
+                         */
+                        @Override
+                        protected void setResource(Bitmap resource) {
+                            RoundedBitmapDrawable circularBitmapDrawable =
+                                    RoundedBitmapDrawableFactory.create(profileIV.getContext().getResources(), resource);
+                            circularBitmapDrawable.setCircular(true);
+                            profileIV.setImageDrawable(circularBitmapDrawable);
+                        }
+                    });
+
         }
     }
 }

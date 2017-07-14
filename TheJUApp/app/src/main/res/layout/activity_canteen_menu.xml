@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.hash.android.thejuapp.ExploreActivity">
+    tools:context="com.hash.android.thejuapp.CanteenMenu">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
@@ -20,11 +20,6 @@
 
     </android.support.design.widget.AppBarLayout>
 
-
-    <FrameLayout
-        android:id="@+id/container"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="?android:attr/actionBarSize" />
+    <include layout="@layout/content_canteen_menu" />
 
 </android.support.design.widget.CoordinatorLayout>

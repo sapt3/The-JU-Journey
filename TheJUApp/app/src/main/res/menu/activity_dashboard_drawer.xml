@@ -10,6 +10,11 @@
             android:id="@+id/nav_bookmarks"
             android:icon="@drawable/ic_bookmark_black_24dp"
             android:title="Bookmarks" />
+
+        <item
+            android:id="@+id/nav_profile"
+            android:icon="@drawable/ic_person_black_24dp"
+            android:title="My Profile" />
     </group>
 
     <item
@@ -24,10 +29,7 @@
                 android:id="@+id/nav_photo"
                 android:icon="@drawable/ic_photo_library_black_24dp"
                 android:title="Photography" />
-            <item
-                android:id="@+id/nav_profile"
-                android:icon="@drawable/ic_person_black_24dp"
-                android:title="Profile" />
+
 
             <item
                 android:id="@+id/nav_eMagazine"

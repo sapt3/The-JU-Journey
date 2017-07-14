@@ -12,12 +12,14 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.hash.android.thejuapp.CanteenMenu;
 import com.hash.android.thejuapp.Model.Canteen;
 import com.hash.android.thejuapp.R;
 
 import java.util.ArrayList;
 
 public class CanteenListRecyclerAdapter extends RecyclerView.Adapter<CanteenListRecyclerAdapter.ViewHolder> {
+    public static final String INTENT_KEY = "key";
     private static final String TAG = CanteenListRecyclerAdapter.class.getSimpleName();
     private ArrayList<Canteen> mArrayList;
     private Context context;
@@ -88,6 +90,9 @@ public class CanteenListRecyclerAdapter extends RecyclerView.Adapter<CanteenList
             @Override
             public void onClick(View view) {
                 Log.d(TAG, "itemView:: " + position);
+                Intent i = new Intent(context, CanteenMenu.class);
+                i.putExtra(INTENT_KEY, mArrayList.get(position).getKey());
+                context.startActivity(i);
             }
         });
     }
@@ -141,7 +146,5 @@ public class CanteenListRecyclerAdapter extends RecyclerView.Adapter<CanteenList
             }
 
         }
-
-
     }
 }

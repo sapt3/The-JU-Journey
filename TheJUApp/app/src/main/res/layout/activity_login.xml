@@ -6,15 +6,32 @@
     android:layout_height="match_parent"
     tools:context="com.hash.android.thejuapp.LoginActivity">
 
+
+    <Spinner
+        android:id="@+id/departmentSpinner"
+        android:layout_width="0dp"
+        android:layout_height="30dp"
+        android:layout_marginLeft="24dp"
+        android:layout_marginRight="24dp"
+        android:layout_marginTop="8dp"
+        android:background="@color/colorAccent"
+        android:minWidth="30dp"
+        android:visibility="visible"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/radioGroup" />
+
     <ImageView
         android:id="@+id/imageView4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:scaleType="centerCrop"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0"
         app:srcCompat="@drawable/login" />
 
     <CheckBox
@@ -22,18 +39,19 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="24dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="8dp"
         android:text="Opt in for occasional promotional letters"
         android:textColor="@android:color/white"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/radioGroup" />
+        app:layout_constraintTop_toBottomOf="@+id/departmentSpinner" />
 
     <CheckBox
         android:id="@+id/checkBoxTerms"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="24dp"
-        android:layout_marginTop="0dp"
+        android:layout_marginStart="24dp"
         android:text="@string/i_agree_to_the_terms_and_conditions"
         android:textColor="@android:color/white"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -43,22 +61,39 @@
         android:id="@+id/textView2shared"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:text="@string/may_the_force_be_with_you"
-        android:transitionName="@string/transition_login"
         android:textColor="@android:color/white"
         android:textSize="24sp"
+        android:transitionName="@string/transition_login"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/jadUniv" />
+
+    <TextView
+        android:id="@+id/jadUniv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:text="Jadavpur University"
+        android:textColor="@android:color/white"
+        android:textSize="30sp"
+        android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="@+id/imageView4"
         app:layout_constraintHorizontal_bias="0.506"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="@+id/imageView4"
-        app:layout_constraintVertical_bias="0.13999999" />
+        app:layout_constraintVertical_bias="0.089" />
 
     <View
         android:id="@+id/view"
@@ -88,8 +123,22 @@
         app:layout_constraintTop_toBottomOf="@+id/textView2shared" />
 
 
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/floatingActionButton2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginTop="8dp"
+        android:clickable="true"
+        app:fabSize="normal"
+        app:layout_constraintBottom_toBottomOf="@+id/imageView4"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/checkBoxTerms"
+        app:srcCompat="@drawable/ic_done_white_24px" />
+
     <android.support.design.widget.TextInputLayout
-        android:id="@+id/textInputLayout2"
+        android:id="@+id/textInputLayout7"
         style="@style/TextAppearence.App.TextInputLayout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -98,38 +147,21 @@
         android:layout_marginRight="24dp"
         android:layout_marginStart="24dp"
         android:textColorHint="@android:color/white"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textInputLayout">
 
         <EditText
-            android:id="@+id/editTextUniversity"
-            style="@style/Widget.AppCompat.Light.AutoCompleteTextView"
+            android:id="@+id/editTextYear"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="University"
-            android:inputType="textCapWords"
+            android:hint="Year of Passing"
+            android:inputType="number"
             android:maxLines="1"
             android:selectAllOnFocus="false"
             android:textAppearance="@style/TextAppearence.App.TextInputLayout"
             android:textColor="@android:color/white" />
-
     </android.support.design.widget.TextInputLayout>
-
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/floatingActionButton2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:clickable="true"
-        app:fabSize="normal"
-        app:srcCompat="@drawable/ic_done_white_24px"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        android:layout_marginTop="8dp"
-        app:layout_constraintTop_toBottomOf="@+id/checkBoxTerms"
-        app:layout_constraintBottom_toBottomOf="@+id/imageView4"
-        android:layout_marginBottom="8dp" />
 
     <android.support.design.widget.TextInputLayout
         android:id="@+id/textInputLayout"
@@ -140,7 +172,7 @@
         android:layout_marginLeft="24dp"
         android:layout_marginRight="24dp"
         android:layout_marginStart="24dp"
-        android:layout_marginTop="64dp"
+        android:layout_marginTop="24dp"
         android:textColorHint="@android:color/white"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -165,34 +197,45 @@
         android:id="@+id/radioGroup"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="0dp"
+        android:layout_marginEnd="24dp"
         android:layout_marginLeft="24dp"
         android:layout_marginRight="24dp"
+        android:layout_marginStart="24dp"
         android:layout_marginTop="8dp"
         android:orientation="horizontal"
-        app:layout_constraintBottom_toBottomOf="@+id/imageView4"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textInputLayout2"
-        app:layout_constraintVertical_bias="0.003">
+        app:layout_constraintTop_toBottomOf="@+id/textInputLayout7">
 
         <RadioButton
-            android:id="@+id/radioButtonMale"
+            android:id="@+id/radioButtonFET"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Male"
+            android:text="FETSU"
             android:textColor="@android:color/white"
             android:textColorHighlight="@android:color/white" />
 
         <RadioButton
-            android:id="@+id/radioButtonFemale"
+            android:id="@+id/radioButtonSC"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Female"
+            android:text="SFSU"
+            android:textColor="@android:color/white" />
+
+        <RadioButton
+            android:id="@+id/radioButtonARTS"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="AFSU"
             android:textColor="@android:color/white" />
     </RadioGroup>
 
+
 </android.support.constraint.ConstraintLayout>
+
+
+

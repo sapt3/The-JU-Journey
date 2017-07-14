@@ -20,6 +20,14 @@ public class PreferenceManager {
     private static final String PREFS_NOTIFICATION_ID = "notificationID";
     private static final String PREFS_PENDING_INTENT_ID = "pendingIntentId";
     private final static String PREFS_FIRST_TIME_LAUNCH = "firstTimeLaunch";
+    private final static String PREFS_USER_YEAR_OF_PASSING = "yearOfPassing";
+    private final static String PREFS_USER_FACULTY = "faculty";
+    private final static String PREFS_USER_DEPARTMENT = "department";
+    private final static String PREFS_USER_ABOUT = "about";
+    private final static String PREFS_USER_DOB = "dateofBirthday";
+    private final static String PREFS_USER_COVER_URL = "coverURL";
+    private final static String PREFS_USER_LINK = "profileLink";
+
     private SharedPreferences mPrefs;
     private SharedPreferences.Editor mEditor;
 
@@ -59,6 +67,26 @@ public class PreferenceManager {
         mEditor.apply();
     }
 
+    public String getAbout() {
+        return mPrefs.getString(PREFS_USER_ABOUT, "");
+    }
+
+    public void setAbout(String about) {
+        mEditor = mPrefs.edit();
+        mEditor.putString(PREFS_USER_ABOUT, about);
+        mEditor.apply();
+    }
+
+    public String getBirthday() {
+        return mPrefs.getString(PREFS_USER_DOB, "");
+    }
+
+    public void setBirthday(String dob) {
+        mEditor = mPrefs.edit();
+        mEditor.putString(PREFS_USER_DOB, dob);
+        mEditor.apply();
+    }
+
     public String getPhoneNumber() {
         return mPrefs.getString(PREFS_USER_PHONE, "");
     }
@@ -89,6 +117,37 @@ public class PreferenceManager {
         mEditor.apply();
     }
 
+    public String getYear() {
+        return mPrefs.getString(PREFS_USER_YEAR_OF_PASSING, "");
+    }
+
+    public void setYear(String year) {
+        mEditor = mPrefs.edit();
+        mEditor.putString(PREFS_USER_YEAR_OF_PASSING, year);
+        mEditor.apply();
+    }
+
+    public String getFaculty() {
+        return mPrefs.getString(PREFS_USER_FACULTY, "");
+    }
+
+    public void setFaculty(String faculty) {
+        mEditor = mPrefs.edit();
+        mEditor.putString(PREFS_USER_FACULTY, faculty);
+        mEditor.apply();
+    }
+
+    public String getDepartment() {
+        return mPrefs.getString(PREFS_USER_DEPARTMENT, "");
+    }
+
+    public void setDepartment(String department) {
+        mEditor = mPrefs.edit();
+        mEditor.putString(PREFS_USER_FACULTY, department);
+        mEditor.apply();
+    }
+
+
     public boolean getPromo() {
         return mPrefs.getBoolean(PREFS_USER_PROMO, false);
     }
@@ -109,6 +168,27 @@ public class PreferenceManager {
         mEditor.apply();
     }
 
+    public String getLink() {
+        return mPrefs.getString(PREFS_USER_LINK, "");
+    }
+
+    public void setLink(String link) {
+        mEditor = mPrefs.edit();
+        mEditor.putString(PREFS_USER_LINK, link);
+        mEditor.apply();
+    }
+
+    public String getCoverURL() {
+        return mPrefs.getString(PREFS_USER_COVER_URL, "");
+    }
+
+    public void setCoverURL(String cover) {
+        mEditor = mPrefs.edit();
+        mEditor.putString(PREFS_USER_COVER_URL, cover);
+        mEditor.apply();
+    }
+
+
     public String getUID() {
         return mPrefs.getString(PREFS_USER_UID, "");
     }
@@ -118,6 +198,7 @@ public class PreferenceManager {
         mEditor.putString(PREFS_USER_UID, uid);
         mEditor.apply();
     }
+
 
     public String getPhotoURL() {
         return mPrefs.getString(PREFS_USER_PHOTO_URL, "");
@@ -130,7 +211,9 @@ public class PreferenceManager {
     }
 
     public User getUser() {
-        return new User(getName(), getPhoneNumber(), getUniversity(), getGender(), getPhotoURL(), getUID(), getPromo(), getEmail());
+//        return new User(getName(), getPhoneNumber(), getUniversity(), getGender(), getPhotoURL(), getUID(), getPromo(), getEmail());
+//        return new User(getName(), getPhoneNumber(), getUniversity(), getPhotoURL(), getFaculty(), getDepartment(), getYear(), getUID(), getPromo(), getEmail(), );
+        return new User(getName(), getPhoneNumber(), getUniversity(), getGender(), getLink(), getCoverURL(), getPhotoURL(), getFaculty(), getDepartment(), getYear(), getUID(), getPromo(), getAbout(), getBirthday(), getEmail());
     }
 
     public boolean isFirstTimeLaunch() {

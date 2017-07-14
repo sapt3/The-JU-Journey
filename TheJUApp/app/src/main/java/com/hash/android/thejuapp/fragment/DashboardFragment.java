@@ -25,6 +25,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.hash.android.thejuapp.DashboardActivity;
 import com.hash.android.thejuapp.DetailsFeedActivity;
+import com.hash.android.thejuapp.ExploreActivity;
 import com.hash.android.thejuapp.HelperClass.PreferenceManager;
 import com.hash.android.thejuapp.Model.Feed;
 import com.hash.android.thejuapp.Model.Topic;
@@ -39,9 +40,11 @@ import java.util.Locale;
 import java.util.TimeZone;
 import java.util.concurrent.ExecutionException;
 
+import static com.hash.android.thejuapp.ExploreActivity.CANTEEN_FRAGMENT;
+import static com.hash.android.thejuapp.ExploreActivity.EXTRA_CLASS_NAME;
+import static com.hash.android.thejuapp.ExploreActivity.MAGAZINE_FRAGMENT;
+import static com.hash.android.thejuapp.ExploreActivity.STUDENT_FRAGMENT;
 import static com.hash.android.thejuapp.adapter.FeedRecyclerAdapter.INTENT_EXTRA_FEED;
-import static com.hash.android.thejuapp.fragment.ExploreActivity.CANTEEN_FRAGMENT;
-import static com.hash.android.thejuapp.fragment.ExploreActivity.EXTRA_CLASS_NAME;
 
 
 public class DashboardFragment extends Fragment {
@@ -173,6 +176,21 @@ public class DashboardFragment extends Fragment {
                         Intent i = new Intent(getActivity(), ExploreActivity.class);
                         i.putExtra(EXTRA_CLASS_NAME, CANTEEN_FRAGMENT);
                         startActivity(i);
+                        break;
+
+                    case TAG_MAGAZINE:
+                        Intent intent = new Intent(getActivity(), ExploreActivity.class);
+                        intent.putExtra(EXTRA_CLASS_NAME, MAGAZINE_FRAGMENT);
+                        startActivity(intent);
+                        break;
+
+                    case TAG_STUDENT:
+                        Intent intent1 = new Intent(getActivity(), ExploreActivity.class);
+                        intent1.putExtra(EXTRA_CLASS_NAME, STUDENT_FRAGMENT);
+                        startActivity(intent1);
+                        break;
+
+
                 }
 
             }

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.hash.android.thejuapp">
 
     <uses-permission android:name="android.permission.INTERNET" />
@@ -14,6 +15,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
+        <meta-data
+            android:name="com.facebook.sdk.ApplicationId"
+            android:value="@string/facebook_app_id"
+            tools:replace="android:value" />
+
         <activity android:name=".WelcomeActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -34,17 +41,17 @@
         <activity
             android:name=".DetailsFeedActivity"
             android:parentActivityName=".DashboardActivity" />
-
-
         <activity
             android:name=".TestActivity"
             android:label="@string/title_activity_test"
             android:theme="@style/AppTheme" />
         <activity
-            android:name=".fragment.ExploreActivity"
+            android:name=".ExploreActivity"
             android:label="@string/title_activity_explore"
             android:parentActivityName=".DashboardActivity"
-            android:theme="@style/AppTheme">
+            android:screenOrientation="locked"
+            android:theme="@style/AppTheme"
+            android:windowSoftInputMode="adjustPan">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.hash.android.thejuapp.DashboardActivity" />
@@ -55,7 +62,6 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
-
         <service android:name=".messaging.MyFirebaseInstanceIdService">
             <intent-filter>
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
@@ -68,6 +74,25 @@
                 <action android:name="bookmarkAction" />
             </intent-filter>
         </receiver>
+
+        <activity
+            android:name=".CanteenMenu"
+            android:label="@string/title_activity_canteen_menu"
+            android:parentActivityName=".ExploreActivity"
+            android:theme="@style/AppTheme">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.hash.android.thejuapp.ExploreActivity" />
+        </activity>
+        <activity
+            android:name=".MagazineActivity"
+            android:label="@string/title_activity_magazine"
+            android:parentActivityName=".ExploreActivity"
+            android:theme="@style/AppTheme">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.hash.android.thejuapp.ExploreActivity" />
+        </activity>
     </application>
 
 </manifest>
