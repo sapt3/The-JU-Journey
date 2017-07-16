@@ -155,5 +155,7 @@
     <string name="ju_canteen">Jadavpur University</string>
     <string name="title_activity_canteen_menu">CanteenMenu</string>
     <string name="title_activity_magazine">MagazineActivity</string>
+    <string name="title_activity_profile">ProfileActivity</string>
+    <string name="lorem_ipsum">\"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi et pharetra quam, at aliquam ipsum. Praesent euismod purus vel massa elementum aliquet quis tempor velit. Suspendisse velit tellus, finibus vel sodales non, tincidunt vitae est. In quis nisi viverra, lacinia sem non, pellentesque nulla.\"\n\n\"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi et pharetra quam, at aliquam ipsum. Praesent euismod purus vel massa elementum aliquet quis tempor velit. Suspendisse velit tellus, finibus vel sodales non, tincidunt vitae est. In quis nisi viverra, lacinia sem non, pellentesque nulla.\"\n\n\"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi et pharetra quam, at aliquam ipsum. Praesent euismod purus vel massa elementum aliquet quis tempor velit. Suspendisse velit tellus, finibus vel sodales non, tincidunt vitae est. In quis nisi viverra, lacinia sem non, pellentesque nulla.\"\n\"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi et pharetra quam, at aliquam ipsum. Praesent euismod purus vel massa elementum aliquet quis tempor velit. Suspendisse velit tellus, finibus vel sodales non, tincidunt vitae est. In quis nisi viverra, lacinia sem non, pellentesque nulla.\"\n\n</string>
 
 </resources>

@@ -114,7 +114,9 @@ public class DetailsFeedActivity extends AppCompatActivity {
         TextView tx = (TextView) findViewById(R.id.contentTextView);
         tx.setTextSize(16f);
         Typeface custom_font = Typeface.createFromAsset(getAssets(), "fonts/opensans.ttf");
-
+        //TODO: REPLACE THIS WITH ORIGINAL CONTENT.
+// tx.setText(feed.getLongDesc());
+        tx.setText(getString(R.string.lorem_ipsum));
         tx.setTypeface(custom_font);
         ImageView feedImage = (ImageView) findViewById(R.id.feedImageView);
         TextView heading = (TextView) findViewById(R.id.headingTextView);

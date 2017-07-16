@@ -1,9 +1,14 @@
 package com.hash.android.thejuapp.adapter;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Bitmap;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
+import android.support.v4.util.Pair;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,12 +19,16 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.hash.android.thejuapp.Model.User;
+import com.hash.android.thejuapp.ProfileActivity;
 import com.hash.android.thejuapp.R;
 
 import java.util.ArrayList;
 
+import static com.facebook.GraphRequest.TAG;
+
 
 public class StudentProfileRecyclerAdapter extends RecyclerView.Adapter<StudentProfileRecyclerAdapter.ViewHolder> {
+    public static final String INTENT_EXTRA_USER = "extraUser";
     private ArrayList<User> mArrayList = new ArrayList<>();
 
     public StudentProfileRecyclerAdapter(ArrayList<User> mArrayList) {
@@ -72,8 +81,19 @@ public class StudentProfileRecyclerAdapter extends RecyclerView.Adapter<StudentP
      * @param position The position of the item within the adapter's data set.
      */
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.bind(position);
+        holder.view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.d(TAG, mArrayList.get(holder.getAdapterPosition()).toString());
+                Intent i = new Intent(holder.view.getContext(), ProfileActivity.class);
+                i.putExtra(INTENT_EXTRA_USER, mArrayList.get(holder.getAdapterPosition()));
+                Pair<View, String> pair1 = Pair.create((View) holder.profileIV, "profileTrans");
+                ActivityOptionsCompat optionsCompat = ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) holder.emailTV.getContext(), pair1);
+                holder.view.getContext().startActivity(i, optionsCompat.toBundle());
+            }
+        });
     }
 
     /**
@@ -89,13 +109,14 @@ public class StudentProfileRecyclerAdapter extends RecyclerView.Adapter<StudentP
     public class ViewHolder extends RecyclerView.ViewHolder {
         TextView nameTV, emailTV, classTV;
         ImageView profileIV;
-
+        View view;
         public ViewHolder(View itemView) {
             super(itemView);
             nameTV = itemView.findViewById(R.id.nameTextView);
             emailTV = itemView.findViewById(R.id.emailTextView);
             classTV = itemView.findViewById(R.id.classOfTextView);
             profileIV = itemView.findViewById(R.id.profilePictureImageView);
+            view = itemView;
         }
 
         public void bind(int position) {

@@ -3,6 +3,7 @@ package com.hash.android.thejuapp.HelperClass;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.google.firebase.database.FirebaseDatabase;
 import com.hash.android.thejuapp.Model.User;
 
 
@@ -27,6 +28,8 @@ public class PreferenceManager {
     private final static String PREFS_USER_DOB = "dateofBirthday";
     private final static String PREFS_USER_COVER_URL = "coverURL";
     private final static String PREFS_USER_LINK = "profileLink";
+    private final static String PREFS_USER_PRIVATE = "private";
+
 
     private SharedPreferences mPrefs;
     private SharedPreferences.Editor mEditor;
@@ -143,7 +146,7 @@ public class PreferenceManager {
 
     public void setDepartment(String department) {
         mEditor = mPrefs.edit();
-        mEditor.putString(PREFS_USER_FACULTY, department);
+        mEditor.putString(PREFS_USER_DEPARTMENT, department);
         mEditor.apply();
     }
 
@@ -199,7 +202,9 @@ public class PreferenceManager {
         mEditor.apply();
     }
 
-
+    public void saveUser() {
+        FirebaseDatabase.getInstance().getReference("users").child(getUID()).setValue(getUser());
+    }
     public String getPhotoURL() {
         return mPrefs.getString(PREFS_USER_PHOTO_URL, "");
     }
@@ -210,10 +215,18 @@ public class PreferenceManager {
         mEditor.apply();
     }
 
+    public boolean isPrivate() {
+        return mPrefs.getBoolean(PREFS_USER_PRIVATE, false);
+    }
+
+    public void setPrivate(boolean isPrivate) {
+        mEditor = mPrefs.edit();
+        mEditor.putBoolean(PREFS_USER_PRIVATE, isPrivate);
+        mEditor.apply();
+    }
+
     public User getUser() {
-//        return new User(getName(), getPhoneNumber(), getUniversity(), getGender(), getPhotoURL(), getUID(), getPromo(), getEmail());
-//        return new User(getName(), getPhoneNumber(), getUniversity(), getPhotoURL(), getFaculty(), getDepartment(), getYear(), getUID(), getPromo(), getEmail(), );
-        return new User(getName(), getPhoneNumber(), getUniversity(), getGender(), getLink(), getCoverURL(), getPhotoURL(), getFaculty(), getDepartment(), getYear(), getUID(), getPromo(), getAbout(), getBirthday(), getEmail());
+        return new User(getName(), getPhoneNumber(), getUniversity(), getGender(), getLink(), getCoverURL(), getPhotoURL(), getFaculty(), getDepartment(), getYear(), getUID(), getPromo(), getAbout(), getBirthday(), getEmail(), isPrivate());
     }
 
     public boolean isFirstTimeLaunch() {

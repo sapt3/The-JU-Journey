@@ -23,6 +23,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.hash.android.thejuapp.HelperClass.PreferenceManager;
 import com.hash.android.thejuapp.Model.Canteen;
@@ -176,16 +177,24 @@ public class CanteenListFragment extends android.support.v4.app.Fragment impleme
     }
 
     private float findDistance(Double lat, Double lng, Location userLocation) {
-        Location l = new Location("");
-        l.setLatitude(lat);
-        l.setLongitude(lng);
-        return ((userLocation.distanceTo(l)) / 1000);
+        if (new PreferenceManager(getActivity()).isLocationEnabled()) {
+            Location l = new Location("");
+            l.setLatitude(lat);
+            l.setLongitude(lng);
+            return ((userLocation.distanceTo(l)) / 1000);
+        } else {
+            Toast.makeText(getActivity(), "Location disabled", Toast.LENGTH_SHORT).show();
+            return 0f;
+        }
     }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.canteen_menu, menu);
+        if (!new PreferenceManager(getActivity()).isLocationEnabled()) {
+            menu.removeItem(1);
+        }
     }
 
 
@@ -252,20 +261,20 @@ public class CanteenListFragment extends android.support.v4.app.Fragment impleme
     }
 
     private void sortByDistance() {
+        if (new PreferenceManager(getActivity()).isLocationEnabled()) {
+            updateCanteen();
+            Collections.sort(mCanteenArrayList, new Comparator<Canteen>() {
+                @Override
+                public int compare(Canteen canteen, Canteen t1) {
+                    return canteen.getLocation() > t1.getLocation() ? 1 : (canteen.getLocation() < t1.getLocation()) ? -1 : 0;
+                }
+            });
 
-        updateCanteen();
-        Collections.sort(mCanteenArrayList, new Comparator<Canteen>() {
-            @Override
-            public int compare(Canteen canteen, Canteen t1) {
-                return canteen.getLocation() > t1.getLocation() ? 1 : (canteen.getLocation() < t1.getLocation()) ? -1 : 0;
-            }
-        });
-
-        ArrayList<Canteen> mArrayList = new ArrayList<>();
-        mArrayList.clear();
-        mArrayList.addAll(mCanteenArrayList);
-        adapter.filter(mArrayList);
-
+            ArrayList<Canteen> mArrayList = new ArrayList<>();
+            mArrayList.clear();
+            mArrayList.addAll(mCanteenArrayList);
+            adapter.filter(mArrayList);
+        }
 
     }
 

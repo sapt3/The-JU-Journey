@@ -12,6 +12,7 @@ import java.util.Map;
 
 public class User implements Parcelable {
 
+
     public static final Creator<User> CREATOR = new Creator<User>() {
         @Override
         public User createFromParcel(Parcel in) {
@@ -39,8 +40,9 @@ public class User implements Parcelable {
     private String about;
     private String birthday;
     private String email;
+    private boolean isPrivate = false;
 
-    public User(String name, String phoneNumber, String university, String gender, String link, String coverURL, String photoURL, String faculty, String department, String yearOfPassing, String UID, boolean targetPromo, String about, String birthday, String email) {
+    public User(String name, String phoneNumber, String university, String gender, String link, String coverURL, String photoURL, String faculty, String department, String yearOfPassing, String UID, boolean targetPromo, String about, String birthday, String email, boolean isPrivate) {
         this.name = name;
         this.phoneNumber = phoneNumber;
         this.university = university;
@@ -56,6 +58,7 @@ public class User implements Parcelable {
         this.about = about;
         this.birthday = birthday;
         this.email = email;
+        this.isPrivate = isPrivate;
     }
 
     protected User(Parcel in) {
@@ -74,9 +77,18 @@ public class User implements Parcelable {
         about = in.readString();
         birthday = in.readString();
         email = in.readString();
+        isPrivate = in.readByte() != 0;
     }
 
     public User() {
+    }
+
+    public boolean isPrivate() {
+        return isPrivate;
+    }
+
+    public void setPrivate(boolean aPrivate) {
+        isPrivate = aPrivate;
     }
 
     public String getGender() {
@@ -230,5 +242,6 @@ public class User implements Parcelable {
         parcel.writeString(about);
         parcel.writeString(birthday);
         parcel.writeString(email);
+        parcel.writeByte((byte) (isPrivate ? 1 : 0));
     }
 }

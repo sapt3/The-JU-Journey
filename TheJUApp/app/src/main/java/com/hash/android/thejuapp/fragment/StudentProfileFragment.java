@@ -7,12 +7,15 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -67,41 +70,63 @@ public class StudentProfileFragment extends Fragment {
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setNestedScrollingEnabled(false);
         DatabaseReference mRef = FirebaseDatabase.getInstance().getReference();
+        mRef.keepSynced(true);
         final Query query = mRef.child("users").orderByChild("name");
-        searchET.setOnKeyListener(new View.OnKeyListener() {
-            @Override
-            public boolean onKey(View view, int i, KeyEvent keyEvent) {
-                if ((keyEvent.getAction() == KeyEvent.ACTION_DOWN) &&
-                        (i == KeyEvent.KEYCODE_ENTER)) {
-                    View view1 = getActivity().getCurrentFocus();
-                    if (view1 != null) {
-                        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-                    }
-                    mArrayList.clear();
-                    final String queryString = searchET.getText().toString().trim();
-                    query.addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-                            for (DataSnapshot snapShot : dataSnapshot.getChildren()) {
-                                User user = snapShot.getValue(User.class);
-                                assert user != null;
-                                if (user.getName().startsWith(queryString)) {
-                                    mArrayList.add(user);
 
-                                }
-                                mAdapter.notifyDataSetChanged();
+        searchET.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                mArrayList.clear();
+                final String queryString = String.valueOf(charSequence);
+                query.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        for (DataSnapshot snapShot : dataSnapshot.getChildren()) {
+                            User user = snapShot.getValue(User.class);
+                            assert user != null;
+                            if (user.getName().startsWith(queryString)) {
+                                mArrayList.add(user);
+
+                            }
+                            mAdapter.notifyDataSetChanged();
+                        }
+
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+                searchET.setOnKeyListener(new View.OnKeyListener() {
+                    @Override
+                    public boolean onKey(View view, int i, KeyEvent keyEvent) {
+                        if ((keyEvent.getAction() == KeyEvent.ACTION_DOWN) &&
+                                (i == KeyEvent.KEYCODE_ENTER)) {
+                            View view1 = getActivity().getCurrentFocus();
+                            if (view1 != null) {
+                                InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                                imm.hideSoftInputFromWindow(view1.getWindowToken(), 0);
+                            }
+                            if (mArrayList.size() == 0) {
+                                Toast.makeText(getActivity(), "No user matching the given name.", Toast.LENGTH_SHORT).show();
                             }
                         }
+                        return false;
+                    }
+                });
 
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
+            }
 
-                        }
-                    });
-                    return true;
-                }
-                return false;
+            @Override
+            public void afterTextChanged(Editable editable) {
+
             }
         });
 

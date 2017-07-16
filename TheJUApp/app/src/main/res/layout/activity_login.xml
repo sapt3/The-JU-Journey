@@ -7,20 +7,6 @@
     tools:context="com.hash.android.thejuapp.LoginActivity">
 
 
-    <Spinner
-        android:id="@+id/departmentSpinner"
-        android:layout_width="0dp"
-        android:layout_height="30dp"
-        android:layout_marginLeft="24dp"
-        android:layout_marginRight="24dp"
-        android:layout_marginTop="8dp"
-        android:background="@color/colorAccent"
-        android:minWidth="30dp"
-        android:visibility="visible"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/radioGroup" />
-
     <ImageView
         android:id="@+id/imageView4"
         android:layout_width="wrap_content"
@@ -33,6 +19,22 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0"
         app:srcCompat="@drawable/login" />
+
+    <Spinner
+        android:id="@+id/departmentSpinner"
+        android:layout_width="0dp"
+        android:layout_height="30dp"
+        android:layout_marginLeft="24dp"
+        android:layout_marginRight="24dp"
+        android:layout_marginTop="8dp"
+        android:background="@android:color/darker_gray"
+        android:backgroundTint="@color/colorAccent"
+
+        android:minWidth="30dp"
+        android:visibility="visible"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/radioGroup" />
 
     <CheckBox
         android:id="@+id/checkBoxPromo"
@@ -146,32 +148,6 @@
         android:layout_marginLeft="24dp"
         android:layout_marginRight="24dp"
         android:layout_marginStart="24dp"
-        android:textColorHint="@android:color/white"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textInputLayout">
-
-        <EditText
-            android:id="@+id/editTextYear"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Year of Passing"
-            android:inputType="number"
-            android:maxLines="1"
-            android:selectAllOnFocus="false"
-            android:textAppearance="@style/TextAppearence.App.TextInputLayout"
-            android:textColor="@android:color/white" />
-    </android.support.design.widget.TextInputLayout>
-
-    <android.support.design.widget.TextInputLayout
-        android:id="@+id/textInputLayout"
-        style="@style/TextAppearence.App.TextInputLayout"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="24dp"
-        android:layout_marginLeft="24dp"
-        android:layout_marginRight="24dp"
-        android:layout_marginStart="24dp"
         android:layout_marginTop="24dp"
         android:textColorHint="@android:color/white"
         app:layout_constraintHorizontal_bias="0.0"
@@ -206,7 +182,7 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textInputLayout7">
+        app:layout_constraintTop_toBottomOf="@+id/textInputLayout8">
 
         <RadioButton
             android:id="@+id/radioButtonFET"
@@ -233,6 +209,34 @@
             android:text="AFSU"
             android:textColor="@android:color/white" />
     </RadioGroup>
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/textInputLayout8"
+        style="@style/TextAppearence.App.TextInputLayout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="24dp"
+        android:layout_marginLeft="24dp"
+        android:layout_marginRight="24dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="-3dp"
+        android:textColorHint="@android:color/white"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textInputLayout7">
+
+        <EditText
+            android:id="@+id/editTextYear"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Year of Joining"
+            android:inputType="number"
+            android:maxLines="1"
+            android:selectAllOnFocus="false"
+            android:textAppearance="@style/TextAppearence.App.TextInputLayout"
+            android:textColor="@android:color/white" />
+    </android.support.design.widget.TextInputLayout>
 
 
 </android.support.constraint.ConstraintLayout>

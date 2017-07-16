@@ -1,14 +1,18 @@
 package com.hash.android.thejuapp.fragment;
 
 import android.app.Activity;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -22,7 +26,9 @@ import com.hash.android.thejuapp.R;
 
 public class ProfileFragment extends android.support.v4.app.Fragment {
 
-    private boolean isEditing = false;
+    private static final String TAG = ProfileFragment.class.getSimpleName();
+    private boolean isEditing = true;
+    private PreferenceManager mPrefsManager;
 
     public ProfileFragment() {
     }
@@ -48,7 +54,7 @@ public class ProfileFragment extends android.support.v4.app.Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getActivity().setTitle("My Profile");
-        this.setHasOptionsMenu(true);
+//        this.setHasOptionsMenu(true);
 
     }
 
@@ -58,24 +64,16 @@ public class ProfileFragment extends android.support.v4.app.Fragment {
         inflater.inflate(R.menu.menu_profile, menu);
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if (id == R.id.nav_edit) {
-            if (isEditing) {
-//                enableEditing();
-                item.setIcon(R.drawable.ic_check_white_24px);
-                isEditing = false;
-            } else {
-//                disableEditing();
-                item.setIcon(R.drawable.ic_edit_white_24dp);
-                isEditing = true;
-            }
+//    @Override
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//        int id = item.getItemId();
+//        if (id == R.id.nav_edit) {
 
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
+//
+//        }
+//
+//        return super.onOptionsItemSelected(item);
+//    }
 
     /**
      * Called to have the fragment instantiate its user interface view.
@@ -102,8 +100,10 @@ public class ProfileFragment extends android.support.v4.app.Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 //        return super.onCreateView(inflater, container, savedInstanceState);
         View rootView = inflater.inflate(R.layout.fragment_profile, container, false);
+
+        mPrefsManager = new PreferenceManager(getActivity());
         ImageView profileImageView = rootView.findViewById(R.id.profileImageViewProfile);
-        User user = new PreferenceManager(getActivity()).getUser();
+        final User user = new PreferenceManager(getActivity()).getUser();
         String profileImage = user.getPhotoURL();
         String name = user.getName();
         TextView nameTV = rootView.findViewById(R.id.nameTextViewProfile);
@@ -114,6 +114,94 @@ public class ProfileFragment extends android.support.v4.app.Fragment {
                 .bitmapTransform(new CircleTransform(getActivity()))
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(profileImageView);
+
+        final TextView phoneTextView = rootView.findViewById(R.id.phoneNumberProfile);
+        TextView departmentTextView = rootView.findViewById(R.id.departmentTextViewProfile);
+        TextView yearOfJoiningTextView = rootView.findViewById(R.id.yearOfJoiningTextViewProfile);
+        TextView emailTextView = rootView.findViewById(R.id.emailTextViewProfile);
+        TextView facultyTextView = rootView.findViewById(R.id.facultyTextViewProfile);
+        Button facebook = rootView.findViewById(R.id.facebookProfile);
+        final ImageView privateButton = rootView.findViewById(R.id.privateAccessButton);
+
+        final EditText statusEditText = rootView.findViewById(R.id.statusEditTextProfile);
+        final ImageView editStatusButton = rootView.findViewById(R.id.editButtonStatus);
+        final TextView privacyTV = rootView.findViewById(R.id.privacyTextView);
+        final FrameLayout privacyMessage = rootView.findViewById(R.id.messagePrivacyFrameLayout);
+
+        statusEditText.setEnabled(false); //Set to disabled at load
+
+        if (mPrefsManager.getAbout().length() > 0) {
+            //If about is not empty
+            statusEditText.setText(mPrefsManager.getAbout());
+        } else {
+            statusEditText.setText("Hey there! A pleasure to meet you. :)");
+        }
+
+        editStatusButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (isEditing) {
+                    editStatusButton.setImageResource(R.drawable.ic_check_pink_24px);
+                    statusEditText.setEnabled(true);
+                    isEditing = false;
+                } else {
+                    editStatusButton.setImageResource(R.drawable.ic_edit_white_24dp);
+                    statusEditText.setEnabled(false);
+                    String rawStatus = statusEditText.getText().toString().trim();
+                    String formattedStatus = "\"" + rawStatus + "\""; //Enclose withing quotes
+                    mPrefsManager.setAbout(formattedStatus);
+                    mPrefsManager.saveUser();
+                    isEditing = true;
+                }
+            }
+        });
+
+
+        if (user.getDepartment() != null) {
+            departmentTextView.setText(user.getDepartment());
+        } else {
+            //TODO: Remove this
+            departmentTextView.setText("Computer Science Engineering");
+        }
+        phoneTextView.setText(user.getPhoneNumber());
+        facultyTextView.setText(user.getFaculty());
+        yearOfJoiningTextView.setText(user.getYearOfPassing());
+        emailTextView.setText(user.getEmail());
+        privateButton.setImageResource((user.isPrivate()) ? R.drawable.ic_lock_outline_black_24dp : R.drawable.ic_lock_open_black_24dp);
+        privacyMessage.setVisibility((user.isPrivate()) ? View.VISIBLE : View.INVISIBLE);
+        privacyTV.setText((user.isPrivate()) ? "Your phone number is private" : "Your phone number is public");
+
+        privateButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (user.isPrivate()) {
+                    privateButton.setImageResource(R.drawable.ic_lock_open_black_24dp);
+                    user.setPrivate(false);
+                    privacyTV.setText("Your phone number is public");
+                    privacyMessage.setVisibility(View.INVISIBLE);
+                    mPrefsManager.setPrivate(false);
+                    mPrefsManager.saveUser();
+                } else {
+                    privateButton.setImageResource(R.drawable.ic_lock_outline_black_24dp);
+                    user.setPrivate(true);
+                    privacyTV.setText("Your phone number is private");
+                    privacyMessage.setVisibility(View.VISIBLE);
+                    mPrefsManager.setPrivate(true);
+                    mPrefsManager.saveUser();
+                }
+            }
+        });
+
+        facebook.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Uri uriUrl = Uri.parse(user.getLink());
+                //TODO: Convert to facebook uri
+                Intent launchBrowser = new Intent(Intent.ACTION_VIEW, uriUrl);
+                startActivity(launchBrowser);
+            }
+        });
+//        mTextView.setError("Your phone number is private.");
 
         return rootView;
     }

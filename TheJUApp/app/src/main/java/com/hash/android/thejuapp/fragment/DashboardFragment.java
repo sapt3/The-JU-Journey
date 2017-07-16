@@ -93,7 +93,7 @@ public class DashboardFragment extends Fragment {
         topicsArrayList = new ArrayList<>();
         topicsArrayList.clear();
         topicsArrayList.add(new Topic(R.drawable.canteen, "Canteen", TAG_CANTEEN));
-        topicsArrayList.add(new Topic(R.drawable.photography, "Photography", TAG_PHOTO));
+//        topicsArrayList.add(new Topic(R.drawable.photography, "Photography", TAG_PHOTO));
         topicsArrayList.add(new Topic(R.drawable.student, "Student Profile", TAG_STUDENT));
         topicsArrayList.add(new Topic(R.drawable.magazine, "e-Magazine", TAG_MAGAZINE));
         topicsArrayList.add(new Topic(R.drawable.events4, "Events", TAG_EVENTS));
@@ -213,6 +213,7 @@ public class DashboardFragment extends Fragment {
         //2017-06-19T14:13:24.100Z
         final DatabaseReference mRef = FirebaseDatabase.getInstance().getReference();
         DatabaseReference ref = mRef.child("posts").getRef();
+        ref.keepSynced(true);
         final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault());
         sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
         String uid = new PreferenceManager(getActivity()).getUID();

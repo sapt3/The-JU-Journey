@@ -40,16 +40,20 @@ public class DashboardActivity extends AppCompatActivity
 
 
     private static final String TAG = "DashboardActivity";
+    private Fragment fragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard);
 
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction()
-                .replace(R.id.frame_container, new DashboardFragment())
-                .commit();
+
+        if (savedInstanceState == null) {
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            fragmentManager.beginTransaction()
+                    .replace(R.id.frame_container, new DashboardFragment())
+                    .commit();
+        }
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -137,7 +141,7 @@ public class DashboardActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
-        Fragment fragment = null;
+        fragment = null;
 
         switch (id) {
             case R.id.nav_logout:
@@ -241,5 +245,6 @@ public class DashboardActivity extends AppCompatActivity
         }
 
     }
+
 
 }
