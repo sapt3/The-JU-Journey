@@ -1,14 +1,31 @@
 package com.hash.android.thejuapp.adapter;
 
+import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 
+import com.hash.android.thejuapp.MagazineActivity;
+import com.hash.android.thejuapp.Model.Magazine;
 import com.hash.android.thejuapp.R;
 
+import java.util.ArrayList;
+
 public class MagazineRecyclerAdapter extends RecyclerView.Adapter<MagazineRecyclerAdapter.ViewHolder> {
+    private ArrayList<Magazine> magazineArrayList = new ArrayList<>();
+    private Context context;
+
+    public MagazineRecyclerAdapter(ArrayList<Magazine> magazineArrayList, Context context) {
+        this.magazineArrayList = magazineArrayList;
+        this.context = context;
+    }
+
     /**
      * Called when RecyclerView needs a new {@link ViewHolder} of the given type to represent
      * an item.
@@ -55,7 +72,31 @@ public class MagazineRecyclerAdapter extends RecyclerView.Adapter<MagazineRecycl
      * @param position The position of the item within the adapter's data set.
      */
     @Override
-    public void onBindViewHolder(MagazineRecyclerAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(final MagazineRecyclerAdapter.ViewHolder holder, int position) {
+
+        holder.editionDate.setText(magazineArrayList.get(position).editionDate);
+        holder.editionName.setText(magazineArrayList.get(position).editionName);
+        holder.coverPage.setImageResource(magazineArrayList.get(position).coverPage);
+        holder.downloadButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                int pos = holder.getAdapterPosition();
+                String url = magazineArrayList.get(pos).downloadURL;
+                Log.d("MagazineRecyclerAdapter", url);
+            }
+        });
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                int pos = holder.getAdapterPosition();
+                String url = magazineArrayList.get(pos).downloadURL;
+
+                Intent i = new Intent(context, MagazineActivity.class);
+                i.putExtra("DOWNLOAD_URL", url);
+                context.startActivity(i);
+
+            }
+        });
 
     }
 
@@ -66,12 +107,18 @@ public class MagazineRecyclerAdapter extends RecyclerView.Adapter<MagazineRecycl
      */
     @Override
     public int getItemCount() {
-        return 5;
+        return magazineArrayList.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
+        ImageView downloadButton, coverPage;
+        TextView editionName, editionDate;
         public ViewHolder(View itemView) {
             super(itemView);
+            downloadButton = itemView.findViewById(R.id.downloadButton);
+            coverPage = itemView.findViewById(R.id.coverPageImageView);
+            editionName = itemView.findViewById(R.id.editionTextView);
+            editionDate = itemView.findViewById(R.id.editionPublishDateTextView);
         }
     }
 }

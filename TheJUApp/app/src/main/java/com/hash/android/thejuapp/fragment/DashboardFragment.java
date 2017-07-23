@@ -42,6 +42,7 @@ import java.util.concurrent.ExecutionException;
 
 import static com.hash.android.thejuapp.ExploreActivity.CANTEEN_FRAGMENT;
 import static com.hash.android.thejuapp.ExploreActivity.EXTRA_CLASS_NAME;
+import static com.hash.android.thejuapp.ExploreActivity.LEADERBOARD_FRAGMENT;
 import static com.hash.android.thejuapp.ExploreActivity.MAGAZINE_FRAGMENT;
 import static com.hash.android.thejuapp.ExploreActivity.STUDENT_FRAGMENT;
 import static com.hash.android.thejuapp.adapter.FeedRecyclerAdapter.INTENT_EXTRA_FEED;
@@ -55,6 +56,7 @@ public class DashboardFragment extends Fragment {
     private static final int TAG_MAGAZINE = 4;
     private static final int TAG_EVENTS = 5;
     private static final String BUNDLE_RECYCLER_LAYOUT = "classname.recycler.layout";
+    private static final int TAG_LEADERBOARD = 6;
     private final String TAG = DashboardActivity.class.getSimpleName();
     private final String URL_NAV_BACKGROUND = "http://api.androidhive.info/images/nav-menu-header-bg.jpg";
     public FirebaseRecyclerAdapter<Feed, FeedHolder> mAdapter;
@@ -92,8 +94,8 @@ public class DashboardFragment extends Fragment {
     private void updateData() {
         topicsArrayList = new ArrayList<>();
         topicsArrayList.clear();
+        topicsArrayList.add(new Topic(R.drawable.leaderboard, "Leaderboard", TAG_LEADERBOARD));
         topicsArrayList.add(new Topic(R.drawable.canteen, "Canteen", TAG_CANTEEN));
-//        topicsArrayList.add(new Topic(R.drawable.photography, "Photography", TAG_PHOTO));
         topicsArrayList.add(new Topic(R.drawable.student, "Student Profile", TAG_STUDENT));
         topicsArrayList.add(new Topic(R.drawable.magazine, "e-Magazine", TAG_MAGAZINE));
         topicsArrayList.add(new Topic(R.drawable.events4, "Events", TAG_EVENTS));
@@ -190,6 +192,12 @@ public class DashboardFragment extends Fragment {
                         startActivity(intent1);
                         break;
 
+                    case TAG_LEADERBOARD:
+                        Intent intent2 = new Intent(getActivity(), ExploreActivity.class);
+                        intent2.putExtra(EXTRA_CLASS_NAME, LEADERBOARD_FRAGMENT);
+                        startActivity(intent2);
+                        break;
+
 
                 }
 
@@ -227,6 +235,7 @@ public class DashboardFragment extends Fragment {
             @Override
             protected void populateViewHolder(FeedHolder viewHolder, Feed model, int position) {
                 progressBar.setVisibility(View.GONE);
+                viewHolder.setAd(false);
                 Log.d(TAG, "populateViewHolder:: " + model.getHeading());
                 viewHolder.setAuthor(model.getAuthor());
                 viewHolder.setImage(model.getImageURL(), getActivity());

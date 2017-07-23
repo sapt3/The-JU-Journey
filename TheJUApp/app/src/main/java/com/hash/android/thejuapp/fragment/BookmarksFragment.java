@@ -43,6 +43,7 @@ public class BookmarksFragment extends Fragment {
     public BookmarksFragment() {
     }
 
+
     /**
      * Called to do initial creation of a fragment.  This is called after
      * {@link #onAttach(Activity)} and before
@@ -138,6 +139,7 @@ public class BookmarksFragment extends Fragment {
                 img.setVisibility(View.GONE);
                 txt.setVisibility(View.GONE);
                 Log.d(TAG, "populateViewHolder:: " + model.getHeading());
+                viewHolder.setAd(false);
                 viewHolder.setAuthor(model.getAuthor());
                 viewHolder.setImage(model.getImageURL(), getActivity());
                 viewHolder.setHeading(model.getHeading());
@@ -145,6 +147,7 @@ public class BookmarksFragment extends Fragment {
                 viewHolder.setTime(model.getTime(), sdf);
 
             }
+
 
             @Override
             public FeedHolder onCreateViewHolder(ViewGroup parent, int viewType) {

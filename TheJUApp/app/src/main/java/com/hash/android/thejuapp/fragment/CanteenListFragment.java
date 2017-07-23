@@ -23,7 +23,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.hash.android.thejuapp.HelperClass.PreferenceManager;
 import com.hash.android.thejuapp.Model.Canteen;
@@ -156,7 +155,7 @@ public class CanteenListFragment extends android.support.v4.app.Fragment impleme
                 //Request location updates:
                 try {
 //                    locationManager.requestLocationUpdates();
-                    locationManager.requestLocationUpdates(provider, 400, 1, this);
+//                    locationManager.requestLocationUpdates(provider, 400, 1, this);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -169,21 +168,28 @@ public class CanteenListFragment extends android.support.v4.app.Fragment impleme
 
     public void updateCanteen() {
         mCanteenArrayList.clear();
-
-        mCanteenArrayList.add(new Canteen("Staff Canteen", getString(R.string.sl_canteen), findDistance(22.560916d, 88.412865d, location), KEY_SURUCHI, 22.560916d, 88.412865d));
-        mCanteenArrayList.add(new Canteen("Suruchi Canteen", getString(R.string.ju_canteen), findDistance(22.499757d, 88.370122, location), KEY_SURUCHI, 22.499757d, 88.370122));
-        mCanteenArrayList.add(new Canteen("Aahar Canteen", getString(R.string.ju_canteen), findDistance(22.496600d, 88.371966d, location), KEY_SURUCHI, 22.496600d, 88.371966d));
+        mCanteenArrayList.add(new Canteen("Staff Canteen", getString(R.string.ju_canteen), findDistance(22.496692d, 88.372081d, location), KEY_SURUCHI, 22.496692d, 88.372081d));
+        mCanteenArrayList.add(new Canteen("CET Canteen", getString(R.string.ju_canteen), findDistance(22.495944d, 88.371803d, location), KEY_SURUCHI, 22.495944d, 88.371803d));
+        mCanteenArrayList.add(new Canteen("Suruchi Canteen ", getString(R.string.ju_canteen), findDistance(22.498714d, 88.372360d, location), KEY_SURUCHI, 22.498714d, 88.372360d));
+        mCanteenArrayList.add(new Canteen("Milan Da Canteen", getString(R.string.ju_canteen), findDistance(22.500828d, 88.370414d, location), KEY_SURUCHI, 22.500828d, 88.370414d));
+        mCanteenArrayList.add(new Canteen("Moni Da Canteen", getString(R.string.ju_canteen), findDistance(22.499815d, 88.370167d, location), KEY_SURUCHI, 22.499815d, 88.370167d));
+        mCanteenArrayList.add(new Canteen("AC canteen", getString(R.string.ju_canteen), findDistance(22.499970d, 88.370807d, location), KEY_SURUCHI, 22.499970d, 88.370807d));
+        mCanteenArrayList.add(new Canteen("Sujit Da Canteen", getString(R.string.ju_canteen), findDistance(22.502547d, 88.370499d, location), KEY_SURUCHI, 22.502547d, 88.370499d));
+        mCanteenArrayList.add(new Canteen("Post Office", getString(R.string.ju_canteen), findDistance(22.497980d, 88.370658d, location), KEY_SURUCHI, 22.497980d, 88.370658d));
+        mCanteenArrayList.add(new Canteen("Guest House", getString(R.string.ju_canteen), findDistance(22.499684d, 88.372428d, location), KEY_SURUCHI, 22.499684d, 88.372428d));
+        mCanteenArrayList.add(new Canteen("Student Canteen", getString(R.string.sl_canteen), findDistance(22.496600d, 88.371966d, location), KEY_SURUCHI, 22.496600d, 88.371966d));
+        mCanteenArrayList.add(new Canteen("Club Canteen", getString(R.string.sl_canteen), findDistance(22.496600d, 88.371966d, location), KEY_SURUCHI, 22.496600d, 88.371966d));
 
     }
 
     private float findDistance(Double lat, Double lng, Location userLocation) {
-        if (new PreferenceManager(getActivity()).isLocationEnabled()) {
+        if (new PreferenceManager(getActivity()).isLocationEnabled() && userLocation != null) {
             Location l = new Location("");
             l.setLatitude(lat);
             l.setLongitude(lng);
             return ((userLocation.distanceTo(l)) / 1000);
         } else {
-            Toast.makeText(getActivity(), "Location disabled", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(getActivity(), "Location disabled", Toast.LENGTH_SHORT).show();
             return 0f;
         }
     }
@@ -311,10 +317,13 @@ public class CanteenListFragment extends android.support.v4.app.Fragment impleme
                         getActivity(),
                         Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED
                 ) {
-            return rootView;
-        }
-        location = locationManager.getLastKnownLocation(provider);
 
+        }
+        try {
+            location = locationManager.getLastKnownLocation(provider);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         RecyclerView mRecyclerView = rootView.findViewById(R.id.canteenRecyclerView);
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());

@@ -44,6 +44,10 @@ public class FeedHolder extends RecyclerView.ViewHolder {
 
     }
 
+    public void setAd(boolean isAd) {
+        ad.setVisibility((isAd) ? View.VISIBLE : View.GONE);
+    }
+
     public void setAuthor(String string) {
         author.setText(string);
     }

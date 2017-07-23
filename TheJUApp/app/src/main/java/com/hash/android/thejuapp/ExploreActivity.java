@@ -9,6 +9,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
 import com.hash.android.thejuapp.fragment.CanteenListFragment;
+import com.hash.android.thejuapp.fragment.LeaderBoardFragment;
 import com.hash.android.thejuapp.fragment.MagazineFragment;
 import com.hash.android.thejuapp.fragment.StudentProfileFragment;
 
@@ -18,6 +19,7 @@ public class ExploreActivity extends AppCompatActivity {
     public static final String CANTEEN_FRAGMENT = "canteen";
     public static final String MAGAZINE_FRAGMENT = "magazine";
     public static final String STUDENT_FRAGMENT = "student";
+    public static final String LEADERBOARD_FRAGMENT = "leaderboard";
 
 
     @Override
@@ -59,6 +61,9 @@ public class ExploreActivity extends AppCompatActivity {
             case STUDENT_FRAGMENT:
                 fragment = new StudentProfileFragment();
                 break;
+
+            case LEADERBOARD_FRAGMENT:
+                fragment = new LeaderBoardFragment();
 
         }
 

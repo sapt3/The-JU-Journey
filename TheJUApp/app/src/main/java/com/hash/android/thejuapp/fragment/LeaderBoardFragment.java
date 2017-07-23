@@ -1,27 +1,14 @@
 package com.hash.android.thejuapp.fragment;
 
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.hash.android.thejuapp.Model.Magazine;
-import com.hash.android.thejuapp.R;
-import com.hash.android.thejuapp.adapter.MagazineRecyclerAdapter;
+public class LeaderBoardFragment extends android.support.v4.app.Fragment {
 
-import java.util.ArrayList;
-
-public class MagazineFragment extends Fragment {
-
-    private static final String URL_4th_EDITION = "https://firebasestorage.googleapis.com/v0/b/the-ju-app.appspot.com/o/journal_newsletters%2F4th%20Edition.pdf?alt=media&token=4d659504-837c-44f8-9869-87d290ae5598";
-    private ArrayList<Magazine> mArrayList = new ArrayList<>();
-    public MagazineFragment() {
+    public LeaderBoardFragment() {
     }
 
     /**
@@ -45,26 +32,7 @@ public class MagazineFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.magazine_list, container, false);
-//        TextView newsLetter = view.findViewById(R.id.textView9);
-        Typeface custom_font = Typeface.createFromAsset(getActivity().getAssets(), "fonts/opensans.ttf");
-//        newsLetter.setTypeface(custom_font);
-        RecyclerView mRecyclerView = view.findViewById(R.id.magazineRecyclerView);
-        mRecyclerView.setHasFixedSize(true);
-        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
-        updateData();
-        MagazineRecyclerAdapter mAdapter = new MagazineRecyclerAdapter(mArrayList, getActivity());
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
-        mRecyclerView.setAdapter(mAdapter);
-        return view;
-    }
-
-    private void updateData() {
-        mArrayList.clear();
-        mArrayList.add(new Magazine("Edition 4.0", R.drawable.magazine2, "July 2017", URL_4th_EDITION));
-        mArrayList.add(new Magazine("Edition 3.0", R.drawable.magazine2, "March 2017", URL_4th_EDITION));
-        mArrayList.add(new Magazine("Edition 2.0", R.drawable.magazine2, "February 2017", URL_4th_EDITION));
-        mArrayList.add(new Magazine("Edition 1.0", R.drawable.magazine2, "January 2017", URL_4th_EDITION));
+        return super.onCreateView(inflater, container, savedInstanceState);
     }
 
     /**
@@ -81,8 +49,8 @@ public class MagazineFragment extends Fragment {
      *                           a previous saved state, this is the state.
      */
     @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        getActivity().setTitle("Newsletter");
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        getActivity().setTitle("Leaderboard");
     }
 }
