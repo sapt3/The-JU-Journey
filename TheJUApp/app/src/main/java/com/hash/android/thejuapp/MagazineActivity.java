@@ -3,10 +3,15 @@ package com.hash.android.thejuapp;
 import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.view.View;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.ProgressBar;
 
 public class MagazineActivity extends AppCompatActivity {
+
+    private ProgressBar progressbar;
 
     @SuppressLint("SetJavaScriptEnabled")
     @Override
@@ -14,17 +19,27 @@ public class MagazineActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_magazine);
 
+        progressbar = (ProgressBar) findViewById(R.id.progressBar2);
+
         WebView webView = (WebView) findViewById(R.id.webView);
         webView.getSettings().setJavaScriptEnabled(true);
-
-        webView.setWebViewClient(new WebViewClient());
-
-        final String mimeType = "text/html";
-        final String encoding = "UTF-8";
-        String html = "<html><head><script type=\"text/javascript\" src=\"//e.issuu.com/embed.js\" async=\"true\"></script></head><body><div data-configid=\"26055985/46049093\" style=\"width:100%; height:490px;\" class=\"issuuembed\"></div></body></html>";
-//            String html = "<html><body>Hello world</body></html>";
         webView.getSettings().setDomStorageEnabled(true);
-        webView.loadDataWithBaseURL("", html, mimeType, encoding, "");
+        webView.getSettings().setAllowFileAccess(true);
+
+        String url = getIntent().getStringExtra("DOWNLOAD_URL");
+        Log.d("url", url);
+        if (url == null) {
+            onBackPressed();
+            finish();
+        } else {
+            webView.loadUrl(url);
+            webView.setWebViewClient(new WebViewClient() {
+                public void onPageFinished(WebView view, String url) {
+                    progressbar.setVisibility(View.GONE);
+                }
+            });
+        }
     }
+
 
 }

@@ -6,17 +6,21 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.LinearSnapHelper;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.hash.android.thejuapp.Model.Magazine;
 import com.hash.android.thejuapp.R;
 import com.hash.android.thejuapp.adapter.MagazineRecyclerAdapter;
 
+import java.util.ArrayList;
+
 public class MagazineFragment extends Fragment {
 
+    private static final String URL_4th_EDITION = "https://drive.google.com/file/d/0BxIjpMfBThXMWU5Jck5aX2JqRkE/view?usp=sharing";
+    private ArrayList<Magazine> mArrayList = new ArrayList<>();
     public MagazineFragment() {
     }
 
@@ -48,11 +52,19 @@ public class MagazineFragment extends Fragment {
         RecyclerView mRecyclerView = view.findViewById(R.id.magazineRecyclerView);
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
-        MagazineRecyclerAdapter mAdapter = new MagazineRecyclerAdapter();
-        LinearSnapHelper helper = new LinearSnapHelper();
+        updateData();
+        MagazineRecyclerAdapter mAdapter = new MagazineRecyclerAdapter(mArrayList, getActivity());
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
-        mRecyclerView.setAdapter(new MagazineRecyclerAdapter());
+        mRecyclerView.setAdapter(mAdapter);
         return view;
+    }
+
+    private void updateData() {
+        mArrayList.clear();
+        mArrayList.add(new Magazine("Edition 4.0", R.drawable.magazine2, "July 2017", URL_4th_EDITION));
+        mArrayList.add(new Magazine("Edition 3.0", R.drawable.magazine2, "March 2017", URL_4th_EDITION));
+        mArrayList.add(new Magazine("Edition 2.0", R.drawable.magazine2, "February 2017", URL_4th_EDITION));
+        mArrayList.add(new Magazine("Edition 1.0", R.drawable.magazine2, "January 2017", URL_4th_EDITION));
     }
 
     /**

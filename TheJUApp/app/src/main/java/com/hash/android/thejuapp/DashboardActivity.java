@@ -3,6 +3,7 @@ package com.hash.android.thejuapp;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -21,8 +22,9 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.FirebaseDatabase;
+import com.firebase.ui.auth.AuthUI;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.hash.android.thejuapp.HelperClass.CircleTransform;
 import com.hash.android.thejuapp.HelperClass.PreferenceManager;
@@ -60,7 +62,7 @@ public class DashboardActivity extends AppCompatActivity
 
         String token = FirebaseInstanceId.getInstance().getToken();
         if (token != null) {
-            FirebaseDatabase.getInstance().getReference().child("notificationTokens").child(token).setValue(true);
+            new PreferenceManager(this).setNotificationKey(token);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -145,9 +147,16 @@ public class DashboardActivity extends AppCompatActivity
 
         switch (id) {
             case R.id.nav_logout:
-                FirebaseAuth.getInstance().signOut();
-                startActivity(new Intent(DashboardActivity.this, LoginActivityPre.class));
-                finish();
+                AuthUI.getInstance()
+                        .signOut(this)
+                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                            public void onComplete(@NonNull Task<Void> task) {
+                                // user is now signed out
+                                startActivity(new Intent(DashboardActivity.this, FacebookLogin.class));
+                                finish();
+                                new PreferenceManager(DashboardActivity.this).setFlowCompleted(false);
+                            }
+                        });
                 break;
 
             case R.id.nav_dashboard:

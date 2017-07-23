@@ -80,7 +80,6 @@ public class ProfileActivity extends AppCompatActivity {
             yearOfJoining.setText(user.getYearOfPassing());
 
             TextView emailTextView = (TextView) findViewById(R.id.emailTextViewProfile);
-            //TODO: Check for email id
             emailTextView.setText(user.getEmail());
 
             TextView phoneNumberTextView = (TextView) findViewById(R.id.phoneNumberProfile);

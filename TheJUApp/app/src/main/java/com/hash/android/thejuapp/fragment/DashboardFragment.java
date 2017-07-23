@@ -11,6 +11,7 @@ import android.support.v7.widget.CardView;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.LinearSnapHelper;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -19,6 +20,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ProgressBar;
 
+import com.firebase.ui.database.FirebaseIndexRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -29,22 +31,28 @@ import com.hash.android.thejuapp.ExploreActivity;
 import com.hash.android.thejuapp.HelperClass.PreferenceManager;
 import com.hash.android.thejuapp.Model.Feed;
 import com.hash.android.thejuapp.Model.Topic;
+import com.hash.android.thejuapp.Model.Update;
 import com.hash.android.thejuapp.Model.User;
+import com.hash.android.thejuapp.ProfileActivity;
 import com.hash.android.thejuapp.R;
 import com.hash.android.thejuapp.ViewHolder.FeedHolder;
+import com.hash.android.thejuapp.ViewHolder.UpdateHolder;
 import com.hash.android.thejuapp.adapter.TopicsRecyclerAdapter;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
 import java.util.concurrent.ExecutionException;
 
 import static com.hash.android.thejuapp.ExploreActivity.CANTEEN_FRAGMENT;
 import static com.hash.android.thejuapp.ExploreActivity.EXTRA_CLASS_NAME;
+import static com.hash.android.thejuapp.ExploreActivity.LEADERBOARD_FRAGMENT;
 import static com.hash.android.thejuapp.ExploreActivity.MAGAZINE_FRAGMENT;
 import static com.hash.android.thejuapp.ExploreActivity.STUDENT_FRAGMENT;
 import static com.hash.android.thejuapp.adapter.FeedRecyclerAdapter.INTENT_EXTRA_FEED;
+import static com.hash.android.thejuapp.adapter.StudentProfileRecyclerAdapter.INTENT_EXTRA_USER;
 
 
 public class DashboardFragment extends Fragment {
@@ -55,9 +63,11 @@ public class DashboardFragment extends Fragment {
     private static final int TAG_MAGAZINE = 4;
     private static final int TAG_EVENTS = 5;
     private static final String BUNDLE_RECYCLER_LAYOUT = "classname.recycler.layout";
+    private static final int TAG_LEADERBOARD = 6;
     private final String TAG = DashboardActivity.class.getSimpleName();
     private final String URL_NAV_BACKGROUND = "http://api.androidhive.info/images/nav-menu-header-bg.jpg";
     public FirebaseRecyclerAdapter<Feed, FeedHolder> mAdapter;
+    public FirebaseIndexRecyclerAdapter<Update, UpdateHolder> updatesAdapter;
     ArrayList<Feed> mFeedList = new ArrayList<>();
     PreferenceManager mPrefsManager;
     private ArrayList<Topic> topicsArrayList = new ArrayList<>();
@@ -86,14 +96,22 @@ public class DashboardFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getActivity().setTitle("JU Connect");
+        getActivity().setTitle("juX");
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (updatesAdapter != null) {
+            updatesAdapter.notifyDataSetChanged();
+        }
     }
 
     private void updateData() {
         topicsArrayList = new ArrayList<>();
         topicsArrayList.clear();
+        topicsArrayList.add(new Topic(R.drawable.leaderboard, "Leaderboard", TAG_LEADERBOARD));
         topicsArrayList.add(new Topic(R.drawable.canteen, "Canteen", TAG_CANTEEN));
-//        topicsArrayList.add(new Topic(R.drawable.photography, "Photography", TAG_PHOTO));
         topicsArrayList.add(new Topic(R.drawable.student, "Student Profile", TAG_STUDENT));
         topicsArrayList.add(new Topic(R.drawable.magazine, "e-Magazine", TAG_MAGAZINE));
         topicsArrayList.add(new Topic(R.drawable.events4, "Events", TAG_EVENTS));
@@ -190,6 +208,12 @@ public class DashboardFragment extends Fragment {
                         startActivity(intent1);
                         break;
 
+                    case TAG_LEADERBOARD:
+                        Intent intent2 = new Intent(getActivity(), ExploreActivity.class);
+                        intent2.putExtra(EXTRA_CLASS_NAME, LEADERBOARD_FRAGMENT);
+                        startActivity(intent2);
+                        break;
+
 
                 }
 
@@ -201,6 +225,82 @@ public class DashboardFragment extends Fragment {
             }
         }));
 
+
+        final RecyclerView announcementsRecyclerView = rootView.findViewById(R.id.announcementsRV);
+        LinearLayoutManager layoutmanager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
+        layoutmanager.setStackFromEnd(true);
+        layoutmanager.setReverseLayout(true);
+        announcementsRecyclerView.setLayoutManager(layoutmanager);
+        LinearSnapHelper helper = new LinearSnapHelper();
+        helper.attachToRecyclerView(announcementsRecyclerView);
+        announcementsRecyclerView.setItemAnimator(new DefaultItemAnimator()); //Create a default item animater when the view comes to range
+//        updateData(); //Call the function to update the data set.
+        final DatabaseReference updatesRef = FirebaseDatabase.getInstance().getReference("updates").getRef();
+        final DatabaseReference keyRef = FirebaseDatabase.getInstance().getReference("users").child(mPrefsManager.getUID()).child("updateKeys").getRef();
+//        announcementsRecyclerView.canScrollHorizontally()
+        updatesAdapter = new FirebaseIndexRecyclerAdapter<Update, UpdateHolder>(
+                Update.class,
+                R.layout.recycler_child_announcement,
+                UpdateHolder.class,
+                keyRef,
+                updatesRef
+        ) {
+            @Override
+            protected void populateViewHolder(final UpdateHolder viewHolder, final Update model, final int position) {
+                Log.d(TAG, "populateViewHolder:: " + model.title);
+                viewHolder.bind(model, getActivity());
+                final int size = updatesAdapter.getItemCount();
+
+                try {
+                    long timeOfExpiry = model.timeOfExpiry;
+                    Date dateOfExpiry = new Date(timeOfExpiry);
+                    Log.d(TAG, dateOfExpiry.toString());
+                    if (new Date().after(dateOfExpiry)) {
+                        //delete the key
+                        String key = updatesAdapter.getRef(position).getKey();
+                        FirebaseDatabase.getInstance().getReference("users").child(mPrefsManager.getUID()).child("updateKeys").child(key).removeValue();
+                        return;
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                viewHolder.avatar.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        User user = model.user;
+                        Intent i = new Intent(getActivity(), ProfileActivity.class);
+                        i.putExtra(INTENT_EXTRA_USER, user);
+                        Pair<View, String> pair1 = Pair.create((View) viewHolder.avatar, "profileTrans");
+                        ActivityOptionsCompat optionsCompat = ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity(), pair1);
+                        viewHolder.avatar.getContext().startActivity(i, optionsCompat.toBundle());
+                    }
+                });
+                viewHolder.rightNav.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Log.d(TAG, "leftArrowPressed");
+                        if (position > 0) {
+                            announcementsRecyclerView.smoothScrollToPosition(position - 1);
+                        }
+                    }
+                });
+                viewHolder.leftNav.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if (position < size) {
+                            announcementsRecyclerView.smoothScrollToPosition(position + 1);
+                        }
+
+                    }
+                });
+
+            }
+
+
+        };
+
+        updatesAdapter.notifyDataSetChanged();
+        announcementsRecyclerView.setAdapter(updatesAdapter);
 
         RecyclerView feedRecyclerView = rootView.findViewById(R.id.feedRecyclerView);
         LinearLayoutManager manager = new LinearLayoutManager(getActivity());
@@ -217,7 +317,7 @@ public class DashboardFragment extends Fragment {
         final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault());
         sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
         String uid = new PreferenceManager(getActivity()).getUID();
-        DatabaseReference keyRef = mRef.child("users").child(uid).child("bookmarks").getRef();
+//        DatabaseReference keyRef = mRef.child("users").child(uid).child("bookmarks").getRef();
 
         mAdapter = new FirebaseRecyclerAdapter<Feed, FeedHolder>(
                 Feed.class,
@@ -227,6 +327,7 @@ public class DashboardFragment extends Fragment {
             @Override
             protected void populateViewHolder(FeedHolder viewHolder, Feed model, int position) {
                 progressBar.setVisibility(View.GONE);
+                viewHolder.setAd(false);
                 Log.d(TAG, "populateViewHolder:: " + model.getHeading());
                 viewHolder.setAuthor(model.getAuthor());
                 viewHolder.setImage(model.getImageURL(), getActivity());
@@ -265,5 +366,10 @@ public class DashboardFragment extends Fragment {
         return rootView;
     }
 
-
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mAdapter.cleanup();
+        updatesAdapter.cleanup();
+    }
 }

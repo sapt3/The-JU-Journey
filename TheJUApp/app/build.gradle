@@ -43,8 +43,12 @@ dependencies {
     compile 'com.google.code.gson:gson:2.7'
     compile 'com.firebaseui:firebase-ui-auth:2.0.1'
     compile 'com.facebook.android:facebook-android-sdk:4.22.1'
+    compile 'jp.wasabeef:recyclerview-animators:2.2.1'
     testCompile 'junit:junit:4.12'
+
 }
+
+
 
 
 

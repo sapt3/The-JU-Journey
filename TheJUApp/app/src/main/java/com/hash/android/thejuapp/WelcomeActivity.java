@@ -33,7 +33,7 @@ public class WelcomeActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         if (!new PreferenceManager(this).isFirstTimeLaunch()) {
-            startActivity(new Intent(this, LoginActivityPre.class));
+            startActivity(new Intent(this, FacebookLogin.class));
             WelcomeActivity.this.overridePendingTransition(0, 0);
 
         }
@@ -41,6 +41,7 @@ public class WelcomeActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        setTheme(R.style.AppTheme);
         super.onCreate(savedInstanceState);
 
         if (Build.VERSION.SDK_INT >= 21) {
@@ -138,7 +139,7 @@ public class WelcomeActivity extends AppCompatActivity {
     private void launchHomeScreen() {
         PreferenceManager prefManager = new PreferenceManager(this);
         prefManager.setFirstTimeLaunch(false);
-        startActivity(new Intent(WelcomeActivity.this, LoginActivityPre.class));
+        startActivity(new Intent(WelcomeActivity.this, FacebookLogin.class));
         finish();
     }
 

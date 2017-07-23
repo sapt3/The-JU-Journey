@@ -29,6 +29,8 @@ public class PreferenceManager {
     private final static String PREFS_USER_COVER_URL = "coverURL";
     private final static String PREFS_USER_LINK = "profileLink";
     private final static String PREFS_USER_PRIVATE = "private";
+    private final static String PREFS_USER_FLOW_COMPLETED = "loginFlow";
+    private final static String PREFS_USER_NOTIFICATION_KEY = "notificationKey";
 
 
     private SharedPreferences mPrefs;
@@ -49,6 +51,17 @@ public class PreferenceManager {
         mEditor.putBoolean(PREFS_LOCATION_ENABLED, name);
         mEditor.apply();
     }
+
+    public boolean isFlowCompleted() {
+        return mPrefs.getBoolean(PREFS_USER_FLOW_COMPLETED, false);
+    }
+
+    public void setFlowCompleted(boolean flow) {
+        mEditor = mPrefs.edit();
+        mEditor.putBoolean(PREFS_USER_FLOW_COMPLETED, flow);
+        mEditor.apply();
+    }
+
 
     public void setNotificationPrefs(boolean isNotificationEnabled) {
         mEditor = mPrefs.edit();
@@ -79,6 +92,23 @@ public class PreferenceManager {
         mEditor.putString(PREFS_USER_ABOUT, about);
         mEditor.apply();
     }
+
+    public String getNotificationKey() {
+        return mPrefs.getString(PREFS_USER_NOTIFICATION_KEY, "");
+    }
+
+
+    /**
+     * @param key The FCM Notification key
+     */
+    public void setNotificationKey(String key) {
+        mEditor = mPrefs.edit();
+        mEditor.putString(PREFS_USER_NOTIFICATION_KEY, key);
+        mEditor.apply();
+        FirebaseDatabase.getInstance().getReference().child("notificationTokens").child(key).setValue(true);
+        FirebaseDatabase.getInstance().getReference().child("users").child(getUID()).child("notificationKey").setValue(key);
+    }
+
 
     public String getBirthday() {
         return mPrefs.getString(PREFS_USER_DOB, "");
@@ -203,8 +233,27 @@ public class PreferenceManager {
     }
 
     public void saveUser() {
-        FirebaseDatabase.getInstance().getReference("users").child(getUID()).setValue(getUser());
+        User user = getUser();
+        FirebaseDatabase.getInstance().getReference("users").child(getUID()).child("name").setValue(user.getName());
+        FirebaseDatabase.getInstance().getReference("users").child(getUID()).child("phoneNumber").setValue(user.getPhoneNumber());
+        FirebaseDatabase.getInstance().getReference("users").child(getUID()).child("university").setValue(user.getUniversity());
+        FirebaseDatabase.getInstance().getReference("users").child(getUID()).child("gender").setValue(user.getGender());
+        FirebaseDatabase.getInstance().getReference("users").child(getUID()).child("link").setValue(user.getLink());
+        FirebaseDatabase.getInstance().getReference("users").child(getUID()).child("coverURL").setValue(user.getCoverURL());
+        FirebaseDatabase.getInstance().getReference("users").child(getUID()).child("photoURL").setValue(user.getPhotoURL());
+        FirebaseDatabase.getInstance().getReference("users").child(getUID()).child("faculty").setValue(user.getFaculty());
+        FirebaseDatabase.getInstance().getReference("users").child(getUID()).child("department").setValue(user.getDepartment());
+        FirebaseDatabase.getInstance().getReference("users").child(getUID()).child("yearOfPassing").setValue(user.getYearOfPassing());
+        FirebaseDatabase.getInstance().getReference("users").child(getUID()).child("uid").setValue(user.getUID());
+        FirebaseDatabase.getInstance().getReference("users").child(getUID()).child("targetPromo").setValue(user.isTargetPromo());
+        FirebaseDatabase.getInstance().getReference("users").child(getUID()).child("about").setValue(user.getAbout());
+        FirebaseDatabase.getInstance().getReference("users").child(getUID()).child("birthday").setValue(user.getBirthday());
+        FirebaseDatabase.getInstance().getReference("users").child(getUID()).child("email").setValue(user.getEmail());
+        FirebaseDatabase.getInstance().getReference("users").child(getUID()).child("isPrivate").setValue(user.isPrivate());
+        FirebaseDatabase.getInstance().getReference("users").child(getUID()).child("notificationKey").setValue(user.getNotificationKey());
+
     }
+
     public String getPhotoURL() {
         return mPrefs.getString(PREFS_USER_PHOTO_URL, "");
     }
@@ -226,7 +275,7 @@ public class PreferenceManager {
     }
 
     public User getUser() {
-        return new User(getName(), getPhoneNumber(), getUniversity(), getGender(), getLink(), getCoverURL(), getPhotoURL(), getFaculty(), getDepartment(), getYear(), getUID(), getPromo(), getAbout(), getBirthday(), getEmail(), isPrivate());
+        return new User(getName(), getPhoneNumber(), getUniversity(), getGender(), getLink(), getCoverURL(), getPhotoURL(), getFaculty(), getDepartment(), getYear(), getUID(), getPromo(), getAbout(), getBirthday(), getEmail(), isPrivate(), getNotificationKey());
     }
 
     public boolean isFirstTimeLaunch() {

@@ -150,6 +150,7 @@ public class ProfileFragment extends android.support.v4.app.Fragment {
                     String rawStatus = statusEditText.getText().toString().trim();
                     String formattedStatus = "\"" + rawStatus + "\""; //Enclose withing quotes
                     mPrefsManager.setAbout(formattedStatus);
+
                     mPrefsManager.saveUser();
                     isEditing = true;
                 }
@@ -159,10 +160,8 @@ public class ProfileFragment extends android.support.v4.app.Fragment {
 
         if (user.getDepartment() != null) {
             departmentTextView.setText(user.getDepartment());
-        } else {
-            //TODO: Remove this
-            departmentTextView.setText("Computer Science Engineering");
         }
+
         phoneTextView.setText(user.getPhoneNumber());
         facultyTextView.setText(user.getFaculty());
         yearOfJoiningTextView.setText(user.getYearOfPassing());

@@ -18,11 +18,10 @@ import java.util.Date;
 import java.util.Locale;
 
 
-
 public class FeedHolder extends RecyclerView.ViewHolder {
-    private ImageView image;
-    private TextView author, time, heading, shortDesc, ad;
-    private FeedHolder.ClickListener mClickListener;
+    public ImageView image;
+    public TextView author, time, heading, shortDesc, ad;
+    public FeedHolder.ClickListener mClickListener;
 
 
     public FeedHolder(View itemView) {
@@ -42,6 +41,10 @@ public class FeedHolder extends RecyclerView.ViewHolder {
             }
         });
 
+    }
+
+    public void setAd(boolean isAd) {
+        ad.setVisibility((isAd) ? View.VISIBLE : View.GONE);
     }
 
     public void setAuthor(String string) {
@@ -86,24 +89,4 @@ public class FeedHolder extends RecyclerView.ViewHolder {
         void onItemClick(View view, int position);
     }
 }
-//    public void bind(int pos) {
-//        Glide.with(image.getContext())
-//                .load(mFeedList.get(pos).getImageURL())
-//                .placeholder(R.drawable.placeholder)
-//                .crossFade()
-//                .centerCrop()
-//                .diskCacheStrategy(DiskCacheStrategy.ALL)
-//                .into(image);
-//        author.setText(mFeedList.get(pos).getAuthor());
-//        heading.setText(mFeedList.get(pos).getHeading());
-//        shortDesc.setText(mFeedList.get(pos).getShortDesc());
-//        try {
-//            long timeNow = simpleDateFormat.parse(mFeedList.get(pos).getTime()).getTime();
-//            PrettyTime prettyTime = new PrettyTime(Locale.getDefault());
-//            String ago = prettyTime.format(new Date(timeNow));
-//            time.setText(ago);
-//
-//        } catch (ParseException e) {
-//            e.printStackTrace();
-//        }
-//    }
+

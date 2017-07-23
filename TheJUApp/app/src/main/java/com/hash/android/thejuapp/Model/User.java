@@ -6,10 +6,6 @@ import android.os.Parcelable;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Created by Spandita Ghosh on 6/13/2017.
- */
-
 public class User implements Parcelable {
 
 
@@ -24,7 +20,8 @@ public class User implements Parcelable {
             return new User[size];
         }
     };
-    public Map<String, Boolean> bookmarks = new HashMap<>();
+    public Map<String, Boolean> updatesKey = new HashMap<>();
+    private Map<String, Boolean> bookmarks = new HashMap<>();
     private String name;
     private String phoneNumber;
     private String university;
@@ -41,25 +38,7 @@ public class User implements Parcelable {
     private String birthday;
     private String email;
     private boolean isPrivate = false;
-
-    public User(String name, String phoneNumber, String university, String gender, String link, String coverURL, String photoURL, String faculty, String department, String yearOfPassing, String UID, boolean targetPromo, String about, String birthday, String email, boolean isPrivate) {
-        this.name = name;
-        this.phoneNumber = phoneNumber;
-        this.university = university;
-        this.gender = gender;
-        this.link = link;
-        this.coverURL = coverURL;
-        this.photoURL = photoURL;
-        this.faculty = faculty;
-        this.department = department;
-        this.yearOfPassing = yearOfPassing;
-        this.UID = UID;
-        this.targetPromo = targetPromo;
-        this.about = about;
-        this.birthday = birthday;
-        this.email = email;
-        this.isPrivate = isPrivate;
-    }
+    private String notificationKey;
 
     protected User(Parcel in) {
         name = in.readString();
@@ -78,9 +57,38 @@ public class User implements Parcelable {
         birthday = in.readString();
         email = in.readString();
         isPrivate = in.readByte() != 0;
+        notificationKey = in.readString();
+    }
+
+    public User(String name, String phoneNumber, String university, String gender, String link, String coverURL, String photoURL, String faculty, String department, String yearOfPassing, String UID, boolean targetPromo, String about, String birthday, String email, boolean isPrivate, String notificationKey) {
+        this.name = name;
+        this.phoneNumber = phoneNumber;
+        this.university = university;
+        this.gender = gender;
+        this.link = link;
+        this.coverURL = coverURL;
+        this.photoURL = photoURL;
+        this.faculty = faculty;
+        this.department = department;
+        this.yearOfPassing = yearOfPassing;
+        this.UID = UID;
+        this.targetPromo = targetPromo;
+        this.about = about;
+        this.birthday = birthday;
+        this.email = email;
+        this.isPrivate = isPrivate;
+        this.notificationKey = notificationKey;
     }
 
     public User() {
+    }
+
+    public String getNotificationKey() {
+        return notificationKey;
+    }
+
+    public void setNotificationKey(String notificationKey) {
+        this.notificationKey = notificationKey;
     }
 
     public boolean isPrivate() {
@@ -211,13 +219,6 @@ public class User implements Parcelable {
         this.email = email;
     }
 
-    public Map<String, Boolean> getBookmarks() {
-        return bookmarks;
-    }
-
-    public void setBookmarks(Map<String, Boolean> bookmarks) {
-        this.bookmarks = bookmarks;
-    }
 
 
     @Override
@@ -243,5 +244,6 @@ public class User implements Parcelable {
         parcel.writeString(birthday);
         parcel.writeString(email);
         parcel.writeByte((byte) (isPrivate ? 1 : 0));
+        parcel.writeString(notificationKey);
     }
 }
