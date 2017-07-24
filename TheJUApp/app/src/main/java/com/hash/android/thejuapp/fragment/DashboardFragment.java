@@ -19,9 +19,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 
 import com.firebase.ui.database.FirebaseIndexRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.messaging.FirebaseMessaging;
@@ -226,6 +228,8 @@ public class DashboardFragment extends Fragment {
         }));
 
 
+        final RelativeLayout mLayout = rootView.findViewById(R.id.updatesPlaceHolder);
+
         final RecyclerView announcementsRecyclerView = rootView.findViewById(R.id.announcementsRV);
         LinearLayoutManager layoutmanager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
         layoutmanager.setStackFromEnd(true);
@@ -237,7 +241,7 @@ public class DashboardFragment extends Fragment {
 //        updateData(); //Call the function to update the data set.
         final DatabaseReference updatesRef = FirebaseDatabase.getInstance().getReference("updates").getRef();
         final DatabaseReference keyRef = FirebaseDatabase.getInstance().getReference("users").child(mPrefsManager.getUID()).child("updateKeys").getRef();
-//        announcementsRecyclerView.canScrollHorizontally()
+
         updatesAdapter = new FirebaseIndexRecyclerAdapter<Update, UpdateHolder>(
                 Update.class,
                 R.layout.recycler_child_announcement,
@@ -247,6 +251,7 @@ public class DashboardFragment extends Fragment {
         ) {
             @Override
             protected void populateViewHolder(final UpdateHolder viewHolder, final Update model, final int position) {
+                mLayout.setVisibility(View.GONE);
                 Log.d(TAG, "populateViewHolder:: " + model.title);
                 viewHolder.bind(model, getActivity());
                 final int size = updatesAdapter.getItemCount();
@@ -296,7 +301,14 @@ public class DashboardFragment extends Fragment {
 
             }
 
-
+            @Override
+            public void onDataChanged() {
+                super.onDataChanged();
+                Log.d(TAG, "position item:: " + updatesAdapter.getItemCount());
+                if (updatesAdapter.getItemCount() == 0) {
+                    mLayout.setVisibility(View.VISIBLE);
+                }
+            }
         };
 
         updatesAdapter.notifyDataSetChanged();
@@ -343,6 +355,12 @@ public class DashboardFragment extends Fragment {
                 viewHolder.setOnClickListener(new FeedHolder.ClickListener() {
                     @Override
                     public void onItemClick(View view, int position) {
+                        FirebaseAnalytics analytics = FirebaseAnalytics.getInstance(getActivity());
+                        Bundle bundle = new Bundle();
+                        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, mAdapter.getRef(position).getKey());
+                        bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, mAdapter.getItem(position).getHeading());
+                        bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "feed");
+                        analytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
                         Log.d(TAG, "onClick::" + position);
                         Intent i = new Intent(getActivity(), DetailsFeedActivity.class);
                         i.putExtra(INTENT_EXTRA_FEED, mAdapter.getItem(position));
