@@ -3,63 +3,14 @@ package com.hash.android.thejuapp.Model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.google.firebase.database.Exclude;
 import com.google.firebase.database.IgnoreExtraProperties;
 
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Created by Spandita Ghosh on 6/19/2017.
- */
 
 @IgnoreExtraProperties
 public class Feed implements Parcelable {
-
-    private String time;
-    private String imageURL;
-    private String author;
-    private String heading;
-    private String shortDesc;
-    private String longDesc;
-    public int starCount = 0;
-    public Map<String, Boolean> stars = new HashMap<>();
-
-
-    public Feed() {
-    }
-
-    @Exclude
-    public Map<String, Object> toMap() {
-        HashMap<String, Object> result = new HashMap<>();
-        result.put("time", time);
-        result.put("author", author);
-        result.put("imageURL", imageURL);
-        result.put("heading", heading);
-        result.put("shortDesc", shortDesc);
-        result.put("longDesc", longDesc);
-        result.put("starCount", starCount);
-        result.put("stars", stars);
-
-        return result;
-    }
-    public Feed(String time, String imageURL, String author, String heading, String shortDesc, String longDesc) {
-        this.time = time;
-        this.imageURL = imageURL;
-        this.author = author;
-        this.heading = heading;
-        this.shortDesc = shortDesc;
-        this.longDesc = longDesc;
-    }
-
-    protected Feed(Parcel in) {
-        time = in.readString();
-        imageURL = in.readString();
-        author = in.readString();
-        heading = in.readString();
-        shortDesc = in.readString();
-        longDesc = in.readString();
-    }
 
     public static final Creator<Feed> CREATOR = new Creator<Feed>() {
         @Override
@@ -72,6 +23,63 @@ public class Feed implements Parcelable {
             return new Feed[size];
         }
     };
+    public int starCount = 0;
+    public String contact; //Comma separated
+    public Map<String, Boolean> stars = new HashMap<>();
+    private String time;
+    private String imageURL;
+    private String author;
+    private String heading;
+    private String shortDesc;
+    private String longDesc;
+    private String logo;
+    private String club;
+
+    public Feed() {
+    }
+
+    public Feed(String time, String imageURL, String author, String heading, String shortDesc, String longDesc, String logo, String club, String contact) {
+        this.time = time;
+        this.imageURL = imageURL;
+        this.author = author;
+        this.heading = heading;
+        this.shortDesc = shortDesc;
+        this.longDesc = longDesc;
+        this.logo = logo;
+        this.club = club;
+        this.contact = contact;
+    }
+
+    protected Feed(Parcel in) {
+        time = in.readString();
+        imageURL = in.readString();
+        author = in.readString();
+        heading = in.readString();
+        shortDesc = in.readString();
+        longDesc = in.readString();
+        logo = in.readString();
+        club = in.readString();
+        starCount = in.readInt();
+        contact = in.readString();
+    }
+
+    public String getLogo() {
+        return logo;
+    }
+
+    public void setLogo(String logo) {
+        this.logo = logo;
+    }
+
+    public String getClub() {
+        return club;
+    }
+
+    public void setClub(String club) {
+        this.club = club;
+    }
+
+
 
     public String getTime() {
         return time;
@@ -135,5 +143,9 @@ public class Feed implements Parcelable {
         parcel.writeString(heading);
         parcel.writeString(shortDesc);
         parcel.writeString(longDesc);
+        parcel.writeString(logo);
+        parcel.writeString(club);
+        parcel.writeInt(starCount);
+        parcel.writeString(contact);
     }
 }

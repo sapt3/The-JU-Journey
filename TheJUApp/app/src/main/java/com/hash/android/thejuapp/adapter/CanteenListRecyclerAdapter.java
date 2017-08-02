@@ -3,6 +3,7 @@ package com.hash.android.thejuapp.adapter;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Parcelable;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -91,7 +92,7 @@ public class CanteenListRecyclerAdapter extends RecyclerView.Adapter<CanteenList
             public void onClick(View view) {
                 Log.d(TAG, "itemView:: " + position);
                 Intent i = new Intent(context, CanteenMenu.class);
-                i.putExtra(INTENT_KEY, mArrayList.get(position).getKey());
+                i.putExtra(INTENT_KEY, (Parcelable) mArrayList.get(holder.getAdapterPosition()));
                 context.startActivity(i);
             }
         });
@@ -125,6 +126,7 @@ public class CanteenListRecyclerAdapter extends RecyclerView.Adapter<CanteenList
     class ViewHolder extends RecyclerView.ViewHolder {
         TextView canteenNameTextView, campusTextView, locationTextView;
         Button naviagateButton;
+//        ImageView canteenImageView;
 
         ViewHolder(View itemView) {
             super(itemView);
@@ -132,6 +134,7 @@ public class CanteenListRecyclerAdapter extends RecyclerView.Adapter<CanteenList
             campusTextView = itemView.findViewById(R.id.campusTextView);
             locationTextView = itemView.findViewById(R.id.locationTextView);
             naviagateButton = itemView.findViewById(R.id.navigateButton);
+//            canteenImageView = itemView.findViewById(R.id.canteenImageView);
 
         }
 
@@ -139,6 +142,7 @@ public class CanteenListRecyclerAdapter extends RecyclerView.Adapter<CanteenList
         void bind(int position) {
             canteenNameTextView.setText(mArrayList.get(position).getCanteenName());
             campusTextView.setText(mArrayList.get(position).getCampus());
+//            canteenImageView.setImageResource(mArrayList.get(position).image);
             try {
                 locationTextView.setText(String.format("%.1f", mArrayList.get(position).getLocation()) + " Km away");
             } catch (Exception e) {

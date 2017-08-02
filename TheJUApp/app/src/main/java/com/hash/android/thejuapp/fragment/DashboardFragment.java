@@ -2,6 +2,7 @@ package com.hash.android.thejuapp.fragment;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityOptionsCompat;
@@ -14,7 +15,11 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.LinearSnapHelper;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -22,15 +27,16 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
 import com.firebase.ui.database.FirebaseIndexRecyclerAdapter;
-import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.analytics.FirebaseAnalytics;
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.messaging.FirebaseMessaging;
+import com.hash.android.thejuapp.ClubActivity;
 import com.hash.android.thejuapp.DashboardActivity;
 import com.hash.android.thejuapp.DetailsFeedActivity;
 import com.hash.android.thejuapp.ExploreActivity;
 import com.hash.android.thejuapp.HelperClass.PreferenceManager;
+import com.hash.android.thejuapp.Model.Club;
 import com.hash.android.thejuapp.Model.Feed;
 import com.hash.android.thejuapp.Model.Topic;
 import com.hash.android.thejuapp.Model.Update;
@@ -48,10 +54,14 @@ import java.util.Locale;
 import java.util.TimeZone;
 import java.util.concurrent.ExecutionException;
 
+import static android.support.v4.app.ActivityOptionsCompat.makeSceneTransitionAnimation;
+import static android.view.View.GONE;
 import static com.hash.android.thejuapp.ExploreActivity.CANTEEN_FRAGMENT;
+import static com.hash.android.thejuapp.ExploreActivity.EVENTS_FRAGMENT;
 import static com.hash.android.thejuapp.ExploreActivity.EXTRA_CLASS_NAME;
 import static com.hash.android.thejuapp.ExploreActivity.LEADERBOARD_FRAGMENT;
 import static com.hash.android.thejuapp.ExploreActivity.MAGAZINE_FRAGMENT;
+import static com.hash.android.thejuapp.ExploreActivity.PROFILE;
 import static com.hash.android.thejuapp.ExploreActivity.STUDENT_FRAGMENT;
 import static com.hash.android.thejuapp.adapter.FeedRecyclerAdapter.INTENT_EXTRA_FEED;
 import static com.hash.android.thejuapp.adapter.StudentProfileRecyclerAdapter.INTENT_EXTRA_USER;
@@ -60,7 +70,6 @@ import static com.hash.android.thejuapp.adapter.StudentProfileRecyclerAdapter.IN
 public class DashboardFragment extends Fragment {
 
     private static final int TAG_CANTEEN = 1;
-    private static final int TAG_PHOTO = 2;
     private static final int TAG_STUDENT = 3;
     private static final int TAG_MAGAZINE = 4;
     private static final int TAG_EVENTS = 5;
@@ -68,12 +77,14 @@ public class DashboardFragment extends Fragment {
     private static final int TAG_LEADERBOARD = 6;
     private final String TAG = DashboardActivity.class.getSimpleName();
     private final String URL_NAV_BACKGROUND = "http://api.androidhive.info/images/nav-menu-header-bg.jpg";
-    public FirebaseRecyclerAdapter<Feed, FeedHolder> mAdapter;
+    public FirebaseIndexRecyclerAdapter<Feed, FeedHolder> mAdapter;
     public FirebaseIndexRecyclerAdapter<Update, UpdateHolder> updatesAdapter;
     ArrayList<Feed> mFeedList = new ArrayList<>();
     PreferenceManager mPrefsManager;
+    private String journal = "https://firebasestorage.googleapis.com/v0/b/the-ju-app.appspot.com/o/club_logo%2Fjournal%20logo%20(Small).jpg?alt=media&token=2c5eba1a-8f55-43ec-8912-4b5373f4bb67";
     private ArrayList<Topic> topicsArrayList = new ArrayList<>();
     private CardView cardView;
+    private float px;
 
     public DashboardFragment() {
     }
@@ -99,6 +110,7 @@ public class DashboardFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getActivity().setTitle("juX");
+        this.setHasOptionsMenu(true);
     }
 
     @Override
@@ -143,14 +155,13 @@ public class DashboardFragment extends Fragment {
 //        return super.onCreateView(inflater, container, savedInstanceState);
         View rootView = inflater.inflate(R.layout.fragment_dashboard, container, false);
 
-        FirebaseMessaging.getInstance().subscribeToTopic("news");
+        Resources r = getResources();
+        px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 180, r.getDisplayMetrics());
         mPrefsManager = new PreferenceManager(getActivity());
 
 
         //If this message has been shown before then quickly skip this when layout is inflated.
 
-        final PreferenceManager mPrefsManager = new PreferenceManager(getActivity());
-        User user = mPrefsManager.getUser();
         //User class has access to all the variables accessed by the user.
 
 
@@ -158,7 +169,7 @@ public class DashboardFragment extends Fragment {
         Button noNotifications = rootView.findViewById(R.id.noNotificationsButton);
         cardView = rootView.findViewById(R.id.cardView);
         if (mPrefsManager.isNotificationEnabled()) {
-            cardView.setVisibility(View.GONE);
+            cardView.setVisibility(GONE);
         }
 
         final ProgressBar progressBar = rootView.findViewById(R.id.feedRecyclerViewProgressView);
@@ -167,7 +178,7 @@ public class DashboardFragment extends Fragment {
             @Override
             public void onClick(View view) {
 
-                cardView.setVisibility(View.GONE);
+                cardView.setVisibility(GONE);
                 mPrefsManager.setNotificationPrefs(true);
             }
         });
@@ -175,7 +186,7 @@ public class DashboardFragment extends Fragment {
         noNotifications.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                cardView.setVisibility(View.GONE);
+                cardView.setVisibility(GONE);
                 mPrefsManager.setNotificationPrefs(false);
             }
         });
@@ -216,6 +227,11 @@ public class DashboardFragment extends Fragment {
                         startActivity(intent2);
                         break;
 
+                    case TAG_EVENTS:
+                        Intent intent3 = new Intent(getActivity(), ExploreActivity.class);
+                        intent3.putExtra(EXTRA_CLASS_NAME, EVENTS_FRAGMENT);
+                        startActivity(intent3);
+                        break;
 
                 }
 
@@ -251,7 +267,7 @@ public class DashboardFragment extends Fragment {
         ) {
             @Override
             protected void populateViewHolder(final UpdateHolder viewHolder, final Update model, final int position) {
-                mLayout.setVisibility(View.GONE);
+                mLayout.setVisibility(GONE);
                 Log.d(TAG, "populateViewHolder:: " + model.title);
                 viewHolder.bind(model, getActivity());
                 final int size = updatesAdapter.getItemCount();
@@ -276,7 +292,7 @@ public class DashboardFragment extends Fragment {
                         Intent i = new Intent(getActivity(), ProfileActivity.class);
                         i.putExtra(INTENT_EXTRA_USER, user);
                         Pair<View, String> pair1 = Pair.create((View) viewHolder.avatar, "profileTrans");
-                        ActivityOptionsCompat optionsCompat = ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity(), pair1);
+                        ActivityOptionsCompat optionsCompat = makeSceneTransitionAnimation(getActivity(), pair1);
                         viewHolder.avatar.getContext().startActivity(i, optionsCompat.toBundle());
                     }
                 });
@@ -304,8 +320,14 @@ public class DashboardFragment extends Fragment {
             @Override
             public void onDataChanged() {
                 super.onDataChanged();
+                int size = updatesAdapter.getItemCount();
+                try {
+                    announcementsRecyclerView.smoothScrollToPosition(size);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 Log.d(TAG, "position item:: " + updatesAdapter.getItemCount());
-                if (updatesAdapter.getItemCount() == 0) {
+                if (size == 0) {
                     mLayout.setVisibility(View.VISIBLE);
                 }
             }
@@ -314,7 +336,7 @@ public class DashboardFragment extends Fragment {
         updatesAdapter.notifyDataSetChanged();
         announcementsRecyclerView.setAdapter(updatesAdapter);
 
-        RecyclerView feedRecyclerView = rootView.findViewById(R.id.feedRecyclerView);
+        final RecyclerView feedRecyclerView = rootView.findViewById(R.id.feedRecyclerView);
         LinearLayoutManager manager = new LinearLayoutManager(getActivity());
         manager.setReverseLayout(true);
         manager.setStackFromEnd(true);
@@ -329,32 +351,64 @@ public class DashboardFragment extends Fragment {
         final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault());
         sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
         String uid = new PreferenceManager(getActivity()).getUID();
-//        DatabaseReference keyRef = mRef.child("users").child(uid).child("bookmarks").getRef();
+        DatabaseReference keyRef2 = mRef.child("postKeys").getRef();
+//        feedRecyclerView.setVisibility(GONE);
+//        new CountDownTimer(2500, 500) {
+//
+//            @Override
+//            public void onTick(long l) {
+//
+//            }
+//
+//            @Override
+//            public void onFinish() {
+//                progressBar.setVisibility(GONE);
+//                feedRecyclerView.setVisibility(View.VISIBLE);
+//            }
+//        }.start();
 
-        mAdapter = new FirebaseRecyclerAdapter<Feed, FeedHolder>(
+        mAdapter = new FirebaseIndexRecyclerAdapter<Feed, FeedHolder>(
                 Feed.class,
-                R.layout.recycler_child_feed,
+                R.layout.recycler_child_new_feed,
                 FeedHolder.class,
+                keyRef2,
                 ref) {
             @Override
-            protected void populateViewHolder(FeedHolder viewHolder, Feed model, int position) {
-                progressBar.setVisibility(View.GONE);
-                viewHolder.setAd(false);
-                Log.d(TAG, "populateViewHolder:: " + model.getHeading());
-                viewHolder.setAuthor(model.getAuthor());
-                viewHolder.setImage(model.getImageURL(), getActivity());
-                viewHolder.setHeading(model.getHeading());
-                viewHolder.setShortDesc(model.getShortDesc());
-                viewHolder.setTime(model.getTime(), sdf);
-
+            public void onChildChanged(EventType type, DataSnapshot snapshot, int index, int oldIndex) {
+                super.onChildChanged(type, snapshot, index, oldIndex);
+                if (type == EventType.ADDED) {
+                    feedRecyclerView.smoothScrollToPosition(mAdapter.getItemCount());
+                }
             }
 
             @Override
-            public FeedHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-                FeedHolder viewHolder = super.onCreateViewHolder(parent, viewType);
-                viewHolder.setOnClickListener(new FeedHolder.ClickListener() {
+            public void onDataChanged() {
+                super.onDataChanged();
+            }
+
+            @Override
+            protected void populateViewHolder(final FeedHolder viewHolder, final Feed model, int position) {
+
+                viewHolder.setAd(false);
+                if (position == mAdapter.getItemCount())
+                    progressBar.setVisibility(GONE);
+                viewHolder.setLogo((model.getLogo() != null) ? model.getLogo() : journal, getActivity());
+                viewHolder.setTag((model.getClub() != null) ? model.getClub() : "@jujournal");
+                Log.d(TAG, "populateViewHolder:: " + model.getHeading());
+                viewHolder.setAuthor(model.getAuthor());
+                if (model.getImageURL().length() > 0) {
+                    viewHolder.image.requestLayout();
+                    viewHolder.image.getLayoutParams().height = (int) px;
+                    viewHolder.image.setVisibility(View.VISIBLE);
+                    viewHolder.setImage(model.getImageURL(), getActivity());
+                } else viewHolder.image.setVisibility(GONE);
+                viewHolder.setHeading(model.getHeading());
+                viewHolder.setShortDesc(model.getShortDesc());
+                viewHolder.setTime(model.getTime(), sdf);
+                viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
-                    public void onItemClick(View view, int position) {
+                    public void onClick(View view) {
+                        int position = viewHolder.getAdapterPosition();
                         FirebaseAnalytics analytics = FirebaseAnalytics.getInstance(getActivity());
                         Bundle bundle = new Bundle();
                         bundle.putString(FirebaseAnalytics.Param.ITEM_ID, mAdapter.getRef(position).getKey());
@@ -366,28 +420,86 @@ public class DashboardFragment extends Fragment {
                         i.putExtra(INTENT_EXTRA_FEED, mAdapter.getItem(position));
                         i.putExtra(Intent.EXTRA_TEXT, mAdapter.getRef(position).getKey());
                         Pair<View, String> pair1 = Pair.create(view.findViewById(R.id.postImageView), "sharedImage");
-                        ActivityOptionsCompat optionsCompat = ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity(), pair1);
+                        ActivityOptionsCompat optionsCompat = makeSceneTransitionAnimation(getActivity(), pair1);
                         startActivity(i, optionsCompat.toBundle());
                     }
                 });
+
+
+                viewHolder.logo.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        int position = viewHolder.getAdapterPosition();
+                        Club club = new Club(mAdapter.getItem(position).getAuthor(), "https://www.facebook.com/juecell/", model.getClub(), model.getLogo());
+                        Intent i = new Intent(getActivity(), ClubActivity.class);
+                        i.putExtra("club", club);
+                        startActivity(i);
+                    }
+                });
+                progressBar.setVisibility(View.GONE);
+
+            }
+
+            @Override
+            public FeedHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+                FeedHolder viewHolder = super.onCreateViewHolder(parent, viewType);
+                viewHolder.image.setVisibility(GONE);
                 return viewHolder;
             }
 
 
         };
 
-
         mAdapter.notifyDataSetChanged();
         feedRecyclerView.setAdapter(mAdapter);
-
-
         return rootView;
     }
 
     @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        if (item.getItemId() == R.id.nav_profile_menu) {
+            Intent intent3 = new Intent(getActivity(), ExploreActivity.class);
+            intent3.putExtra(EXTRA_CLASS_NAME, PROFILE);
+            startActivity(intent3);
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    /**
+     * Initialize the contents of the Fragment host's standard options menu.  You
+     * should place your menu items in to <var>menu</var>.  For this method
+     * to be called, you must have first called {@link #setHasOptionsMenu}.  See
+     * {@link Activity#onCreateOptionsMenu(Menu) Activity.onCreateOptionsMenu}
+     * for more information.
+     *
+     * @param menu     The options menu in which you place your items.
+     * @param inflater
+     * @see #setHasOptionsMenu
+     * @see #onPrepareOptionsMenu
+     * @see #onOptionsItemSelected
+     */
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.menu_login, menu);
+        MenuItem item = menu.getItem(0);
+        item.setIcon(R.drawable.ic_person_white_24dp);
+
+    }
+
+    //    @Override
+//    public void onCreateOptionsMenu(Menu menu) {
+//
+    //
+//    }
+
+    @Override
     public void onDestroy() {
+
         super.onDestroy();
         mAdapter.cleanup();
         updatesAdapter.cleanup();
+
     }
 }

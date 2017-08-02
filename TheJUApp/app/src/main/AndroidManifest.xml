@@ -104,7 +104,26 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.hash.android.thejuapp.ExploreActivity" />
         </activity>
-        <activity android:name=".FacebookLogin"></activity>
+        <activity android:name=".FacebookLogin" />
+        <activity android:name=".PhoneNumberAuth" />
+        <activity
+            android:name=".ClubActivity"
+            android:label="@string/title_activity_club"
+            android:parentActivityName=".DashboardActivity"
+            android:theme="@style/AppTheme">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.hash.android.thejuapp.DashboardActivity" />
+        </activity>
+        <activity
+            android:name=".fragment.EventsDetailsActivity"
+            android:label="@string/title_activity_events_details"
+            android:parentActivityName=".ExploreActivity"
+            android:theme="@style/AppTheme">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.hash.android.thejuapp.ExploreActivity" />
+        </activity>
     </application>
 
 </manifest>

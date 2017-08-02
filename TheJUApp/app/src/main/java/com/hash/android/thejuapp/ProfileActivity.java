@@ -113,7 +113,7 @@ public class ProfileActivity extends AppCompatActivity {
             }
 
 
-            Button facebookButton = (Button) findViewById(R.id.facebookProfile);
+            Button facebookButton = (Button) findViewById(R.id.clubContactButton);
             facebookButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {

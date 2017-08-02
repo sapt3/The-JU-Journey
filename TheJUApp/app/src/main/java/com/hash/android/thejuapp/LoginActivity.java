@@ -1,6 +1,5 @@
 package com.hash.android.thejuapp;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
@@ -23,7 +22,6 @@ import android.widget.SpinnerAdapter;
 import android.widget.Toast;
 
 import com.firebase.ui.auth.AuthUI;
-import com.google.firebase.auth.FirebaseAuth;
 import com.hash.android.thejuapp.HelperClass.PreferenceManager;
 
 import java.util.ArrayList;
@@ -44,10 +42,6 @@ public class LoginActivity extends AppCompatActivity {
     RadioButton fetsuRB, artsRB, scienceRB;
     RadioGroup rg;
     Spinner departmentSpinner;
-    private FirebaseAuth mAuth;
-    private FirebaseAuth.AuthStateListener mAuthListener;
-    private ProgressDialog pd;
-    private boolean isDepartmentSelected = false;
     private String department;
     private String email;
 
@@ -60,10 +54,8 @@ public class LoginActivity extends AppCompatActivity {
             getWindow().getDecorView().setSystemUiVisibility(SYSTEM_UI_FLAG_LAYOUT_STABLE | SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
         changeStatusBarColor();
 
-        email = getIntent().getStringExtra("email");
+        email = new PreferenceManager(this).getEmail();
 
-        pd = new ProgressDialog(LoginActivity.this);
-        pd.setMessage("Signing you in...");
 
         phoneET = (EditText) findViewById(R.id.editTextPhone);
         yearOfPassingET = (EditText) findViewById(R.id.editTextYear);
@@ -119,6 +111,12 @@ public class LoginActivity extends AppCompatActivity {
             emailET.setFocusable(false);
         }
 
+        String phoneNumber = new PreferenceManager(LoginActivity.this).getPhoneNumber();
+        if (phoneNumber != null) {
+            phoneET.setText(phoneNumber);
+            phoneET.setEnabled(false);
+            phoneET.setFocusable(false);
+        }
         FloatingActionButton signInFab = (FloatingActionButton) findViewById(R.id.floatingActionButton2);
 
         signInFab.setOnClickListener(new OnClickListener() {
@@ -259,6 +257,7 @@ public class LoginActivity extends AppCompatActivity {
         mPrefsManager.setPromo(isOptInForPromo);
 
         startActivity(new Intent(this, DashboardActivity.class));
+        finish();
 
         mPrefsManager.setFlowCompleted(true);
 //        signIn();

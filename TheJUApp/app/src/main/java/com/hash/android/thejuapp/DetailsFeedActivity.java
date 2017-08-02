@@ -2,10 +2,15 @@ package com.hash.android.thejuapp;
 
 import android.content.Intent;
 import android.graphics.Typeface;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.Html;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -21,10 +26,15 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.MutableData;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 import com.hash.android.thejuapp.HelperClass.PreferenceManager;
 import com.hash.android.thejuapp.Model.Feed;
+import com.hash.android.thejuapp.Model.User;
+import com.hash.android.thejuapp.adapter.ContactRecyclerAdapter;
+
+import java.util.ArrayList;
 
 import static com.hash.android.thejuapp.adapter.FeedRecyclerAdapter.INTENT_EXTRA_FEED;
 
@@ -52,10 +62,13 @@ public class DetailsFeedActivity extends AppCompatActivity {
 
         }
     };
+    TextView contactUsTextView;
+    private ArrayList<User> mArrayListUser = new ArrayList<>();
     private String key;
     private String uid;
     private Feed feed;
     private DatabaseReference bookmarksRef;
+    private ContactRecyclerAdapter mAdapter;
 
     @Override
     protected void onPause() {
@@ -111,13 +124,25 @@ public class DetailsFeedActivity extends AppCompatActivity {
 
         key = i.getStringExtra(Intent.EXTRA_TEXT);
 
+        RecyclerView contactRecyclerView = (RecyclerView) findViewById(R.id.contactRecyclerView);
+        contactRecyclerView.setHasFixedSize(true);
+        contactRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        mAdapter = new ContactRecyclerAdapter(mArrayListUser);
+        contactRecyclerView.setAdapter(mAdapter);
+        contactRecyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
+        contactRecyclerView.setNestedScrollingEnabled(false);
+        contactUsTextView = (TextView) findViewById(R.id.contactUsTextView2);
+
+        updateList();
+
         TextView tx = (TextView) findViewById(R.id.contentTextView);
-        tx.setTextSize(16f);
         Typeface custom_font = Typeface.createFromAsset(getAssets(), "fonts/opensans.ttf");
-        //TODO: REPLACE THIS WITH ORIGINAL CONTENT.
-// tx.setText(feed.getLongDesc());
-        tx.setText(getString(R.string.lorem_ipsum));
+        //COMPLETED: REPLACE THIS WITH ORIGINAL CONTENT.
+//        tx.setText(feed.getLongDesc());
+        tx.setText(Html.fromHtml(feed.getLongDesc()));
+
         tx.setTypeface(custom_font);
+
         ImageView feedImage = (ImageView) findViewById(R.id.feedImageView);
         TextView heading = (TextView) findViewById(R.id.headingTextView);
         TextView author = (TextView) findViewById(R.id.authorTextView);
@@ -146,6 +171,7 @@ public class DetailsFeedActivity extends AppCompatActivity {
         bookmarksRef = FirebaseDatabase.getInstance().getReference().child("users").child(uid).child("bookmarks").child(key).getRef();
 
 
+
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.floatingActionButton3);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -153,6 +179,19 @@ public class DetailsFeedActivity extends AppCompatActivity {
                 onStarClicked(globalPostRef);
             }
         });
+    }
+
+    private void updateList() {
+        mArrayListUser.clear();
+        String uids = feed.contact;
+        if (uids != null && uids.length() > 0) {
+            String[] uid = uids.split(",");
+            new FindUserList().execute(uid); //Do in background
+        } else {
+            contactUsTextView.setVisibility(View.GONE);
+        }
+
+        mAdapter.notifyDataSetChanged();
     }
 
     private void onStarClicked(DatabaseReference postRef) {
@@ -226,8 +265,45 @@ public class DetailsFeedActivity extends AppCompatActivity {
         } else {
             bookmarksRef.setValue(true);
         }
+    }
 
+    private class FindUserList extends AsyncTask<String, Void, Void> {
 
-        //        mRef.setValue()
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            mAdapter.notifyDataSetChanged();
+        }
+
+        @Override
+        protected Void doInBackground(String... strings) {
+            for (final String string : strings) {
+                //TODO: Index data properly
+                String formattedString = string.trim();
+                Query mRef = FirebaseDatabase.getInstance().getReference("users").orderByChild("phoneNumber").equalTo(formattedString);
+                mRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        for (DataSnapshot shot : dataSnapshot.getChildren()) {
+                            try {
+                                User user = shot.getValue(User.class);
+                                Log.d(TAG, user.getName());
+                                mArrayListUser.add(user);
+
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                            mAdapter.notifyDataSetChanged();
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+            }
+            return null;
+        }
     }
 }

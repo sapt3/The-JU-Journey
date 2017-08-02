@@ -52,16 +52,17 @@ public class ProfileFragment extends android.support.v4.app.Fragment {
      */
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         getActivity().setTitle("My Profile");
-//        this.setHasOptionsMenu(true);
+        this.setHasOptionsMenu(false);
 
     }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.menu_profile, menu);
+//        super.onCreateOptionsMenu(menu, inflater);
+//        inflater.inflate(R.menu.menu_profile, menu);
     }
 
 //    @Override
@@ -120,7 +121,7 @@ public class ProfileFragment extends android.support.v4.app.Fragment {
         TextView yearOfJoiningTextView = rootView.findViewById(R.id.yearOfJoiningTextViewProfile);
         TextView emailTextView = rootView.findViewById(R.id.emailTextViewProfile);
         TextView facultyTextView = rootView.findViewById(R.id.facultyTextViewProfile);
-        Button facebook = rootView.findViewById(R.id.facebookProfile);
+        Button facebook = rootView.findViewById(R.id.clubContactButton);
         final ImageView privateButton = rootView.findViewById(R.id.privateAccessButton);
 
         final EditText statusEditText = rootView.findViewById(R.id.statusEditTextProfile);

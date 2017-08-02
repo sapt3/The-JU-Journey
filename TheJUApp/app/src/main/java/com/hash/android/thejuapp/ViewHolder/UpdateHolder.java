@@ -12,10 +12,6 @@ import com.hash.android.thejuapp.HelperClass.CircleTransform;
 import com.hash.android.thejuapp.Model.Update;
 import com.hash.android.thejuapp.R;
 
-/**
- * Created by Spandita Ghosh on 7/24/2017.
- */
-
 public class UpdateHolder extends RecyclerView.ViewHolder {
 
     public TextView priorityTV, updateTV;
@@ -29,7 +25,6 @@ public class UpdateHolder extends RecyclerView.ViewHolder {
         avatar = itemView.findViewById(R.id.avatarImage);
         leftNav = itemView.findViewById(R.id.leftNavigateRecyclerView);
         rightNav = itemView.findViewById(R.id.rightNavigateRecyclerView);
-
 
     }
 

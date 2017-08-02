@@ -17,6 +17,12 @@ public class PreferenceManager {
     private static final String PREFS_USER_UID = "uid";
     private static final String PREFS_USER_EMAIL = "mail";
     private static final String PREFS_USER_NOTIFICATION = "notification9";
+    private static final String PREFS_USER_NOTIFICATION_NEWS = "notificationNews";
+    private static final String PREFS_USER_NOTIFICATION_CLASS = "notificationClass";
+    private static final String PREFS_USER_NOTIFICATION_DEPARTMENT = "notificationDepartment";
+    private static final String PREFS_USER_NOTIFICATION_UNIVERSITY = "notificationUniversity";
+    private static final String PREFS_USER_NOTIFICATION_EVENTS = "notificationEvents";
+
     private static final String PREFS_LOCATION_ENABLED = "location";
     private static final String PREFS_NOTIFICATION_ID = "notificationID";
     private static final String PREFS_PENDING_INTENT_ID = "pendingIntentId";
@@ -31,6 +37,8 @@ public class PreferenceManager {
     private final static String PREFS_USER_PRIVATE = "private";
     private final static String PREFS_USER_FLOW_COMPLETED = "loginFlow";
     private final static String PREFS_USER_NOTIFICATION_KEY = "notificationKey";
+    private final static String PREFS_FACEBOOK_TOKEN = "fbtoken";
+
 
 
     private SharedPreferences mPrefs;
@@ -83,6 +91,47 @@ public class PreferenceManager {
         mEditor.apply();
     }
 
+    public boolean getPrefsUserNotificationNews() {
+        return mPrefs.getBoolean(PREFS_USER_NOTIFICATION_NEWS, true);
+    }
+
+    public void setPrefsUserNotificationNews(boolean name) {
+        mEditor = mPrefs.edit();
+        mEditor.putBoolean(PREFS_USER_NOTIFICATION_NEWS, name);
+        mEditor.apply();
+    }
+
+    public boolean getPrefsUserNotificationClass() {
+        return mPrefs.getBoolean(PREFS_USER_NOTIFICATION_CLASS, true);
+    }
+
+    public void setPrefsUserNotificationClass(boolean name) {
+        mEditor = mPrefs.edit();
+        mEditor.putBoolean(PREFS_USER_NOTIFICATION_CLASS, name);
+        mEditor.apply();
+    }
+
+    public boolean getPrefsUserNotificationDepartment() {
+        return mPrefs.getBoolean(PREFS_USER_NOTIFICATION_DEPARTMENT, true);
+    }
+
+    public void setPrefsUserNotificationDepartment(boolean name) {
+        mEditor = mPrefs.edit();
+        mEditor.putBoolean(PREFS_USER_NOTIFICATION_DEPARTMENT, name);
+        mEditor.apply();
+    }
+
+    public boolean getPrefsUserNotificationUniversity() {
+        return mPrefs.getBoolean(PREFS_USER_NOTIFICATION_UNIVERSITY, true);
+    }
+
+    public void setPrefsUserNotificationUniversity(boolean dept) {
+        mEditor = mPrefs.edit();
+        mEditor.putBoolean(PREFS_USER_NOTIFICATION_UNIVERSITY, dept);
+        mEditor.apply();
+    }
+
+
     public String getAbout() {
         return mPrefs.getString(PREFS_USER_ABOUT, "");
     }
@@ -93,6 +142,16 @@ public class PreferenceManager {
         mEditor.apply();
     }
 
+
+    public String getFacebookToken() {
+        return mPrefs.getString(PREFS_FACEBOOK_TOKEN, "");
+    }
+
+    public void setFacebookToken(String about) {
+        mEditor = mPrefs.edit();
+        mEditor.putString(PREFS_FACEBOOK_TOKEN, about);
+        mEditor.apply();
+    }
     public String getNotificationKey() {
         return mPrefs.getString(PREFS_USER_NOTIFICATION_KEY, "");
     }

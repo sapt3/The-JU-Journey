@@ -3,9 +3,12 @@ package com.hash.android.thejuapp.Model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.google.firebase.database.IgnoreExtraProperties;
+
 import java.util.HashMap;
 import java.util.Map;
 
+@IgnoreExtraProperties
 public class User implements Parcelable {
 
 
@@ -218,7 +221,6 @@ public class User implements Parcelable {
     public void setEmail(String email) {
         this.email = email;
     }
-
 
 
     @Override

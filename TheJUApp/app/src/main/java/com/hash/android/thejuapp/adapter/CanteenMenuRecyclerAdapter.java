@@ -4,6 +4,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -11,10 +12,6 @@ import com.hash.android.thejuapp.Model.MenuItem;
 import com.hash.android.thejuapp.R;
 
 import java.util.ArrayList;
-
-/**
- * Created by Spandita Ghosh on 7/11/2017.
- */
 
 public class CanteenMenuRecyclerAdapter extends RecyclerView.Adapter<CanteenMenuRecyclerAdapter.ViewHolder> {
     ArrayList<com.hash.android.thejuapp.Model.MenuItem> menuItemArrayList = new ArrayList<>();
@@ -69,9 +66,26 @@ public class CanteenMenuRecyclerAdapter extends RecyclerView.Adapter<CanteenMenu
      * @param position The position of the item within the adapter's data set.
      */
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
-        holder.itemPriceTV.setText(menuItemArrayList.get(position).itemPrice);
+    public void onBindViewHolder(final ViewHolder holder, int position) {
+        if (!menuItemArrayList.get(position).itemName.equals("")) {
+            holder.itemPriceTV.setText("Rs. " + menuItemArrayList.get(position).itemPrice);
+        } else {
+            holder.itemPriceTV.setVisibility(View.INVISIBLE);
+        }
         holder.itemNameTV.setText(menuItemArrayList.get(position).itemName);
+        holder.isSelectedCB.setChecked(menuItemArrayList.get(position).isItemSelected);
+        holder.isSelectedCB.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                menuItemArrayList.get(holder.getAdapterPosition()).isItemSelected = !menuItemArrayList.get(holder.getAdapterPosition()).isItemSelected;
+            }
+        });
+    }
+
+    public void setFilter(ArrayList<MenuItem> arrayList) {
+        menuItemArrayList.clear();
+        menuItemArrayList.addAll(arrayList);
+        notifyDataSetChanged();
     }
 
     /**
@@ -86,11 +100,13 @@ public class CanteenMenuRecyclerAdapter extends RecyclerView.Adapter<CanteenMenu
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         TextView itemPriceTV, itemNameTV;
+        CheckBox isSelectedCB;
 
         public ViewHolder(View itemView) {
             super(itemView);
             itemNameTV = itemView.findViewById(R.id.foodItemName);
             itemPriceTV = itemView.findViewById(R.id.foodItemPrice);
+            isSelectedCB = itemView.findViewById(R.id.isSelectedCheckBox);
         }
     }
 }

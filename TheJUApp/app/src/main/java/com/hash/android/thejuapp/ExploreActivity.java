@@ -9,8 +9,10 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
 import com.hash.android.thejuapp.fragment.CanteenListFragment;
+import com.hash.android.thejuapp.fragment.EventsTabsFragment;
 import com.hash.android.thejuapp.fragment.LeaderBoardFragment;
 import com.hash.android.thejuapp.fragment.MagazineFragment;
+import com.hash.android.thejuapp.fragment.ProfileFragment;
 import com.hash.android.thejuapp.fragment.StudentProfileFragment;
 
 public class ExploreActivity extends AppCompatActivity {
@@ -20,6 +22,8 @@ public class ExploreActivity extends AppCompatActivity {
     public static final String MAGAZINE_FRAGMENT = "magazine";
     public static final String STUDENT_FRAGMENT = "student";
     public static final String LEADERBOARD_FRAGMENT = "leaderboard";
+    public static final String EVENTS_FRAGMENT = "events";
+    public static final String PROFILE = "profile";
 
 
     @Override
@@ -64,7 +68,15 @@ public class ExploreActivity extends AppCompatActivity {
 
             case LEADERBOARD_FRAGMENT:
                 fragment = new LeaderBoardFragment();
+                break;
 
+            case EVENTS_FRAGMENT:
+                fragment = new EventsTabsFragment();
+                break;
+
+            case PROFILE:
+                fragment = new ProfileFragment();
+                break;
         }
 
         if (fragment != null) {
@@ -79,5 +91,6 @@ public class ExploreActivity extends AppCompatActivity {
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
+
 
 }

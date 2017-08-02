@@ -113,8 +113,8 @@ public class StudentProfileRecyclerAdapter extends RecyclerView.Adapter<StudentP
         public ViewHolder(View itemView) {
             super(itemView);
             nameTV = itemView.findViewById(R.id.nameTextView);
-            emailTV = itemView.findViewById(R.id.emailTextView);
-            classTV = itemView.findViewById(R.id.classOfTextView);
+//            emailTV = itemView.findViewById(R.id.emailTextView);
+//            classTV = itemView.findViewById(R.id.classOfTextView);
             profileIV = itemView.findViewById(R.id.profilePictureImageView);
             view = itemView;
         }

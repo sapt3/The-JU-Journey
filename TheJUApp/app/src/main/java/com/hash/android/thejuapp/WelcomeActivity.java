@@ -19,11 +19,12 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.firebase.database.FirebaseDatabase;
 import com.hash.android.thejuapp.HelperClass.PreferenceManager;
 
 public class WelcomeActivity extends AppCompatActivity {
 
-    ImageView imgView;
+    private ImageView imgView;
     private ViewPager viewPager;
     private LinearLayout dotsLayout;
     private int[] layouts;
@@ -32,10 +33,15 @@ public class WelcomeActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        try {
+            FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         if (!new PreferenceManager(this).isFirstTimeLaunch()) {
             startActivity(new Intent(this, FacebookLogin.class));
             WelcomeActivity.this.overridePendingTransition(0, 0);
-
+            finish();
         }
     }
 

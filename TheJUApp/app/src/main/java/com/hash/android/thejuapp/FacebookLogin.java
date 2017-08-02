@@ -2,15 +2,13 @@ package com.hash.android.thejuapp;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.graphics.Color;
-import android.os.Build;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.AccessToken;
@@ -31,16 +29,23 @@ import java.util.Arrays;
 public class FacebookLogin extends AppCompatActivity implements View.OnClickListener {
 
     private static final int RC_SIGN_IN = 12344;
+    private static final int RC_SIGN_IN_PHONE = 1234;
 
     private static final String TAG = FacebookLogin.class.getSimpleName();
+    private static AccessToken token;
     ImageView loginWithFacebook;
-
     private ProgressDialog pd;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_facebook_login);
+        TextView welcome, create;
+        Typeface custom_font = Typeface.createFromAsset(getAssets(), "fonts/opensans.ttf");
+        welcome = (TextView) findViewById(R.id.welcomeTextViewLogin);
+        create = (TextView) findViewById(R.id.createAccountTextViewLogin);
+        welcome.setTypeface(custom_font);
+        create.setTypeface(custom_font);
         loginWithFacebook = (ImageView) findViewById(R.id.loginWithFacebookButton);
         loginWithFacebook.setOnClickListener(this);
         pd = new ProgressDialog(FacebookLogin.this);
@@ -57,30 +62,19 @@ public class FacebookLogin extends AppCompatActivity implements View.OnClickList
     @Override
     protected void onStop() {
         super.onStop();
-//        if(pd != null){
-//            if(pd.isShowing())  pd.dismiss();
-//        }
     }
 
     @Override
     protected void onStart() {
         super.onStart();
+
         FirebaseAuth auth = FirebaseAuth.getInstance();
         final FirebaseUser user = auth.getCurrentUser();
         if (user != null && new PreferenceManager(this).isFlowCompleted()) {
-            AccessToken token = AccessToken.getCurrentAccessToken();
-
-            fetchGraphData(token);
-
-//            PreferenceManager mPrefsManager = new PreferenceManager(FacebookLogin.this);
-//            mPrefsManager.setUID(user.getUid());
-//            mPrefsManager.setEmail(user.getEmail());
-//            mPrefsManager.setPhotoURL(user.getPhotoUrl().toString());
-            Log.d(TAG, "PHOTO URL: " + user.getPhotoUrl().toString());
-            Log.d(TAG, "Sign in successful");
             Intent i = new Intent(FacebookLogin.this, DashboardActivity.class);
             FacebookLogin.this.overridePendingTransition(0, 0);
             startActivity(i);
+            finish();
         }
     }
 
@@ -125,13 +119,6 @@ public class FacebookLogin extends AppCompatActivity implements View.OnClickList
     }
 
 
-    private void changeStatusBarColor() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            Window window = getWindow();
-            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-            window.setStatusBarColor(Color.TRANSPARENT);
-        }
-    }
 
     private void signIn() {
 
@@ -153,6 +140,25 @@ public class FacebookLogin extends AppCompatActivity implements View.OnClickList
         pd.show();
     }
 
+
+    private void verifyPhone() {
+
+        startActivityForResult(
+                AuthUI.getInstance()
+                        .createSignInIntentBuilder()
+                        .setAvailableProviders(
+                                Arrays.asList(
+                                        new AuthUI.IdpConfig.Builder(AuthUI.PHONE_VERIFICATION_PROVIDER).build()
+                                )
+                        )
+                        .build()
+                , RC_SIGN_IN_PHONE
+        );
+        pd.hide();
+        pd.setMessage("Verifying your phone number!");
+        pd.show();
+    }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -162,9 +168,9 @@ public class FacebookLogin extends AppCompatActivity implements View.OnClickList
 
             // Successfully signed in
             if (resultCode == ResultCodes.OK) {
-                AccessToken token = AccessToken.getCurrentAccessToken();
+                token = AccessToken.getCurrentAccessToken();
+                new PreferenceManager(FacebookLogin.this).setFacebookToken(token.toString());
                 final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-
                 if (user != null) {
 
                     fetchGraphData(token);
@@ -172,12 +178,60 @@ public class FacebookLogin extends AppCompatActivity implements View.OnClickList
                     mPrefsManager.setUID(user.getUid());
                     mPrefsManager.setEmail(user.getEmail());
                     mPrefsManager.setPhotoURL(user.getPhotoUrl().toString());
+//                    Intent i = new Intent(FacebookLogin.this, LoginActivity.class);
+//                    if (user.getEmail() != null) {
+//                        i.putExtra("email", user.getEmail());
+//                    }
+                    FirebaseAuth.getInstance().signOut();
+                    verifyPhone();
+//                    FacebookLogin.this.overridePendingTransition(0, 0);
+//                    AuthCredential credential = FacebookAuthProvider.getCredential(token.toString());
+//                    i.putExtra("credential", credential);
+//                    startActivity(i);
+//                    finish();
+
+                } else {
+                    Toast.makeText(this, "Failed to sign in", Toast.LENGTH_SHORT).show();
+
+                }
+
+//                finish();
+                return;
+            } else {
+                // Sign in failed
+                if (response == null) {
+                    // User pressed back button
+                    Toast.makeText(this, "Sign in cancelled!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                if (response.getErrorCode() == ErrorCodes.NO_NETWORK) {
+                    Toast.makeText(this, "No internet connection", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                if (response.getErrorCode() == ErrorCodes.UNKNOWN_ERROR) {
+                    Toast.makeText(this, "Unknown Error", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+            }
+
+
+            Toast.makeText(this, "Unknown Error", Toast.LENGTH_SHORT).show();
+        } else if (requestCode == RC_SIGN_IN_PHONE) {
+
+            IdpResponse response = IdpResponse.fromResultIntent(data);
+
+            // Successfully signed in
+            if (resultCode == ResultCodes.OK) {
+                final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                if (user != null) {
+                    new PreferenceManager(FacebookLogin.this).setPhoneNumber(user.getPhoneNumber());
                     Intent i = new Intent(FacebookLogin.this, LoginActivity.class);
-                    if (user.getEmail() != null) {
-                        i.putExtra("email", user.getEmail());
-                    }
                     FacebookLogin.this.overridePendingTransition(0, 0);
                     startActivity(i);
+                    finish();
+
 
                 } else {
                     Toast.makeText(this, "Failed to sign in", Toast.LENGTH_SHORT).show();
@@ -208,6 +262,7 @@ public class FacebookLogin extends AppCompatActivity implements View.OnClickList
 
             Toast.makeText(this, "Unknown Error", Toast.LENGTH_SHORT).show();
         }
+
         pd.hide();
         pd.dismiss();
     }

@@ -32,8 +32,10 @@ import com.hash.android.thejuapp.Model.User;
 import com.hash.android.thejuapp.fragment.BookmarksFragment;
 import com.hash.android.thejuapp.fragment.CanteenListFragment;
 import com.hash.android.thejuapp.fragment.DashboardFragment;
+import com.hash.android.thejuapp.fragment.EventsTabsFragment;
 import com.hash.android.thejuapp.fragment.MagazineFragment;
 import com.hash.android.thejuapp.fragment.ProfileFragment;
+import com.hash.android.thejuapp.fragment.SettingsFragment;
 
 import java.util.concurrent.ExecutionException;
 
@@ -166,6 +168,7 @@ public class DashboardActivity extends AppCompatActivity
             case R.id.nav_bookmarks:
                 fragment = new BookmarksFragment();
                 break;
+
             case R.id.nav_canteen:
                 fragment = new CanteenListFragment();
                 break;
@@ -174,11 +177,17 @@ public class DashboardActivity extends AppCompatActivity
                 fragment = new ProfileFragment();
                 break;
 
-
             case R.id.nav_eMagazine:
                 fragment = new MagazineFragment();
+                break;
 
+            case R.id.nav_settings:
+                fragment = new SettingsFragment();
+                break;
 
+            case R.id.nav_events:
+                fragment = new EventsTabsFragment();
+                break;
         }
 
         if (fragment != null) {

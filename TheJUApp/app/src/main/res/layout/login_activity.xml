@@ -58,7 +58,7 @@
 
 
         <TextView
-            android:id="@+id/radiogrouo"
+            android:id="@+id/createAccountTextViewLogin"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
@@ -91,7 +91,7 @@
             android:textColorHint="@android:color/white"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/radiogrouo">
+            app:layout_constraintTop_toBottomOf="@+id/createAccountTextViewLogin">
 
             <EditText
                 android:id="@+id/editText2"
