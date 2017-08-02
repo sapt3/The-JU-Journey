@@ -1,35 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="100dp"
-    android:layout_marginRight="8dp"
     android:layout_marginBottom="8dp"
-    android:layout_marginLeft="8dp">
+    android:layout_marginLeft="8dp"
+    android:layout_marginRight="8dp"
+    android:orientation="vertical">
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
 
-        <ImageView
-            android:id="@+id/imageView"
-            android:layout_width="75dp"
-            android:layout_height="75dp"
-            android:layout_alignParentStart="true"
-            android:layout_centerVertical="true"
-            android:layout_margin="8dp"
-            android:background="#02CCBA" />
+    <ImageView
+        android:id="@+id/canteenImageView"
+        android:layout_width="100dp"
+        android:layout_height="0dp"
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true"
+        android:layout_margin="8dp"
+        android:layout_marginBottom="0dp"
+        android:layout_marginLeft="0dp"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="0dp"
+        android:background="@color/notificationPrimary"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/canteenNameTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignTop="@+id/imageView"
-            android:layout_toEndOf="@+id/imageView"
-            android:text="Suruchi Canteen"
-            android:textColor="@color/colorAccent"
-            android:textSize="24sp" />
+    <TextView
+        android:id="@+id/canteenNameTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/canteenImageView"
+        android:layout_marginLeft="12dp"
+        android:layout_marginTop="0dp"
+        android:layout_toEndOf="@+id/canteenImageView"
+        android:text="Suruchi Canteen"
+        android:textColor="@android:color/black"
+        android:textSize="24sp"
+        app:layout_constraintLeft_toRightOf="@+id/canteenImageView"
+        app:layout_constraintTop_toTopOf="@+id/canteenImageView" />
 
         <TextView
             android:id="@+id/campusTextView"
@@ -37,33 +45,44 @@
             android:layout_height="wrap_content"
             android:layout_alignStart="@+id/canteenNameTextView"
             android:layout_below="@+id/canteenNameTextView"
-            android:text="Jadavpur University " />
+            android:layout_marginLeft="0dp"
+            android:layout_marginTop="4dp"
+            android:text="Jadavpur University "
+            app:layout_constraintLeft_toLeftOf="@+id/canteenNameTextView"
+            app:layout_constraintTop_toBottomOf="@+id/canteenNameTextView" />
 
         <TextView
             android:id="@+id/locationTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/imageView"
+            android:layout_alignBottom="@+id/canteenImageView"
             android:layout_alignStart="@+id/campusTextView"
-            android:text="0.4 Km away" />
+            android:layout_marginLeft="0dp"
+            android:layout_marginTop="4dp"
+            android:text="0.4 Km away"
+            app:layout_constraintLeft_toLeftOf="@+id/campusTextView"
+            app:layout_constraintTop_toBottomOf="@+id/campusTextView" />
 
-        <Button
-            android:id="@+id/navigateButton"
-            android:layout_width="wrap_content"
-            android:layout_height="20dp"
-            android:layout_alignParentEnd="true"
-            android:layout_alignTop="@+id/locationTextView"
-            android:layout_marginEnd="7dp"
-            android:layout_marginRight="8dp"
-            android:background="#4285F4"
-            android:drawableLeft="@drawable/ic_directions_white_24px"
-            android:paddingLeft="4dp"
-            android:paddingRight="4dp"
-            android:text="Directions"
-            android:textColor="@android:color/white"
-            android:textSize="10sp" />
+    <Button
+        android:id="@+id/navigateButton"
+        android:layout_width="wrap_content"
+        android:layout_height="20dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignTop="@+id/locationTextView"
+        android:layout_marginBottom="0dp"
+        android:layout_marginEnd="0dp"
+        android:layout_marginRight="0dp"
+        android:layout_marginTop="8dp"
+        android:background="#4285F4"
+        android:drawableLeft="@drawable/ic_directions_white_24px"
+        android:padding="4dp"
+        android:text="Directions"
+        android:textColor="@android:color/white"
+        android:textSize="10sp"
+        app:layout_constraintBottom_toBottomOf="@+id/locationTextView"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/locationTextView"
+        app:layout_constraintVertical_bias="0.666" />
 
 
-    </RelativeLayout>
-
-</android.support.v7.widget.CardView>
+</android.support.constraint.ConstraintLayout>

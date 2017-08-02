@@ -33,28 +33,19 @@
                 app:popupTheme="@style/AppTheme.PopupOverlay" />
         </android.support.design.widget.AppBarLayout>
 
+
         <ImageView
             android:id="@+id/feedImageView"
             android:layout_width="0dp"
             android:layout_height="250dp"
+            android:layout_marginTop="0dp"
             android:scaleType="centerCrop"
             android:transitionName="sharedImage"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/photography" />
-
-        <TextView
-            android:id="@+id/exactTimeTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
-            android:text="Sat Jun 17, 2017 |"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/feedImageView" />
+            app:srcCompat="@drawable/placeholder" />
 
         <TextView
             android:id="@+id/headingTextView"
@@ -64,56 +55,43 @@
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
             android:layout_marginStart="16dp"
+            android:layout_marginTop="24dp"
             android:text="New Student profile launched"
             android:textColor="@android:color/black"
             android:textSize="24sp"
             android:textStyle="bold"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/exactTimeTextView" />
-
-        <TextView
-            android:id="@+id/textView8"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:text="by"
-            android:textColor="@color/colorAccent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/headingTextView" />
+            app:layout_constraintTop_toBottomOf="@+id/feedImageView" />
 
         <TextView
             android:id="@+id/contentTextView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="24dp"
             android:layout_marginEnd="16dp"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:text="@string/large_text"
+            android:layout_marginTop="8dp"
+            android:text="Hello world my name is Saptarshi Ghosh. A pleasure to meet you."
             android:textColor="@android:color/black"
             android:textSize="16sp"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/authorTextView"
-            app:layout_constraintVertical_bias="0.0" />
+            app:layout_constraintTop_toBottomOf="@+id/authorTextView" />
 
         <TextView
             android:id="@+id/authorTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="2dp"
-            android:layout_marginStart="2dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
             android:text="The JU Journal"
             android:textColor="@color/colorAccent"
-            app:layout_constraintLeft_toRightOf="@+id/textView8"
-            app:layout_constraintTop_toTopOf="@+id/textView8" />
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/headingTextView" />
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/floatingActionButton3"
@@ -139,5 +117,35 @@
             android:textColor="@color/colorAccent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/feedImageView" />
+
+        <TextView
+            android:id="@+id/contactUsTextView2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:text="CONTACT US"
+            android:textColor="@color/colorAccent"
+            android:textStyle="bold"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/contentTextView" />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/contactRecyclerView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginTop="16dp"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/contactUsTextView2" />
+
     </android.support.constraint.ConstraintLayout>
 </android.support.v4.widget.NestedScrollView>

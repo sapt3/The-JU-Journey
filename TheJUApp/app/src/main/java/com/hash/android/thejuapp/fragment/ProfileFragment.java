@@ -52,16 +52,17 @@ public class ProfileFragment extends android.support.v4.app.Fragment {
      */
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         getActivity().setTitle("My Profile");
-//        this.setHasOptionsMenu(true);
+        this.setHasOptionsMenu(false);
 
     }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.menu_profile, menu);
+//        super.onCreateOptionsMenu(menu, inflater);
+//        inflater.inflate(R.menu.menu_profile, menu);
     }
 
 //    @Override
@@ -99,7 +100,7 @@ public class ProfileFragment extends android.support.v4.app.Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 //        return super.onCreateView(inflater, container, savedInstanceState);
-        View rootView = inflater.inflate(R.layout.fragment_profile, container, false);
+        View rootView = inflater.inflate(R.layout.self_profile_layout, container, false);
 
         mPrefsManager = new PreferenceManager(getActivity());
         ImageView profileImageView = rootView.findViewById(R.id.profileImageViewProfile);
@@ -111,6 +112,7 @@ public class ProfileFragment extends android.support.v4.app.Fragment {
         Glide.with(this)
                 .load(profileImage)
                 .crossFade()
+                .placeholder(R.drawable.defaultdp)
                 .bitmapTransform(new CircleTransform(getActivity()))
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(profileImageView);
@@ -120,7 +122,7 @@ public class ProfileFragment extends android.support.v4.app.Fragment {
         TextView yearOfJoiningTextView = rootView.findViewById(R.id.yearOfJoiningTextViewProfile);
         TextView emailTextView = rootView.findViewById(R.id.emailTextViewProfile);
         TextView facultyTextView = rootView.findViewById(R.id.facultyTextViewProfile);
-        Button facebook = rootView.findViewById(R.id.facebookProfile);
+        Button facebook = rootView.findViewById(R.id.clubContactButton);
         final ImageView privateButton = rootView.findViewById(R.id.privateAccessButton);
 
         final EditText statusEditText = rootView.findViewById(R.id.statusEditTextProfile);
@@ -134,22 +136,21 @@ public class ProfileFragment extends android.support.v4.app.Fragment {
             //If about is not empty
             statusEditText.setText(mPrefsManager.getAbout());
         } else {
-            statusEditText.setText("Hey there! A pleasure to meet you. :)");
+            statusEditText.setText(R.string.placeholder_text);
         }
 
         editStatusButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (isEditing) {
-                    editStatusButton.setImageResource(R.drawable.ic_check_pink_24px);
+                    editStatusButton.setImageResource(R.drawable.ic_check_white_24px);
                     statusEditText.setEnabled(true);
                     isEditing = false;
                 } else {
                     editStatusButton.setImageResource(R.drawable.ic_edit_white_24dp);
                     statusEditText.setEnabled(false);
                     String rawStatus = statusEditText.getText().toString().trim();
-                    String formattedStatus = "\"" + rawStatus + "\""; //Enclose withing quotes
-                    mPrefsManager.setAbout(formattedStatus);
+                    mPrefsManager.setAbout(rawStatus);
 
                     mPrefsManager.saveUser();
                     isEditing = true;

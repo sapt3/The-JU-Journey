@@ -25,7 +25,6 @@ public class ProfileActivity extends AppCompatActivity {
 
 
     PreferenceManager mPrefsManager;
-    private String message;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,18 +44,18 @@ public class ProfileActivity extends AppCompatActivity {
             mPrefsManager = new PreferenceManager(this);
 
             TextView statusTextView = (TextView) findViewById(R.id.statusEditTextProfile);
-            statusTextView.setText(user.getAbout());
-
             if (!TextUtils.isEmpty(user.getAbout())) {
                 //If about is not empty
                 statusTextView.setText(user.getAbout());
             } else {
-                statusTextView.setText("Hey there! A pleasure to meet you. :)");
+                statusTextView.setText(R.string.placeholder_text);
             }
             ImageView profileImageView = (ImageView) findViewById(R.id.profileImageViewProfile);
+
             Glide.with(this)
                     .load(user.getPhotoURL())
                     .crossFade()
+                    .placeholder(R.drawable.defaultdp)
                     .bitmapTransform(new CircleTransform(this))
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .into(profileImageView);
@@ -71,13 +70,10 @@ public class ProfileActivity extends AppCompatActivity {
             //COMPLETED: Replace with original department
             if (user.getDepartment() != null) {
                 departmentTextView.setText(user.getDepartment());
-            } else {
-                //TODO: Remove this
-                departmentTextView.setText("Computer Science Engineering");
             }
 
             TextView yearOfJoining = (TextView) findViewById(R.id.yearOfJoiningTextViewProfile);
-            yearOfJoining.setText(user.getYearOfPassing());
+            yearOfJoining.setText("Class of " + user.getYearOfPassing());
 
             TextView emailTextView = (TextView) findViewById(R.id.emailTextViewProfile);
             emailTextView.setText(user.getEmail());
@@ -99,6 +95,7 @@ public class ProfileActivity extends AppCompatActivity {
             TextView privacyMessage = (TextView) findViewById(R.id.privacyMessageTextView);
             FrameLayout messageHolder = (FrameLayout) findViewById(R.id.messagePrivacyFrameLayout);
 
+            String message;
             if (user.isPrivate() && !mPrefsManager.isPrivate()) {
                 message = "You cannot see this phone number because the user has set it to private.";
                 privacyMessage.setText(message);
@@ -113,7 +110,7 @@ public class ProfileActivity extends AppCompatActivity {
             }
 
 
-            Button facebookButton = (Button) findViewById(R.id.facebookProfile);
+            Button facebookButton = (Button) findViewById(R.id.clubContactButton);
             facebookButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -124,16 +121,16 @@ public class ProfileActivity extends AppCompatActivity {
                 }
             });
 
-            ImageView emailButton = (ImageView) findViewById(R.id.emailButtonProfile);
-            emailButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
-                            "mailto", user.getEmail(), null));
-                    startActivity(Intent.createChooser(emailIntent, "Send email..."));
-
-                }
-            });
+//            ImageView emailButton = (ImageView) findViewById(R.id.emailButtonProfile);
+//            emailButton.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View view) {
+//                    Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
+//                            "mailto", user.getEmail(), null));
+//                    startActivity(Intent.createChooser(emailIntent, "Send email..."));
+//
+//                }
+//            });
 
 
         }

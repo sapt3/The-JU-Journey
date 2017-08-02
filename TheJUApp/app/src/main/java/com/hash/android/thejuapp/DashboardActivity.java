@@ -3,6 +3,7 @@ package com.hash.android.thejuapp;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -19,6 +20,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -30,25 +32,26 @@ import com.hash.android.thejuapp.HelperClass.CircleTransform;
 import com.hash.android.thejuapp.HelperClass.PreferenceManager;
 import com.hash.android.thejuapp.Model.User;
 import com.hash.android.thejuapp.fragment.BookmarksFragment;
-import com.hash.android.thejuapp.fragment.CanteenListFragment;
 import com.hash.android.thejuapp.fragment.DashboardFragment;
-import com.hash.android.thejuapp.fragment.MagazineFragment;
+import com.hash.android.thejuapp.fragment.InterestedEventsFragment;
 import com.hash.android.thejuapp.fragment.ProfileFragment;
+import com.hash.android.thejuapp.fragment.SettingsFragment;
 
 import java.util.concurrent.ExecutionException;
 
 public class DashboardActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-
     private static final String TAG = "DashboardActivity";
+    boolean doubleBackToExitPressedOnce = false;
     private Fragment fragment;
+    private DrawerLayout drawer;
+    private PreferenceManager mPrefs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard);
-
 
         if (savedInstanceState == null) {
             FragmentManager fragmentManager = getSupportFragmentManager();
@@ -60,12 +63,13 @@ public class DashboardActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        mPrefs = new PreferenceManager(this);
         String token = FirebaseInstanceId.getInstance().getToken();
         if (token != null) {
-            new PreferenceManager(this).setNotificationKey(token);
+            mPrefs.setNotificationKey(token);
         }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
@@ -81,50 +85,38 @@ public class DashboardActivity extends AppCompatActivity
         ImageView header = navHeader.findViewById(R.id.img_header_bg);
         ImageView profileImage = navHeader.findViewById(R.id.img_profile);
 
-        User user = new PreferenceManager(this).getUser();
+        User user = mPrefs.getUser();
         txtName.setText(user.getName());
         emailTextView.setText(user.getEmail());
 
-        header.setImageResource(R.drawable.navheader);
-//        Log.d(TAG, user.getCoverURL());
-//        Glide.with(this)
-//                .load(user.getCoverURL())
-//                .crossFade()
-//                .placeholder(R.drawable.navheader)
-//                .diskCacheStrategy(DiskCacheStrategy.ALL)
-//                .into(header);
-
+        header.setImageResource(R.drawable.nav);
 
         Glide.with(this)
                 .load(user.getPhotoURL())
                 .crossFade()
                 .thumbnail(0.5f)
+                .placeholder(R.drawable.defaultdp)
                 .bitmapTransform(new CircleTransform(this))
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(profileImage);
 
-
-//        "2016-06-18T19:43:03Z"
-//        try {
-//            long time = sdf.parse("2017-06-18T12:00:00.000Z").getTime();
-//            PrettyTime prettyTime = new PrettyTime(Locale.getDefault());
-//            Log.d(TAG, "Server Timestamp: +" + String.valueOf(ServerValue.TIMESTAMP));
-//            Log.d(TAG, "time: Long" + time);
-//            String ago = prettyTime.format(new Date(time));
-//            Log.d(TAG, "Time Ago: " + ago);
-//        } catch (ParseException e) {
-//            e.printStackTrace();
-//        }
+        profileImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                fragment = new ProfileFragment();
+                FragmentManager fragmentManager = getSupportFragmentManager();
+                fragmentManager
+                        .beginTransaction()
+                        .replace(R.id.frame_container, fragment)
+                        .commit();
+                if (drawer.isDrawerOpen(GravityCompat.START)) {
+                    drawer.closeDrawer(GravityCompat.START);
+                }
+            }
+        });
 
 
     }
-
-
-//    private void updateList() {
-//
-//        mFeedList.add(new Feed("2017-06-18T23:43:03Z", "https://firebasestorage.googleapis.com/v0/b/the-ju-app.appspot.com/o/brooke-lark-250695%20(Small).jpg?alt=media&token=83298d64-0ab4-4eda-bebd-d22fcb3b9cd4", "The JU Journal -", "Jadvpur University ranks 9th", "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut consectetur ipsum et tellus sollicitudin, non gravida leo fringilla. Nulla at massa quis erat lacinia egestas. Nam ac enim ante. Ut eu porttitor est, non venenatis nunc.", "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut consectetur ipsum et tellus sollicitudin, non gravida leo fringilla. Nulla at massa quis erat lacinia egestas. Nam ac enim ante. Ut eu porttitor est, non venenatis nunc. Nunc vitae diam sed dui ornare efficitur eu at dolor. Ut a molestie enim. Vestibulum laoreet non velit sit amet molestie. Suspendisse sit amet vulputate ligula. Vivamus volutpat quam eu metus placerat posuere. Aenean vel varius arcu."));
-//        mFeedList.add(new Feed("2017-06-18T19:43:03Z", "https://firebasestorage.googleapis.com/v0/b/srijan-17-e257c.appspot.com/o/ui_start%2Fmanageeimage.webp?alt=media&token=8ba6a505-e6e3-4cc0-9018-300e81b0ff85", "The JU Journal -", "Jadvpur University ranks 9th", "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut consectetur ipsum et tellus sollicitudin, non gravida leo fringilla. Nulla at massa quis erat lacinia egestas. Nam ac enim ante. Ut eu porttitor est, non venenatis nunc.", "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut consectetur ipsum et tellus sollicitudin, non gravida leo fringilla. Nulla at massa quis erat lacinia egestas. Nam ac enim ante. Ut eu porttitor est, non venenatis nunc. Nunc vitae diam sed dui ornare efficitur eu at dolor. Ut a molestie enim. Vestibulum laoreet non velit sit amet molestie. Suspendisse sit amet vulputate ligula. Vivamus volutpat quam eu metus placerat posuere. Aenean vel varius arcu."));
-//    }
 
 
     @Override
@@ -133,7 +125,22 @@ public class DashboardActivity extends AppCompatActivity
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            super.onBackPressed();
+            if (doubleBackToExitPressedOnce) {
+                super.onBackPressed();
+                return;
+            }
+
+            this.doubleBackToExitPressedOnce = true;
+            Toast.makeText(this, "Press back again to exit", Toast.LENGTH_SHORT).show();
+
+            new Handler().postDelayed(new Runnable() {
+
+                @Override
+                public void run() {
+                    doubleBackToExitPressedOnce = false;
+                }
+            }, 2000);
+//            super.onBackPressed();
         }
     }
 
@@ -154,7 +161,7 @@ public class DashboardActivity extends AppCompatActivity
                                 // user is now signed out
                                 startActivity(new Intent(DashboardActivity.this, FacebookLogin.class));
                                 finish();
-                                new PreferenceManager(DashboardActivity.this).setFlowCompleted(false);
+                                mPrefs.setFlowCompleted(false);
                             }
                         });
                 break;
@@ -166,19 +173,60 @@ public class DashboardActivity extends AppCompatActivity
             case R.id.nav_bookmarks:
                 fragment = new BookmarksFragment();
                 break;
-            case R.id.nav_canteen:
-                fragment = new CanteenListFragment();
+
+            case R.id.nav_interested_events:
+                fragment = new InterestedEventsFragment();
                 break;
 
+//            case R.id.nav_canteen:
+//                fragment = new CanteenListFragment();
+//                break;
+//
             case R.id.nav_profile:
                 fragment = new ProfileFragment();
                 break;
 
+//            case R.id.nav_eMagazine:
+//                fragment = new MagazineFragment();
+//                break;
 
-            case R.id.nav_eMagazine:
-                fragment = new MagazineFragment();
+//            case R.id.nav_student_directory:
+//                Intent intent1 = new Intent(this, ExploreActivity.class);
+//                intent1.putExtra(EXTRA_CLASS_NAME, STUDENT_FRAGMENT);
+//                startActivity(intent1);
+//                break;
 
+            case R.id.nav_settings:
+                fragment = new SettingsFragment();
+                break;
 
+//            case R.id.nav_events:
+//                fragment = new EventsTabsFragment();
+//                break;
+
+            case R.id.nav_ecell:
+                Intent i = new Intent(this, ClubActivity.class);
+                i.putExtra("club", "@juecell");
+                startActivity(i);
+                DrawerLayout drawer0 = (DrawerLayout) findViewById(R.id.drawer_layout);
+                drawer0.closeDrawer(GravityCompat.START);
+                return true;
+
+            case R.id.nav_journal:
+                Intent i1 = new Intent(this, ClubActivity.class);
+                i1.putExtra("club", "@jujournal");
+                startActivity(i1);
+                DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+                drawer.closeDrawer(GravityCompat.START);
+                return true;
+
+            case R.id.nav_science:
+                Intent i2 = new Intent(this, ClubActivity.class);
+                i2.putExtra("club", "@jusc");
+                startActivity(i2);
+                DrawerLayout drawer1 = (DrawerLayout) findViewById(R.id.drawer_layout);
+                drawer1.closeDrawer(GravityCompat.START);
+                return true;
         }
 
         if (fragment != null) {

@@ -157,5 +157,11 @@
     <string name="title_activity_magazine">MagazineActivity</string>
     <string name="title_activity_profile">ProfileActivity</string>
     <string name="lorem_ipsum">\"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi et pharetra quam, at aliquam ipsum. Praesent euismod purus vel massa elementum aliquet quis tempor velit. Suspendisse velit tellus, finibus vel sodales non, tincidunt vitae est. In quis nisi viverra, lacinia sem non, pellentesque nulla.\"\n\n\"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi et pharetra quam, at aliquam ipsum. Praesent euismod purus vel massa elementum aliquet quis tempor velit. Suspendisse velit tellus, finibus vel sodales non, tincidunt vitae est. In quis nisi viverra, lacinia sem non, pellentesque nulla.\"\n\n\"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi et pharetra quam, at aliquam ipsum. Praesent euismod purus vel massa elementum aliquet quis tempor velit. Suspendisse velit tellus, finibus vel sodales non, tincidunt vitae est. In quis nisi viverra, lacinia sem non, pellentesque nulla.\"\n\"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi et pharetra quam, at aliquam ipsum. Praesent euismod purus vel massa elementum aliquet quis tempor velit. Suspendisse velit tellus, finibus vel sodales non, tincidunt vitae est. In quis nisi viverra, lacinia sem non, pellentesque nulla.\"\n\n</string>
+    <string name="journal">\@jujournal</string>
+    <string name="title_activity_club">ClubActivity</string>
+    <string name="title_activity_events_details">EventsDetailsActivity</string>
+    <string name="placeholder_text">Hi! I am presently too lazy to come up with a creative descirption for myself, so I\'ll leave this default message here instead.</string>
+    <string name="unregister">UNREGISTER</string>
+    <string name="register">REGISTER</string>
 
 </resources>

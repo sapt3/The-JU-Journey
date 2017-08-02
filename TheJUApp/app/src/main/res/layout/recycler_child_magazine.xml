@@ -1,71 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_margin="8dp"
+    android:layout_width="280dp"
+    android:layout_height="match_parent"
+    android:layout_marginBottom="32dp"
+    android:layout_marginLeft="4dp"
+    android:layout_marginRight="12dp"
+    android:layout_marginTop="4dp"
     android:clickable="true"
     android:foreground="?android:attr/selectableItemBackground"
     app:cardCornerRadius="8dp"
     app:cardElevation="2dp">
 
-    <RelativeLayout
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="0dp"
+        android:orientation="vertical">
 
         <ImageView
             android:id="@+id/coverPageImageView"
-            android:layout_width="300dp"
-            android:layout_height="425dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
+            android:layout_weight="1"
             android:scaleType="fitXY"
             app:srcCompat="@drawable/magazine2" />
 
-        <TextView
-            android:id="@+id/editionTextView"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_below="@+id/coverPageImageView"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginStart="12dp"
-            android:paddingTop="0dp"
-            android:text="Edition 3.0"
-            android:textColor="@color/colorAccent"
-            android:textSize="24sp" />
+            android:layout_weight="0">
 
-        <TextView
-            android:id="@+id/editionPublishDateTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignStart="@+id/textView11"
-            android:layout_below="@+id/textView11"
-            android:layout_marginBottom="8dp"
-            android:layout_marginLeft="0dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginTop="6dp"
-            android:text="February, 2017"
-            android:textSize="14sp"
-            android:textStyle="bold" />
+            <TextView
+                android:id="@+id/editionTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_below="@+id/coverPageImageView"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginStart="12dp"
+                android:layout_weight="1"
+                android:padding="8dp"
+                android:text="Edition 3.0"
+                android:textColor="@android:color/black"
+                android:textSize="24sp" />
 
-        <TextView
-            android:id="@+id/textView11"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignEnd="@+id/editionTextView"
-            android:layout_below="@+id/coverPageImageView"
-            android:layout_marginTop="29dp"
-            android:text="by The JU Journal" />
+            <TextView
+                android:id="@+id/editionPublishDateTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_alignEnd="@+id/coverPageImageView"
 
-        <ImageView
-            android:id="@+id/downloadButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignEnd="@+id/coverPageImageView"
-            android:layout_alignTop="@+id/editionTextView"
-            android:layout_marginEnd="8dp"
-            app:srcCompat="@drawable/ic_file_download_black_24dp" />
-    </RelativeLayout>
+                android:layout_below="@+id/coverPageImageView"
+                android:layout_marginBottom="8dp"
+                android:layout_marginLeft="0dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginTop="16dp"
+                android:layout_weight="0"
+                android:text="February, 2017"
+                android:textSize="14sp" />
+        </LinearLayout>
+
+    </LinearLayout>
 </android.support.v7.widget.CardView>

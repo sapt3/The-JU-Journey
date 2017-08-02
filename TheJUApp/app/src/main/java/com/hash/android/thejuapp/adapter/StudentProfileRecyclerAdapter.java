@@ -8,7 +8,6 @@ import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v4.util.Pair;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,8 +22,6 @@ import com.hash.android.thejuapp.ProfileActivity;
 import com.hash.android.thejuapp.R;
 
 import java.util.ArrayList;
-
-import static com.facebook.GraphRequest.TAG;
 
 
 public class StudentProfileRecyclerAdapter extends RecyclerView.Adapter<StudentProfileRecyclerAdapter.ViewHolder> {
@@ -86,12 +83,16 @@ public class StudentProfileRecyclerAdapter extends RecyclerView.Adapter<StudentP
         holder.view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.d(TAG, mArrayList.get(holder.getAdapterPosition()).toString());
-                Intent i = new Intent(holder.view.getContext(), ProfileActivity.class);
-                i.putExtra(INTENT_EXTRA_USER, mArrayList.get(holder.getAdapterPosition()));
-                Pair<View, String> pair1 = Pair.create((View) holder.profileIV, "profileTrans");
-                ActivityOptionsCompat optionsCompat = ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) holder.emailTV.getContext(), pair1);
-                holder.view.getContext().startActivity(i, optionsCompat.toBundle());
+//                Log.d(TAG, mArrayList.get(holder.getAdapterPosition()).toString());
+                try {
+                    Intent i = new Intent(holder.view.getContext(), ProfileActivity.class);
+                    i.putExtra(INTENT_EXTRA_USER, mArrayList.get(holder.getAdapterPosition()));
+                    Pair<View, String> pair1 = Pair.create((View) holder.profileIV, "profileTrans");
+                    ActivityOptionsCompat optionsCompat = ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) holder.departmentTV.getContext(), pair1);
+                    holder.view.getContext().startActivity(i, optionsCompat.toBundle());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         });
     }
@@ -107,26 +108,25 @@ public class StudentProfileRecyclerAdapter extends RecyclerView.Adapter<StudentP
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        TextView nameTV, emailTV, classTV;
+        TextView nameTV, emailTV, departmentTV;
         ImageView profileIV;
         View view;
         public ViewHolder(View itemView) {
             super(itemView);
             nameTV = itemView.findViewById(R.id.nameTextView);
-            emailTV = itemView.findViewById(R.id.emailTextView);
-            classTV = itemView.findViewById(R.id.classOfTextView);
+            departmentTV = itemView.findViewById(R.id.departmentTextView);
             profileIV = itemView.findViewById(R.id.profilePictureImageView);
             view = itemView;
         }
 
         public void bind(int position) {
             nameTV.setText(mArrayList.get(position).getName());
-            emailTV.setText(mArrayList.get(position).getEmail());
-            classTV.setText("Class of " + mArrayList.get(position).getYearOfPassing());
+            departmentTV.setText(mArrayList.get(position).getDepartment());
             Glide.with(profileIV.getContext())
                     .load(mArrayList.get(position).getPhotoURL())
                     .asBitmap()
                     .centerCrop()
+                    .placeholder(R.drawable.defaultdp)
                     .into(new BitmapImageViewTarget(profileIV) {
                         /**
                          * Sets the {@link Bitmap} on the view using

@@ -44,7 +44,7 @@
             app:srcCompat="@drawable/ic_lock_open_black_24dp" />
 
         <Button
-            android:id="@+id/facebookProfile"
+            android:id="@+id/back"
             android:layout_width="wrap_content"
             android:layout_height="48dp"
             android:layout_margin="16dp"
@@ -105,7 +105,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="0dp"
                     android:hint="Status"
-                    android:text="@string/lorem_ipsum"
+                    android:text="Hello world"
                     android:textColor="@android:color/darker_gray"
                     android:textColorHighlight="#C6DAFC"
                     android:textColorLink="#C6DAFC"

@@ -1,6 +1,5 @@
 package com.hash.android.thejuapp;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
@@ -22,12 +21,9 @@ import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
 import android.widget.Toast;
 
-import com.firebase.ui.auth.AuthUI;
-import com.google.firebase.auth.FirebaseAuth;
 import com.hash.android.thejuapp.HelperClass.PreferenceManager;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import static android.view.View.OnClickListener;
 import static android.view.View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
@@ -37,20 +33,14 @@ import static android.view.View.VISIBLE;
 public class LoginActivity extends AppCompatActivity {
 
 
-    private static final int RC_SIGN_IN = 0;
     private static final String TAG = LoginActivity.class.getSimpleName();
     EditText phoneET, yearOfPassingET, emailET;
     CheckBox promoCB, termsCB;
     RadioButton fetsuRB, artsRB, scienceRB;
     RadioGroup rg;
     Spinner departmentSpinner;
-    private FirebaseAuth mAuth;
-    private FirebaseAuth.AuthStateListener mAuthListener;
-    private ProgressDialog pd;
-    private boolean isDepartmentSelected = false;
     private String department;
-    private String email;
-
+    private PreferenceManager mPrefs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,10 +50,9 @@ public class LoginActivity extends AppCompatActivity {
             getWindow().getDecorView().setSystemUiVisibility(SYSTEM_UI_FLAG_LAYOUT_STABLE | SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
         changeStatusBarColor();
 
-        email = getIntent().getStringExtra("email");
+        mPrefs = new PreferenceManager(this);
+        String email = mPrefs.getEmail();
 
-        pd = new ProgressDialog(LoginActivity.this);
-        pd.setMessage("Signing you in...");
 
         phoneET = (EditText) findViewById(R.id.editTextPhone);
         yearOfPassingET = (EditText) findViewById(R.id.editTextYear);
@@ -113,19 +102,31 @@ public class LoginActivity extends AppCompatActivity {
         promoCB = (CheckBox) findViewById(R.id.checkBoxPromo);
         termsCB = (CheckBox) findViewById(R.id.checkBoxTerms);
 
-        if (email != null) {
-            emailET.setText(email);
-            emailET.setEnabled(false);
-            emailET.setFocusable(false);
+        try {
+            if (!TextUtils.isEmpty(email)) {
+                emailET.setText(email);
+                emailET.setEnabled(false);
+                emailET.setFocusable(false);
+            } else {
+                emailET.setEnabled(true);
+                emailET.setFocusable(true);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
+        String phoneNumber = mPrefs.getPhoneNumber();
+        if (phoneNumber != null) {
+            phoneET.setText(phoneNumber);
+            phoneET.setEnabled(false);
+            phoneET.setFocusable(false);
+        }
         FloatingActionButton signInFab = (FloatingActionButton) findViewById(R.id.floatingActionButton2);
 
         signInFab.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
                 savePrefs();
-                //Code to sign in
             }
         });
 
@@ -218,15 +219,15 @@ public class LoginActivity extends AppCompatActivity {
         String faculty;
         switch (rg.getCheckedRadioButtonId()) {
             case R.id.radioButtonFET:
-                faculty = "FETSU";
+                faculty = "Engineering";
                 break;
 
             case R.id.radioButtonARTS:
-                faculty = "AFSU";
+                faculty = "Arts";
                 break;
 
             case R.id.radioButtonSC:
-                faculty = "SFSU";
+                faculty = "Science";
                 break;
 
             default:
@@ -244,46 +245,26 @@ public class LoginActivity extends AppCompatActivity {
 
 
         if (!isAgreeToTerms) {
-            termsCB.setError("ERROR");
+            termsCB.setError("Error");
             Toast.makeText(this, "You must agree to the terms before proceeding.", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        PreferenceManager mPrefsManager = new PreferenceManager(this);
-        mPrefsManager.setPhoneNumber(phoneNumber);
-        mPrefsManager.setFaculty(faculty);
-        mPrefsManager.setEmail(emailId);
-        mPrefsManager.setDepartment(department);
-        mPrefsManager.setUniversity("Jadavpur University");
-        mPrefsManager.setYear(yearOfPassing);
-        mPrefsManager.setPromo(isOptInForPromo);
+        mPrefs.setPhoneNumber(phoneNumber);
+        mPrefs.setFaculty(faculty);
+        mPrefs.setEmail(emailId);
+        mPrefs.setDepartment(department);
+        mPrefs.setUniversity("Jadavpur University");
+        mPrefs.setYear(yearOfPassing);
+        mPrefs.setPromo(isOptInForPromo);
+        mPrefs.saveUser();
+        mPrefs.setFlowCompleted(true);
 
-        startActivity(new Intent(this, DashboardActivity.class));
-
-        mPrefsManager.setFlowCompleted(true);
-//        signIn();
+        startActivity(new Intent(this, DashboardActivity.class)); //move to dashboard activity
+        finish();
 
     }
 
-    private void signIn() {
-
-        AuthUI.IdpConfig facebookIdp = new AuthUI.IdpConfig.Builder(AuthUI.FACEBOOK_PROVIDER)
-                .setPermissions(Arrays.asList("public_profile", "email", "user_about_me", "user_birthday"))
-                .build();
-        startActivityForResult(
-                AuthUI.getInstance()
-                        .createSignInIntentBuilder()
-                        .setAvailableProviders(
-                                Arrays.asList(
-                                        facebookIdp
-                                )
-                        )
-                        .build()
-                , RC_SIGN_IN
-        );
-//        Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
-//        startActivityForResult(signInIntent, RC_SIGN_IN);
-    }
 
     private void changeStatusBarColor() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -294,61 +275,6 @@ public class LoginActivity extends AppCompatActivity {
     }
 
 
-//    @Override
-//    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        super.onActivityResult(requestCode, resultCode, data);
-//
-//        if (requestCode == RC_SIGN_IN) {
-//            IdpResponse response = IdpResponse.fromResultIntent(data);
-//
-//            // Successfully signed in
-//            if (resultCode == ResultCodes.OK) {
-//                AccessToken token = AccessToken.getCurrentAccessToken();
-//                final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-//
-//                if (user != null) {
-//
-//                    fetchGraphData(token);
-//                    PreferenceManager mPrefsManager = new PreferenceManager(LoginActivity.this);
-//                    mPrefsManager.setUID(user.getUid());
-//                    mPrefsManager.setEmail(user.getEmail());
-//                    mPrefsManager.setPhotoURL(user.getPhotoUrl().toString());
-//                    Log.d(TAG, "PHOTO URL: " + user.getPhotoUrl().toString());
-//                    Log.d(TAG, "Sign in successful");
-//                    Intent i = new Intent(LoginActivity.this, DashboardActivity.class);
-//                    LoginActivity.this.overridePendingTransition(0, 0);
-//                    startActivity(i);
-//
-//
-//                } else {
-//                    Toast.makeText(this, "Failed to sign in", Toast.LENGTH_SHORT).show();
-//
-//                }
-////                finish();
-//                return;
-//            } else {
-//                // Sign in failed
-//                if (response == null) {
-//                    // User pressed back button
-//                    Toast.makeText(this, "Sign in cancelled!", Toast.LENGTH_SHORT).show();
-//                    return;
-//                }
-//
-//                if (response.getErrorCode() == ErrorCodes.NO_NETWORK) {
-//                    Toast.makeText(this, "No internet connection", Toast.LENGTH_SHORT).show();
-//                    return;
-//                }
-//
-//                if (response.getErrorCode() == ErrorCodes.UNKNOWN_ERROR) {
-//                    Toast.makeText(this, "Unknown Error", Toast.LENGTH_SHORT).show();
-//                    return;
-//                }
-//            }
-//
-//            Toast.makeText(this, "Unknown Error", Toast.LENGTH_SHORT).show();
-//        }
-//    }
-
     @Override
     protected void onStop() {
         super.onStop();
@@ -357,62 +283,5 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-//        FirebaseAuth auth = FirebaseAuth.getInstance();
-//        final FirebaseUser user = auth.getCurrentUser();
-//        if (user != null) {
-//
-//            Intent i = new Intent(LoginActivity.this, DashboardActivity.class);
-//            LoginActivity.this.overridePendingTransition(0, 0);
-////            startActivity(i);
-//
-//        }
-
-//    private void fetchGraphData(AccessToken token) {
-//        final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-//        if (user != null) {
-//            if (token != null) {
-//                GraphRequest request = GraphRequest.newMeRequest(
-//                        AccessToken.getCurrentAccessToken(),
-//                        new GraphRequest.GraphJSONObjectCallback() {
-//                            @Override
-//                            public void onCompleted(JSONObject object, GraphResponse response) {
-//                                try {
-//                                    Log.d(TAG, "object:: " + object.toString());
-//                                    PreferenceManager mPrefsManager = new PreferenceManager(LoginActivity.this);
-//                                    String link = object.getString("link");
-//                                    String gender = object.getString("gender");
-//                                    JSONObject profilePhoto = object.getJSONObject("picture");
-//                                    JSONObject data = profilePhoto.getJSONObject("data");
-//                                    String photoURL = data.getString("url");
-//
-//                                    JSONObject cover = object.getJSONObject("cover");
-//                                    String coverURL = cover.getString("source");
-//
-////                                    String name = object.getString("name");
-//
-//                                    mPrefsManager.setLink(link);
-//                                    mPrefsManager.setGender(gender);
-//                                    mPrefsManager.setCoverURL(coverURL);
-//                                    mPrefsManager.setPhotoURL(photoURL);
-//
-//                                    FirebaseDatabase.getInstance().getReference("users").child(user.getUid()).setValue(new PreferenceManager(LoginActivity.this).getUser())
-//                                            .addOnCompleteListener(new OnCompleteListener<Void>() {
-//                                                @Override
-//                                                public void onComplete(@NonNull Task<Void> task) {
-//                                                    finish();
-//                                                }
-//                                            });
-//                                } catch (JSONException e) {
-//                                    e.printStackTrace();
-//                                }
-//                            }
-//                        });
-//                Bundle parameters = new Bundle();
-//                parameters.putString("fields", "gender, email, link, cover, picture.type(large)");
-//                request.setParameters(parameters);
-//                request.executeAsync();
-//            }
-//        }
-//    }
     }
 }

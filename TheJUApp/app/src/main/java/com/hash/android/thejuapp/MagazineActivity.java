@@ -27,6 +27,7 @@ public class MagazineActivity extends AppCompatActivity {
         webView.getSettings().setAllowFileAccess(true);
 
         String url = getIntent().getStringExtra("DOWNLOAD_URL");
+
         Log.d("url", url);
         if (url == null) {
             onBackPressed();

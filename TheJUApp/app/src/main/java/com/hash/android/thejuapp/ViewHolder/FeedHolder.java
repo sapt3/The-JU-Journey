@@ -19,8 +19,8 @@ import java.util.Locale;
 
 
 public class FeedHolder extends RecyclerView.ViewHolder {
-    public ImageView image;
-    public TextView author, time, heading, shortDesc, ad;
+    public ImageView image, logo;
+    public TextView author, time, heading, shortDesc, ad, tag;
     public FeedHolder.ClickListener mClickListener;
 
 
@@ -32,6 +32,8 @@ public class FeedHolder extends RecyclerView.ViewHolder {
         heading = itemView.findViewById(R.id.headingTextView);
         shortDesc = itemView.findViewById(R.id.shortDescTextView);
         ad = itemView.findViewById(R.id.adTextView);
+        logo = itemView.findViewById(R.id.logoImageView);
+        tag = itemView.findViewById(R.id.clubTagTextView);
 
         itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -41,6 +43,21 @@ public class FeedHolder extends RecyclerView.ViewHolder {
             }
         });
 
+    }
+
+    public void setTag(String tag1) {
+        tag.setText(tag1);
+    }
+
+    public void setLogo(String url, Context context) {
+        Glide.with(context)
+                .load(url)
+                .placeholder(R.drawable.placeholder)
+                .crossFade()
+                .thumbnail(0.5f)
+                .centerCrop()
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .into(logo);
     }
 
     public void setAd(boolean isAd) {
@@ -56,7 +73,7 @@ public class FeedHolder extends RecyclerView.ViewHolder {
                 .load(string)
                 .placeholder(R.drawable.placeholder)
                 .crossFade()
-                .centerCrop()
+                .fitCenter()
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(image);
     }

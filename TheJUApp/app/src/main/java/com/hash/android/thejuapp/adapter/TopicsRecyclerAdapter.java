@@ -8,6 +8,8 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.hash.android.thejuapp.Model.Topic;
 import com.hash.android.thejuapp.R;
 
@@ -94,7 +96,13 @@ public class TopicsRecyclerAdapter extends RecyclerView.Adapter<TopicsRecyclerAd
         }
 
         public void bind(int postion) {
-            image.setImageResource(mArrayList.get(postion).getImage());
+            Glide.with(image.getContext())
+                    .load(mArrayList.get(postion).getImage())
+                    .placeholder(R.drawable.placeholder)
+                    .fitCenter()
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .into(image);
+//            image.setImageResource(mArrayList.get(postion).getImage());
             topicName.setText(mArrayList.get(postion).getTopicName());
             view.setTag(mArrayList.get(postion).getTag());
         }

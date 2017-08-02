@@ -1,10 +1,24 @@
 package com.hash.android.thejuapp.Model;
 
-/**
- * Created by Spandita Ghosh on 6/21/2017.
- */
+import android.os.Parcel;
+import android.os.Parcelable;
 
-public class Canteen {
+import java.util.ArrayList;
+
+public class Canteen extends ArrayList<Parcelable> implements Parcelable {
+    public static final Creator<Canteen> CREATOR = new Creator<Canteen>() {
+        @Override
+        public Canteen createFromParcel(Parcel in) {
+            return new Canteen(in);
+        }
+
+        @Override
+        public Canteen[] newArray(int size) {
+            return new Canteen[size];
+        }
+    };
+    public String shortTimings;
+    public String longTimings;
     private String canteenName;
     private String campus;
     private float location;
@@ -12,13 +26,25 @@ public class Canteen {
     private Double latitude;
     private Double longitude;
 
-    public Canteen(String canteenName, String campus, float location, String key, Double latitude, Double longitude) {
+
+    public Canteen(String canteenName, String campus, float location, String key, Double latitude, Double longitude, String shortTimings, String longTimings) {
         this.canteenName = canteenName;
         this.campus = campus;
         this.location = location;
         this.key = key;
         this.latitude = latitude;
         this.longitude = longitude;
+        this.shortTimings = shortTimings;
+        this.longTimings = longTimings;
+    }
+
+    protected Canteen(Parcel in) {
+        canteenName = in.readString();
+        campus = in.readString();
+        location = in.readFloat();
+        key = in.readString();
+        shortTimings = in.readString();
+        longTimings = in.readString();
     }
 
     public Double getLatitude() {
@@ -68,4 +94,21 @@ public class Canteen {
     public void setLocation(float location) {
         this.location = location;
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(canteenName);
+        parcel.writeString(campus);
+        parcel.writeFloat(location);
+        parcel.writeString(key);
+        parcel.writeString(shortTimings);
+        parcel.writeString(longTimings);
+    }
+
+
 }

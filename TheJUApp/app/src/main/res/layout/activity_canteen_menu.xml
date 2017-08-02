@@ -20,6 +20,6 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <include layout="@layout/content_canteen_menu" />
+    <include layout="@layout/content_canteen_new" />
 
 </android.support.design.widget.CoordinatorLayout>

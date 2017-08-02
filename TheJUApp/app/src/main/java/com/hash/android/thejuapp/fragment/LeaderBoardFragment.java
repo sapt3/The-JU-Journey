@@ -6,6 +6,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.hash.android.thejuapp.R;
+
 public class LeaderBoardFragment extends android.support.v4.app.Fragment {
 
     public LeaderBoardFragment() {
@@ -32,7 +34,7 @@ public class LeaderBoardFragment extends android.support.v4.app.Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return super.onCreateView(inflater, container, savedInstanceState);
+        return inflater.inflate(R.layout.leaderboard_fragment, container, false);
     }
 
     /**

@@ -3,13 +3,17 @@ package com.hash.android.thejuapp.adapter;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Parcelable;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.hash.android.thejuapp.CanteenMenu;
@@ -17,12 +21,14 @@ import com.hash.android.thejuapp.Model.Canteen;
 import com.hash.android.thejuapp.R;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 public class CanteenListRecyclerAdapter extends RecyclerView.Adapter<CanteenListRecyclerAdapter.ViewHolder> {
     public static final String INTENT_KEY = "key";
     private static final String TAG = CanteenListRecyclerAdapter.class.getSimpleName();
     private ArrayList<Canteen> mArrayList;
     private Context context;
+    private int[] colorIndex = new int[]{R.color.canteen1, R.color.canteen2, R.color.canteen3, R.color.canteen4, R.color.canteen5, R.color.canteen1, R.color.canteen2, R.color.canteen3, R.color.canteen4};
 
     public CanteenListRecyclerAdapter(ArrayList<Canteen> mArrayList, Context context) {
         this.mArrayList = mArrayList;
@@ -53,7 +59,7 @@ public class CanteenListRecyclerAdapter extends RecyclerView.Adapter<CanteenList
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
-        return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_child_canteen_item, parent, false));
+        return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_canteen_new, parent, false));
     }
 
     /**
@@ -91,7 +97,7 @@ public class CanteenListRecyclerAdapter extends RecyclerView.Adapter<CanteenList
             public void onClick(View view) {
                 Log.d(TAG, "itemView:: " + position);
                 Intent i = new Intent(context, CanteenMenu.class);
-                i.putExtra(INTENT_KEY, mArrayList.get(position).getKey());
+                i.putExtra(INTENT_KEY, (Parcelable) mArrayList.get(holder.getAdapterPosition()));
                 context.startActivity(i);
             }
         });
@@ -123,24 +129,32 @@ public class CanteenListRecyclerAdapter extends RecyclerView.Adapter<CanteenList
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
-        TextView canteenNameTextView, campusTextView, locationTextView;
-        Button naviagateButton;
+        TextView canteenNameTextView, locationTextView;
+        ImageView naviagateButton;
+        RelativeLayout frame1;
+        FrameLayout frame2;
+//        ImageView canteenImageView;
 
         ViewHolder(View itemView) {
             super(itemView);
+            frame1 = itemView.findViewById(R.id.distanceFrame);
+            frame2 = itemView.findViewById(R.id.frameLayout);
             canteenNameTextView = itemView.findViewById(R.id.canteenNameTextView);
-            campusTextView = itemView.findViewById(R.id.campusTextView);
+//            campusTextView = itemView.findViewById(R.id.campusTextView);
             locationTextView = itemView.findViewById(R.id.locationTextView);
             naviagateButton = itemView.findViewById(R.id.navigateButton);
+//            canteenImageView = itemView.findViewById(R.id.canteenImageView);
 
         }
 
 
         void bind(int position) {
+            frame1.setBackgroundColor(ContextCompat.getColor(context, colorIndex[position]));
+            frame2.setBackgroundColor(ContextCompat.getColor(context, colorIndex[position]));
+
             canteenNameTextView.setText(mArrayList.get(position).getCanteenName());
-            campusTextView.setText(mArrayList.get(position).getCampus());
             try {
-                locationTextView.setText(String.format("%.1f", mArrayList.get(position).getLocation()) + " Km away");
+                locationTextView.setText(String.format(Locale.getDefault(), "%.1f", mArrayList.get(position).getLocation()));
             } catch (Exception e) {
                 e.printStackTrace();
             }

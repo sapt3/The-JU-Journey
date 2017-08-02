@@ -19,8 +19,12 @@ import java.util.ArrayList;
 
 public class MagazineFragment extends Fragment {
 
-    private static final String URL_4th_EDITION = "https://drive.google.com/file/d/0BxIjpMfBThXMWU5Jck5aX2JqRkE/view?usp=sharing";
+    private static final String URL_4th_EDITION = "https://docs.google.com/gview?embedded=true&url=jux.jujournal.com/newsletter/4th_edition.pdf";
+    private static final String URL_3rd_EDITION = "https://docs.google.com/gview?embedded=true&url=jux.jujournal.com/newsletter/3rd_edition.pdf";
+    private static final String URL_2nd_EDITION = "https://docs.google.com/gview?embedded=true&url=http://jux.jujournal.com/newsletter/2nd_edition.pdf";
+
     private ArrayList<Magazine> mArrayList = new ArrayList<>();
+
     public MagazineFragment() {
     }
 
@@ -41,14 +45,13 @@ public class MagazineFragment extends Fragment {
      * @param savedInstanceState If non-null, this fragment is being re-constructed
      *                           from a previous saved state as given here.
      * @return Return the View for the fragment's UI, or null.
+     *
      */
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.magazine_list, container, false);
-//        TextView newsLetter = view.findViewById(R.id.textView9);
         Typeface custom_font = Typeface.createFromAsset(getActivity().getAssets(), "fonts/opensans.ttf");
-//        newsLetter.setTypeface(custom_font);
         RecyclerView mRecyclerView = view.findViewById(R.id.magazineRecyclerView);
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -60,11 +63,12 @@ public class MagazineFragment extends Fragment {
     }
 
     private void updateData() {
+
         mArrayList.clear();
-        mArrayList.add(new Magazine("Edition 4.0", R.drawable.magazine2, "July 2017", URL_4th_EDITION));
-        mArrayList.add(new Magazine("Edition 3.0", R.drawable.magazine2, "March 2017", URL_4th_EDITION));
-        mArrayList.add(new Magazine("Edition 2.0", R.drawable.magazine2, "February 2017", URL_4th_EDITION));
-        mArrayList.add(new Magazine("Edition 1.0", R.drawable.magazine2, "January 2017", URL_4th_EDITION));
+//        mArrayList.add(new Magazine("Edition 4.0", R.drawable.magazine2, "July 2017", URL_4th_EDITION));
+        mArrayList.add(new Magazine("Edition 3.0", R.drawable.edition3, "February 2017", URL_3rd_EDITION));
+        mArrayList.add(new Magazine("Edition 2.0", R.drawable.edition1, "October 2016", URL_2nd_EDITION));
+
     }
 
     /**

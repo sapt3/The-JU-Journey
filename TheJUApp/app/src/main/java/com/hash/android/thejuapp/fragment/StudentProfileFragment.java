@@ -1,21 +1,22 @@
 package com.hash.android.thejuapp.fragment;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.view.KeyEvent;
+import android.support.v7.widget.SearchView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.EditText;
-import android.widget.Toast;
+import android.widget.ProgressBar;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -23,6 +24,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.hash.android.thejuapp.ExploreActivity;
 import com.hash.android.thejuapp.Model.User;
 import com.hash.android.thejuapp.R;
 import com.hash.android.thejuapp.adapter.StudentProfileRecyclerAdapter;
@@ -31,10 +33,89 @@ import java.util.ArrayList;
 
 public class StudentProfileFragment extends Fragment {
     private static final String TAG = StudentProfileFragment.class.getSimpleName();
+    Query query = FirebaseDatabase.getInstance().getReference("users").orderByChild("name");
+    ProgressBar progressBar;
     private ArrayList<User> mArrayList = new ArrayList<>();
     private StudentProfileRecyclerAdapter mAdapter;
 
+
     public StudentProfileFragment() {
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.menu_canteen, menu);
+        final MenuItem item = menu.findItem(R.id.action_search);
+
+        final SearchView searchView = new SearchView(((ExploreActivity) getActivity()).getSupportActionBar().getThemedContext());
+        searchView.setQueryHint("Search anyone...");
+        MenuItemCompat.setShowAsAction(item, MenuItemCompat.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW);
+        MenuItemCompat.setActionView(item, searchView);
+        MenuItemCompat.expandActionView(item);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+
+                return false;
+
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+
+                mArrayList.clear();
+                if (!TextUtils.isEmpty(newText)) {
+
+                    final String queryString = String.valueOf(newText).toLowerCase();
+
+                    query.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            for (DataSnapshot snapShot : dataSnapshot.getChildren()) {
+                                try {
+                                    User user = snapShot.getValue(User.class);
+                                    if (user.getName().toLowerCase().startsWith(queryString)) {
+                                        mArrayList.add(user);
+                                        progressBar.setVisibility(View.GONE);
+                                    }
+                                    mAdapter.notifyDataSetChanged();
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
+
+                            if (mAdapter.getItemCount() == 0)
+                                progressBar.setVisibility(View.VISIBLE);
+                            else progressBar.setVisibility(View.GONE);
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+
+                    });
+
+                }
+                return true;
+            }
+        });
+        MenuItemCompat.setOnActionExpandListener(item, new MenuItemCompat.OnActionExpandListener() {
+            @Override
+            public boolean onMenuItemActionExpand(MenuItem menuItem) {
+                return true;
+            }
+
+            @Override
+            public boolean onMenuItemActionCollapse(MenuItem menuItem) {
+                searchView.setIconified(true);
+                mArrayList.clear();
+                mAdapter.notifyDataSetChanged();
+                return true;
+            }
+        });
+
     }
 
     /**
@@ -58,77 +139,59 @@ public class StudentProfileFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.layout_student_profile, container, false);
 
-        final EditText searchET = rootView.findViewById(R.id.searchEditText);
+        View rootView = inflater.inflate(R.layout.layout_student_profile, container, false);
 
         RecyclerView mRecyclerView = rootView.findViewById(R.id.studentRecyclerView);
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL));
+
         mAdapter = new StudentProfileRecyclerAdapter(mArrayList);
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setNestedScrollingEnabled(false);
         DatabaseReference mRef = FirebaseDatabase.getInstance().getReference();
         mRef.keepSynced(true);
-        final Query query = mRef.child("users").orderByChild("name");
+        progressBar = rootView.findViewById(R.id.progressBar3);
 
-        searchET.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+//        searchET.addTextChangedListener(new TextWatcher() {
+//            @Override
+//            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+//
+//            }
+//
+//            @Override
+//            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+//
 
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-                mArrayList.clear();
-                final String queryString = String.valueOf(charSequence);
-                query.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        for (DataSnapshot snapShot : dataSnapshot.getChildren()) {
-                            User user = snapShot.getValue(User.class);
-                            assert user != null;
-                            if (user.getName().startsWith(queryString)) {
-                                mArrayList.add(user);
-
-                            }
-                            mAdapter.notifyDataSetChanged();
-                        }
-
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-
-                    }
-                });
-                searchET.setOnKeyListener(new View.OnKeyListener() {
-                    @Override
-                    public boolean onKey(View view, int i, KeyEvent keyEvent) {
-                        if ((keyEvent.getAction() == KeyEvent.ACTION_DOWN) &&
-                                (i == KeyEvent.KEYCODE_ENTER)) {
-                            View view1 = getActivity().getCurrentFocus();
-                            if (view1 != null) {
-                                InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                                imm.hideSoftInputFromWindow(view1.getWindowToken(), 0);
-                            }
-                            if (mArrayList.size() == 0) {
-                                Toast.makeText(getActivity(), "No user matching the given name.", Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                        return false;
-                    }
-                });
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-
-            }
-        });
+//                searchET.setOnKeyListener(new View.OnKeyListener()
+//
+//                {
+//                    @Override
+//                    public boolean onKey(View view, int i, KeyEvent keyEvent) {
+//                        if ((keyEvent.getAction() == KeyEvent.ACTION_DOWN) &&
+//                                (i == KeyEvent.KEYCODE_ENTER)) {
+//                            View view1 = getActivity().getCurrentFocus();
+//                            if (view1 != null) {
+//                                InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+//                                imm.hideSoftInputFromWindow(view1.getWindowToken(), 0);
+//                            }
+//                            if (mArrayList.size() == 0) {
+//                                Toast.makeText(getActivity(), "No user matching the given name.", Toast.LENGTH_SHORT).show();
+//                            }
+//                        }
+//                        return false;
+//                    }
+//                });
+//
+//            }
+//
+//            @Override
+//            public void afterTextChanged(Editable editable) {
+//
+//            }
+//        });
 
         return rootView;
 
@@ -151,6 +214,7 @@ public class StudentProfileFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         getActivity().setTitle("Student Profile");
+        this.setHasOptionsMenu(true);
     }
 
 

@@ -3,7 +3,6 @@ package com.hash.android.thejuapp.adapter;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -77,14 +76,7 @@ public class MagazineRecyclerAdapter extends RecyclerView.Adapter<MagazineRecycl
         holder.editionDate.setText(magazineArrayList.get(position).editionDate);
         holder.editionName.setText(magazineArrayList.get(position).editionName);
         holder.coverPage.setImageResource(magazineArrayList.get(position).coverPage);
-        holder.downloadButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                int pos = holder.getAdapterPosition();
-                String url = magazineArrayList.get(pos).downloadURL;
-                Log.d("MagazineRecyclerAdapter", url);
-            }
-        });
+
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -94,7 +86,6 @@ public class MagazineRecyclerAdapter extends RecyclerView.Adapter<MagazineRecycl
                 Intent i = new Intent(context, MagazineActivity.class);
                 i.putExtra("DOWNLOAD_URL", url);
                 context.startActivity(i);
-
             }
         });
 
@@ -111,11 +102,10 @@ public class MagazineRecyclerAdapter extends RecyclerView.Adapter<MagazineRecycl
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        ImageView downloadButton, coverPage;
+        ImageView coverPage;
         TextView editionName, editionDate;
         public ViewHolder(View itemView) {
             super(itemView);
-            downloadButton = itemView.findViewById(R.id.downloadButton);
             coverPage = itemView.findViewById(R.id.coverPageImageView);
             editionName = itemView.findViewById(R.id.editionTextView);
             editionDate = itemView.findViewById(R.id.editionPublishDateTextView);
