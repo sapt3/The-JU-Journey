@@ -4,22 +4,22 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_dashboard"
-            android:icon="@drawable/ic_dashboard_black_24dp"
-            android:title="Dashboard" />
+            android:icon="@drawable/ic_action_name_dashboard"
+            android:title="@string/dashboard" />
         <item
             android:id="@+id/nav_bookmarks"
-            android:icon="@drawable/ic_bookmark_black_24dp"
-            android:title="Bookmarks" />
+            android:icon="@drawable/ic_action_name_bookmark"
+            android:title="@string/bookmarks" />
 
         <item
             android:id="@+id/nav_interested_events"
-            android:icon="@drawable/ic_event_black_dark_24dp"
-            android:title="Interested Events" />
+            android:icon="@drawable/ic_action_name_event"
+            android:title="@string/interested_events" />
 
         <item
             android:id="@+id/nav_profile"
-            android:icon="@drawable/ic_person_black_24dp"
-            android:title="My Profile" />
+            android:icon="@drawable/ic_action_name_person"
+            android:title="@string/my_profile" />
 
 
     </group>
@@ -51,44 +51,83 @@
     <!--</menu>-->
     <!--</item>-->
 
-    <item
-        android:id="@+id/clubs"
-        android:title="Clubs">
+    <item android:title="@string/clubs">
 
         <menu>
             <item
                 android:id="@+id/nav_ecell"
-                android:icon="@drawable/ic_lightbulb_outline_black_24dp"
-                android:title="JU E-Cell" />
+                android:icon="@drawable/ic_action_name_light_bulb"
+                android:title="@string/ju_e_cell" />
 
             <item
                 android:id="@+id/nav_journal"
-                android:icon="@drawable/ic_import_contacts_black_24dp"
-                android:title="JU Journal" />
+                android:icon="@drawable/ic_action_name_contacts"
+                android:title="@string/ju_journal" />
 
             <item
                 android:id="@+id/nav_science"
-                android:icon="@drawable/ic_build_black_24dp"
-                android:title="JU Science Club" />
+                android:icon="@drawable/ic_action_name_build"
+                android:title="@string/ju_science_club" />
+
+            <item
+                android:id="@+id/nav_jupc"
+                android:icon="@drawable/ic_action_name_photo"
+                android:title="Photographic Club" />
+
+            <item
+                android:id="@+id/nav_ds"
+                android:icon="@drawable/ic_action_name_mic"
+                android:title="Debate Society" />
+
+            <item
+                android:id="@+id/nav_pnc"
+                android:icon="@drawable/ic_action_name_palette"
+                android:title="Painting Club" />
+
+            <item
+                android:id="@+id/nav_mc"
+                android:icon="@drawable/ic_action_name_music_note"
+                android:title="Music Club" />
+
+            <item
+                android:id="@+id/nav_qc"
+                android:icon="@drawable/ic_action_name_question_answer"
+                android:title="Quiz Club" />
+
+            <item
+                android:id="@+id/nav_mhc"
+                android:icon="@drawable/ic_action_name_image"
+                android:title="Mountaineering Club" />
+
+            <item
+                android:id="@+id/nav_dc"
+                android:icon="@drawable/ic_action_name_people"
+                android:title="Drama Club" />
+
+            <item
+                android:id="@+id/nav_df"
+                android:icon="@drawable/ic_action_name_accessiblity"
+                android:title="Dance Forum" />
+
 
         </menu>
     </item>
 
 
-    <item android:title="Others">
+    <item android:title="@string/others">
         <menu>
             <item
                 android:id="@+id/nav_settings"
-                android:icon="@drawable/ic_settings_black_24dp"
-                android:title="Settings" />
+                android:icon="@drawable/ic_action_name_settings"
+                android:title="@string/settings" />
             <item
                 android:id="@+id/nav_privacy"
-                android:icon="@drawable/ic_assignment_black_24dp"
-                android:title="Privacy Policy" />
+                android:icon="@drawable/ic_action_name_assignment"
+                android:title="@string/privacy_policy" />
             <item
                 android:id="@+id/nav_logout"
-                android:icon="@drawable/ic_power_settings_new_black_24dp"
-                android:title="Log Out" />
+                android:icon="@drawable/ic_action_name_power"
+                android:title="@string/log_out" />
         </menu>
     </item>
 

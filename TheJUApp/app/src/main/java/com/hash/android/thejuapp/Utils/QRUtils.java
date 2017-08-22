@@ -1,4 +1,4 @@
-package com.hash.android.srijan.functions;
+package com.hash.android.thejuapp.Utils;
 
 import android.graphics.Bitmap;
 
@@ -10,13 +10,10 @@ import com.google.zxing.common.BitMatrix;
 import static android.graphics.Color.BLACK;
 import static android.graphics.Color.WHITE;
 
-/**
- * Created by Spandita Ghosh on 5/21/2017.
- */
 
-public class QRHelper {
+class QRUtils {
 
-    public Bitmap encodeAsBitmap(String str, int height, int width) throws WriterException {
+    Bitmap encodeAsBitmap(String str, int height, int width) throws WriterException {
         BitMatrix result;
         try {
             result = new MultiFormatWriter().encode(str,

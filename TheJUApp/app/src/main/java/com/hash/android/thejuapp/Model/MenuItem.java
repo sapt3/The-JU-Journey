@@ -5,8 +5,8 @@ package com.hash.android.thejuapp.Model;
  */
 
 public class MenuItem {
-    public String itemName;
-    public String itemPrice;
+    public final String itemName;
+    public final String itemPrice;
     public boolean isItemSelected = false;
 
     public MenuItem(String itemName, String itemPrice) {

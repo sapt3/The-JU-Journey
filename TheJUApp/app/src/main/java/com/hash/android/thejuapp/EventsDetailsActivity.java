@@ -12,6 +12,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -30,9 +31,9 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
-import com.hash.android.thejuapp.HelperClass.PreferenceManager;
 import com.hash.android.thejuapp.Model.Event;
 import com.hash.android.thejuapp.Model.User;
+import com.hash.android.thejuapp.Utils.PreferenceManager;
 import com.hash.android.thejuapp.adapter.ContactRecyclerAdapter;
 
 import java.text.SimpleDateFormat;
@@ -44,15 +45,19 @@ import java.util.Locale;
 public class EventsDetailsActivity extends AppCompatActivity {
 
     private static final String TAG = EventsDetailsActivity.class.getSimpleName();
+
+    static {
+        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
+    }
+
+    private final ArrayList<User> mArrayListUser = new ArrayList<>();
     SharedPreferences mPrefs;
     private ContactRecyclerAdapter mAdapter;
-    private ArrayList<User> mArrayListUser = new ArrayList<>();
     private TextView contactUsTextView;
     private boolean isRegistered;
     private Button registerButton;
     private String key;
     private PreferenceManager mPrefsManager;
-    private boolean isRegistrationEnabled;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,7 +85,7 @@ public class EventsDetailsActivity extends AppCompatActivity {
         key = getIntent().getStringExtra("KEY");
 
         Date endDate = new Date(event.endDate);
-        isRegistrationEnabled = !new Date().after(endDate);
+        boolean isRegistrationEnabled = !new Date().after(endDate);
 
         isRegistered = mPrefs.getBoolean(key, false);
 
@@ -96,9 +101,7 @@ public class EventsDetailsActivity extends AppCompatActivity {
         int date = cal.get(Calendar.DATE);
         String formattedMonth = month.substring(0, 3).toUpperCase();
         String formattedDate = date + " " + formattedMonth;
-
         eventsDateTextView.setText(formattedDate);
-
         RecyclerView contactRecyclerView = (RecyclerView) findViewById(R.id.contactRecyclerViewEvent);
         contactRecyclerView.setHasFixedSize(true);
         contactRecyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -148,7 +151,7 @@ public class EventsDetailsActivity extends AppCompatActivity {
 
     private void unregister() {
         isRegistered = false;
-        mPrefs.edit().putBoolean(key, false).commit();
+        mPrefs.edit().putBoolean(key, false).apply();
         registerButton.setText(R.string.register);
         Log.d(TAG, "Unregistering user" + key);
         FirebaseDatabase.getInstance().getReference("events").child(key).child("registeredUsers").child(mPrefsManager.getUID()).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -176,7 +179,7 @@ public class EventsDetailsActivity extends AppCompatActivity {
     private void register() {
         isRegistered = true;
         Log.d(TAG, "Registering user" + key);
-        mPrefs.edit().putBoolean(key, true).commit();
+        mPrefs.edit().putBoolean(key, true).apply();
         registerButton.setText(R.string.unregister);
 
         FirebaseDatabase.getInstance().getReference("events").child(key).child("registeredUsers").child(mPrefsManager.getUID()).setValue(true).addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -191,7 +194,7 @@ public class EventsDetailsActivity extends AppCompatActivity {
                                     unregister();
                                 }
                             })
-                            .setActionTextColor(getResources().getColor(R.color.colorAccent))
+                            .setActionTextColor(ContextCompat.getColor(EventsDetailsActivity.this, R.color.colorAccent))
                             .show();
             }
 
@@ -202,7 +205,7 @@ public class EventsDetailsActivity extends AppCompatActivity {
 
     }
 
-    public void addEvent(String title, long begin, long end) {
+    private void addEvent(String title, long begin, long end) {
         Intent intent = new Intent(Intent.ACTION_INSERT)
                 .setData(CalendarContract.Events.CONTENT_URI)
                 .putExtra(CalendarContract.Events.TITLE, title)

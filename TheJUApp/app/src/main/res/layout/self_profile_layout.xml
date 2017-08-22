@@ -24,7 +24,6 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/messagePrivacyFrameLayout"
         app:layout_constraintVertical_bias="1.0" />
 
     <android.support.v4.widget.NestedScrollView
@@ -211,7 +210,7 @@
                 android:layout_marginRight="8dp"
                 android:layout_marginTop="4dp"
                 android:alpha="0.6"
-                android:text="Class of 2016"
+                android:text="Year of Joining: 2016"
                 android:textColor="@android:color/white"
                 app:layout_constraintLeft_toLeftOf="@+id/departmentTextViewProfile"
                 app:layout_constraintRight_toRightOf="parent"
@@ -318,7 +317,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="0dp"
                 android:layout_marginTop="32dp"
-                android:background="@drawable/actionbar_gradient_dark"
+                android:background="#40000000"
                 android:padding="16dp"
                 android:visibility="visible"
                 app:layout_constraintBottom_toBottomOf="parent"

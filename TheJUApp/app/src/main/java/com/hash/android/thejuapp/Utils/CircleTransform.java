@@ -1,4 +1,4 @@
-package com.hash.android.thejuapp.HelperClass;
+package com.hash.android.thejuapp.Utils;
 
 import android.content.Context;
 import android.graphics.Bitmap;

@@ -26,7 +26,6 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <android.support.constraint.ConstraintLayout
-            android:id="@+id/constraintLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
@@ -39,7 +38,8 @@
                 android:layout_marginTop="16dp"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/ic_notifications_active_white_24px" />
+                app:srcCompat="@drawable/ic_notifications_active_white_24px"
+                tools:ignore="ContentDescription" />
 
             <TextView
                 android:id="@+id/textView2"
@@ -55,7 +55,6 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                android:id="@+id/textView3"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
@@ -72,13 +71,14 @@
                 android:layout_width="0dp"
                 android:layout_height="1dp"
                 android:layout_marginBottom="8dp"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="4dp"
                 android:background="@color/notificationSecondary"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/imageView5" />
+                app:layout_constraintTop_toBottomOf="@+id/imageView5"
+                app:layout_constraintVertical_bias="0.51" />
 
 
             <Button
@@ -88,9 +88,9 @@
                 android:layout_height="30dp"
                 android:layout_marginBottom="8dp"
                 android:layout_marginLeft="24dp"
-                android:layout_marginTop="1dp"
+                android:layout_marginTop="0dp"
                 android:background="@color/notificationPrimary"
-                android:drawableLeft="@drawable/ic_check_white_24px"
+                android:drawableLeft="@drawable/ic_action_name_check_white"
                 android:text="YES"
                 android:textColor="@android:color/white"
                 android:textSize="18sp"
@@ -108,7 +108,7 @@
                 android:layout_marginLeft="16dp"
                 android:layout_marginTop="8dp"
                 android:background="@color/notificationPrimary"
-                android:drawableLeft="@drawable/ic_clear_white_24px"
+                android:drawableLeft="@drawable/ic_action_name_clear_white"
                 android:text="NO"
                 android:textColor="@android:color/white"
                 android:textSize="18sp"
@@ -162,7 +162,6 @@
                 app:layout_constraintTop_toBottomOf="@+id/textView7" />
 
             <TextView
-                android:id="@+id/textView14"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="8dp"
@@ -180,12 +179,11 @@
 
 
                 <TextView
-                    android:id="@+id/textView17"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
                     android:layout_centerVertical="true"
-                    android:text="Nothing worth mentioning"
+                    android:text="@string/no_announcements"
                     android:textColor="@android:color/white"
                     android:textSize="20sp" />
             </RelativeLayout>
@@ -193,7 +191,7 @@
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/announcementsRV"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="match_parent" />
 
             <TextView
                 android:id="@+id/textView4"

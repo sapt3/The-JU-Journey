@@ -4,7 +4,7 @@ package com.hash.android.thejuapp.Model;
 public class Topic {
     private int image;
     private String topicName;
-    int tag;
+    private int tag;
 
     public Topic(int image, String topicName, int tag) {
         this.image = image;

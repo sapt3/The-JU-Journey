@@ -3,6 +3,7 @@ package com.hash.android.thejuapp.fragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -14,13 +15,16 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.firebase.ui.database.FirebaseIndexRecyclerAdapter;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.hash.android.thejuapp.EventsDetailsActivity;
-import com.hash.android.thejuapp.HelperClass.PreferenceManager;
 import com.hash.android.thejuapp.Model.Event;
 import com.hash.android.thejuapp.R;
+import com.hash.android.thejuapp.Utils.PreferenceManager;
 import com.hash.android.thejuapp.ViewHolder.EventViewHolder;
 
 import java.util.Date;
@@ -30,8 +34,12 @@ import static android.view.View.GONE;
 
 public class InterestedEventsFragment extends android.support.v4.app.Fragment {
 
-    private FirebaseIndexRecyclerAdapter<Event, EventViewHolder> mAdapter;
+    static {
+        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
+    }
 
+    private FirebaseIndexRecyclerAdapter<Event, EventViewHolder> mAdapter;
+    private ProgressBar pb;
     public InterestedEventsFragment() {
     }
 
@@ -81,6 +89,7 @@ public class InterestedEventsFragment extends android.support.v4.app.Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_events_self, container, false);
 
+
         final RecyclerView mRecyclerView = rootView.findViewById(R.id.interestedRecyclerView);
         LinearLayoutManager manager = new LinearLayoutManager(getActivity());
         manager.setReverseLayout(true);
@@ -88,13 +97,25 @@ public class InterestedEventsFragment extends android.support.v4.app.Fragment {
         mRecyclerView.setLayoutManager(manager);
         mRecyclerView.setNestedScrollingEnabled(false);
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
-
-        final ProgressBar pb = rootView.findViewById(R.id.progressBarBookmark);
+        pb = rootView.findViewById(R.id.progressBarEventsSelf);
         final ImageView img = rootView.findViewById(R.id.bookmarkImageViewPlaceHolder);
         final TextView txt = rootView.findViewById(R.id.bookmarkTextViewPlaceHolder);
 
         Query keyRef = FirebaseDatabase.getInstance().getReference("users").child(new PreferenceManager(getActivity()).getUID()).child("registeredEvents").getRef();
         DatabaseReference mRef = FirebaseDatabase.getInstance().getReference("events");
+
+        keyRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.getChildrenCount() == 0)
+                    pb.setVisibility(GONE);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
 
         mAdapter = new FirebaseIndexRecyclerAdapter<Event, EventViewHolder>(
                 Event.class,

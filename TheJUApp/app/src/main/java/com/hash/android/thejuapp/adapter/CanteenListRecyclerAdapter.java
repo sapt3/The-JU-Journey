@@ -6,7 +6,6 @@ import android.net.Uri;
 import android.os.Parcelable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,9 +25,9 @@ import java.util.Locale;
 public class CanteenListRecyclerAdapter extends RecyclerView.Adapter<CanteenListRecyclerAdapter.ViewHolder> {
     public static final String INTENT_KEY = "key";
     private static final String TAG = CanteenListRecyclerAdapter.class.getSimpleName();
-    private ArrayList<Canteen> mArrayList;
-    private Context context;
-    private int[] colorIndex = new int[]{R.color.canteen1, R.color.canteen2, R.color.canteen3, R.color.canteen4, R.color.canteen5, R.color.canteen1, R.color.canteen2, R.color.canteen3, R.color.canteen4};
+    private final ArrayList<Canteen> mArrayList;
+    private final Context context;
+    private final int[] colorIndex = new int[]{R.color.canteen1, R.color.canteen2, R.color.canteen3, R.color.canteen4, R.color.canteen5, R.color.canteen1, R.color.canteen2, R.color.canteen3, R.color.canteen4};
 
     public CanteenListRecyclerAdapter(ArrayList<Canteen> mArrayList, Context context) {
         this.mArrayList = mArrayList;
@@ -83,19 +82,19 @@ public class CanteenListRecyclerAdapter extends RecyclerView.Adapter<CanteenList
      * @param position The position of the item within the adapter's data set.
      */
     @Override
-    public void onBindViewHolder(final ViewHolder holder, final int position) {
+    public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.bind(position);
         holder.naviagateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.d(TAG, "navigate Position:: " + position);
-                navigateTo(mArrayList.get(position).getLatitude(), mArrayList.get(position).getLongitude(), mArrayList.get(position).getCanteenName());
+                int pos = holder.getAdapterPosition();
+                navigateTo(mArrayList.get(pos).getLatitude(), mArrayList.get(pos).getLongitude(), mArrayList.get(pos).getCanteenName());
             }
         });
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.d(TAG, "itemView:: " + position);
+                int pos = holder.getAdapterPosition();
                 Intent i = new Intent(context, CanteenMenu.class);
                 i.putExtra(INTENT_KEY, (Parcelable) mArrayList.get(holder.getAdapterPosition()));
                 context.startActivity(i);
@@ -129,10 +128,11 @@ public class CanteenListRecyclerAdapter extends RecyclerView.Adapter<CanteenList
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
-        TextView canteenNameTextView, locationTextView;
-        ImageView naviagateButton;
-        RelativeLayout frame1;
-        FrameLayout frame2;
+        final TextView canteenNameTextView;
+        final TextView locationTextView;
+        final ImageView naviagateButton;
+        final RelativeLayout frame1;
+        final FrameLayout frame2;
 //        ImageView canteenImageView;
 
         ViewHolder(View itemView) {

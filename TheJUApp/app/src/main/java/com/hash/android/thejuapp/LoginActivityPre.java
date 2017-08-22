@@ -8,6 +8,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.util.Pair;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.AppCompatDelegate;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.Window;
@@ -20,6 +21,10 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.FirebaseDatabase;
 
 public class LoginActivityPre extends AppCompatActivity {
+
+    static {
+        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
+    }
 
     private FloatingActionButton fab;
 
@@ -44,7 +49,7 @@ public class LoginActivityPre extends AppCompatActivity {
     }
 
     private void storeName() {
-        com.hash.android.thejuapp.HelperClass.PreferenceManager mPreferenceManager = new com.hash.android.thejuapp.HelperClass.PreferenceManager(this);
+        com.hash.android.thejuapp.Utils.PreferenceManager mPreferenceManager = new com.hash.android.thejuapp.Utils.PreferenceManager(this);
         EditText editTextName = (EditText) findViewById(R.id.editText2);
         String name = editTextName.getText().toString().trim();
         if (!TextUtils.isEmpty(name)) { //If name is not empty

@@ -48,7 +48,7 @@
                 style="@style/Widget.AppCompat.Light.AutoCompleteTextView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="e-Mail"
+                android:hint="@string/e_mail"
                 android:inputType="textWebEmailAddress"
                 android:maxLines="1"
                 android:selectAllOnFocus="false"
@@ -75,31 +75,32 @@
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/radioGroup" />
 
-        <CheckBox
+        <android.support.v7.widget.AppCompatCheckBox
             android:id="@+id/checkBoxPromo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="24dp"
             android:layout_marginStart="24dp"
             android:layout_marginTop="8dp"
-            android:text="Opt in for occasional promotional letters"
+            android:buttonTint="@android:color/white"
+            android:text="@string/opt_in_for_occasional_promotional_letters"
             android:textColor="@android:color/white"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/departmentSpinner" />
 
-        <CheckBox
+        <android.support.v7.widget.AppCompatCheckBox
             android:id="@+id/checkBoxTerms"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="24dp"
             android:layout_marginStart="24dp"
+            android:buttonTint="@android:color/white"
             android:text="@string/i_agree_to_the_terms_and_conditions"
             android:textColor="@android:color/white"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/checkBoxPromo" />
 
         <ImageView
-            android:id="@+id/imageView7"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="0dp"
@@ -110,7 +111,8 @@
             app:layout_constraintLeft_toRightOf="@+id/departmentSpinner"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="@+id/departmentSpinner"
-            app:srcCompat="@drawable/ic_keyboard_arrow_down_black_24dp" />
+            app:srcCompat="@drawable/ic_keyboard_arrow_down_black_24dp"
+            tools:ignore="ContentDescription" />
 
         <View
             android:id="@+id/view"
@@ -130,7 +132,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:text="Complete your account"
+            android:text="@string/complete_your_account"
             android:textColor="@android:color/white"
             android:textSize="18sp"
             app:layout_constraintLeft_toLeftOf="parent"
@@ -148,7 +150,6 @@
             android:clickable="true"
             app:borderWidth="0dp"
             app:fabSize="normal"
-            app:layout_constraintBottom_toBottomOf="@+id/imageView4"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/checkBoxTerms"
@@ -174,7 +175,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Engineering"
+                android:text="@string/engineering"
                 android:textColor="@android:color/white"
                 android:textColorHighlight="@android:color/white" />
 
@@ -183,7 +184,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Science"
+                android:text="@string/science"
                 android:textColor="@android:color/white" />
 
             <RadioButton
@@ -191,7 +192,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Arts"
+                android:text="@string/arts"
                 android:textColor="@android:color/white" />
         </RadioGroup>
 
@@ -214,7 +215,7 @@
                 android:id="@+id/editTextYear"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Year of Joining"
+                android:hint="@string/year_of_joining"
                 android:inputType="number"
                 android:maxLines="1"
                 android:selectAllOnFocus="false"
@@ -243,8 +244,8 @@
                 style="@style/Widget.AppCompat.Light.AutoCompleteTextView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Phone Number"
-                android:inputType="number"
+                android:hint="@string/phone_number"
+                android:inputType="phone"
                 android:maxLines="1"
                 android:selectAllOnFocus="false"
                 android:textAppearance="@style/TextAppearence.App.TextInputLayout"
@@ -260,7 +261,8 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/logomain" />
+            app:srcCompat="@drawable/logomain"
+            tools:ignore="ContentDescription" />
 
 
     </android.support.constraint.ConstraintLayout>

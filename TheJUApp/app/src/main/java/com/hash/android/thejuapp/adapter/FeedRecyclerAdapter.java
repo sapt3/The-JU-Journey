@@ -42,11 +42,11 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedRecyclerAdapte
 
     public static final String TAG = "FeedRecyclerView";
     public static final String INTENT_EXTRA_FEED = "extraParcelableFeed";
-    public ArrayList<Feed> mFeedList = new ArrayList<>();
-    private SimpleDateFormat simpleDateFormat;
-    private DatabaseReference mRef;
-    private ArrayList<String> mFeedIds = new ArrayList<>();
-    private Context mContext;
+    public final ArrayList<Feed> mFeedList = new ArrayList<>();
+    private final SimpleDateFormat simpleDateFormat;
+    private final DatabaseReference mRef;
+    private final ArrayList<String> mFeedIds = new ArrayList<>();
+    private final Context mContext;
 
 
     public FeedRecyclerAdapter(SimpleDateFormat simpleDateFormat, DatabaseReference mRef, Context context) {
@@ -153,24 +153,28 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedRecyclerAdapte
 
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        ImageView image;
-        TextView author, time, heading, shortDesc, ad;
+        final ImageView image;
+        final TextView author;
+        final TextView time;
+        final TextView heading;
+        final TextView shortDesc;
+        final TextView ad;
 
         public ViewHolder(View itemView) {
             super(itemView);
             itemView.setOnClickListener(this);
-            image = (ImageView) itemView.findViewById(R.id.postImageView);
-            author = (TextView) itemView.findViewById(R.id.authorTextView);
-            time = (TextView) itemView.findViewById(R.id.timeTextView);
-            heading = (TextView) itemView.findViewById(R.id.headingTextView);
-            shortDesc = (TextView) itemView.findViewById(R.id.shortDescTextView);
-            ad = (TextView) itemView.findViewById(R.id.adTextView);
+            image = itemView.findViewById(R.id.postImageView);
+            author = itemView.findViewById(R.id.authorTextView);
+            time = itemView.findViewById(R.id.timeTextView);
+            heading = itemView.findViewById(R.id.headingTextView);
+            shortDesc = itemView.findViewById(R.id.shortDescTextView);
+            ad = itemView.findViewById(R.id.adTextView);
         }
 
         public void bind(int pos) {
             Glide.with(image.getContext())
                     .load(mFeedList.get(pos).getImageURL())
-                    .placeholder(R.drawable.placeholder)
+                    .placeholder(R.color.placeholder)
                     .crossFade()
                     .centerCrop()
                     .diskCacheStrategy(DiskCacheStrategy.ALL)

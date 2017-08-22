@@ -10,6 +10,8 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.hash.android.thejuapp.MagazineActivity;
 import com.hash.android.thejuapp.Model.Magazine;
 import com.hash.android.thejuapp.R;
@@ -17,8 +19,8 @@ import com.hash.android.thejuapp.R;
 import java.util.ArrayList;
 
 public class MagazineRecyclerAdapter extends RecyclerView.Adapter<MagazineRecyclerAdapter.ViewHolder> {
+    private final Context context;
     private ArrayList<Magazine> magazineArrayList = new ArrayList<>();
-    private Context context;
 
     public MagazineRecyclerAdapter(ArrayList<Magazine> magazineArrayList, Context context) {
         this.magazineArrayList = magazineArrayList;
@@ -76,7 +78,12 @@ public class MagazineRecyclerAdapter extends RecyclerView.Adapter<MagazineRecycl
         holder.editionDate.setText(magazineArrayList.get(position).editionDate);
         holder.editionName.setText(magazineArrayList.get(position).editionName);
         holder.coverPage.setImageResource(magazineArrayList.get(position).coverPage);
-
+        Glide.with(context)
+                .load(magazineArrayList.get(position).coverPage)
+                .placeholder(R.color.placeholder)
+                .fitCenter()
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .into(holder.coverPage);
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -102,8 +109,9 @@ public class MagazineRecyclerAdapter extends RecyclerView.Adapter<MagazineRecycl
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        ImageView coverPage;
-        TextView editionName, editionDate;
+        final ImageView coverPage;
+        final TextView editionName;
+        final TextView editionDate;
         public ViewHolder(View itemView) {
             super(itemView);
             coverPage = itemView.findViewById(R.id.coverPageImageView);

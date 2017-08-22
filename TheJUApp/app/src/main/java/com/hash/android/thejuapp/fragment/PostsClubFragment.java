@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.util.Pair;
+import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -20,16 +21,18 @@ import android.widget.ProgressBar;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.analytics.FirebaseAnalytics;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.hash.android.thejuapp.DashboardActivity;
 import com.hash.android.thejuapp.DetailsFeedActivity;
-import com.hash.android.thejuapp.HelperClass.ClubUtils;
-import com.hash.android.thejuapp.HelperClass.PreferenceManager;
 import com.hash.android.thejuapp.Model.Club;
 import com.hash.android.thejuapp.Model.Feed;
 import com.hash.android.thejuapp.R;
+import com.hash.android.thejuapp.Utils.ClubUtils;
 import com.hash.android.thejuapp.ViewHolder.FeedHolder;
 
 import java.text.SimpleDateFormat;
@@ -44,34 +47,19 @@ import static com.hash.android.thejuapp.adapter.FeedRecyclerAdapter.INTENT_EXTRA
  */
 
 public class PostsClubFragment extends Fragment {
+
     private static final String TAG = PostsClubFragment.class.getSimpleName();
+
+    static {
+        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
+    }
+
     private FirebaseRecyclerAdapter<Feed, FeedHolder> mAdapter;
     private float px;
 
     public PostsClubFragment() {
     }
 
-    /**
-     * Called to do initial creation of a fragment.  This is called after
-     * and before
-     * {@link #onCreateView(LayoutInflater, ViewGroup, Bundle)}.
-     * <p>
-     * <p>Note that this can be called while the fragment's activity is
-     * still in the process of being created.  As such, you can not rely
-     * on things like the activity's content view hierarchy being initialized
-     * at this point.  If you want to do work once the activity itself is
-     * created, see {@link #onActivityCreated(Bundle)}.
-     * <p>
-     * <p>Any restored child fragments will be created before the base
-     * <code>Fragment.onCreate</code> method returns.</p>
-     *
-     * @param savedInstanceState If the fragment is being re-created from
-     *                           a previous saved state, this is the state.
-     */
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
 
     /**
      * Called to have the fragment instantiate its user interface view.
@@ -114,13 +102,26 @@ public class PostsClubFragment extends Fragment {
             mRecyclerView.addItemDecoration(new DividerItemDecoration(mRecyclerView.getContext(), DividerItemDecoration.VERTICAL));
             //2017-06-19T14:13:24.100Z
             final DatabaseReference mRef = FirebaseDatabase.getInstance().getReference();
-            Query ref = mRef.child("posts").orderByChild("club").equalTo(club != null ? club.clubTag : null).limitToFirst(80);
+            Query ref = mRef.child("posts").orderByChild("club").equalTo(club.clubTag).limitToFirst(80);
             ref.keepSynced(true);
             final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault());
             sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
-            String uid = new PreferenceManager(getActivity()).getUID();
             Resources r = getResources();
             px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 180, r.getDisplayMetrics());
+
+            ref.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.getChildrenCount() == 0) {
+                        pb.setVisibility(View.GONE);
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
 
             mAdapter = new FirebaseRecyclerAdapter<Feed, FeedHolder>(
                     Feed.class,

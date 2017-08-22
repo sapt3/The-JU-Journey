@@ -15,6 +15,7 @@
         android:layout_below="@+id/guideline6"
         android:layout_marginLeft="4dp"
         android:layout_toEndOf="@+id/logoImageView"
+        android:layout_toRightOf="@+id/logoImageView"
         android:text="The JU Journal"
         android:textColor="@android:color/black"
         android:textStyle="bold" />
@@ -27,6 +28,7 @@
         android:layout_marginLeft="8dp"
         android:layout_marginStart="8dp"
         android:layout_toEndOf="@+id/imageView11"
+        android:layout_toRightOf="@+id/imageView11"
         android:text="@string/journal"
         app:layout_constraintLeft_toRightOf="@+id/imageView11"
         app:layout_constraintTop_toTopOf="@+id/authorTextView" />
@@ -38,6 +40,7 @@
         android:layout_alignParentTop="true"
         android:layout_marginLeft="4dp"
         android:layout_toEndOf="@+id/clubTagTextView"
+        android:layout_toRightOf="@+id/clubTagTextView"
         android:text="•"
         app:layout_constraintLeft_toRightOf="@+id/clubTagTextView"
         app:layout_constraintTop_toTopOf="@+id/clubTagTextView" />
@@ -46,6 +49,7 @@
         android:id="@+id/postImageView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_alignLeft="@+id/shortDescTextView"
         android:layout_alignStart="@+id/shortDescTextView"
         android:layout_below="@+id/shortDescTextView"
         android:layout_marginLeft="0dp"
@@ -58,7 +62,8 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="@+id/guideline6"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/shortDescTextView" />
+        app:layout_constraintTop_toBottomOf="@+id/shortDescTextView"
+        tools:ignore="ContentDescription" />
 
     <TextView
         android:id="@+id/headingTextView"
@@ -69,6 +74,7 @@
         android:layout_marginRight="0dp"
         android:layout_marginTop="4dp"
         android:layout_toEndOf="@+id/logoImageView"
+        android:layout_toRightOf="@+id/logoImageView"
         android:text="Jadavpur University ranks 10th"
         android:textColor="@android:color/black"
         android:textSize="18sp"
@@ -86,6 +92,7 @@
         android:layout_marginRight="0dp"
         android:layout_marginTop="4dp"
         android:layout_toEndOf="@+id/logoImageView"
+        android:layout_toRightOf="@+id/logoImageView"
         android:autoLink="web"
         android:paddingBottom="8dp"
         android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi et pharetra quam, at aliquam ipsum. Praesent euismod purus vel massa elementum "
@@ -103,6 +110,7 @@
         android:layout_marginRight="8dp"
         android:layout_marginStart="8dp"
         android:layout_toEndOf="@+id/textView23"
+        android:layout_toRightOf="@+id/textView23"
         android:ellipsize="end"
         android:maxLines="1"
         android:text="2 hr. ago dasdasd"
@@ -119,11 +127,13 @@
         android:layout_marginLeft="4dp"
         android:layout_marginStart="7dp"
         android:layout_toEndOf="@+id/authorTextView"
+        android:layout_toRightOf="@+id/authorTextView"
         app:layout_constraintBottom_toBottomOf="@+id/authorTextView"
         app:layout_constraintLeft_toRightOf="@+id/authorTextView"
         app:layout_constraintTop_toTopOf="@+id/authorTextView"
         app:layout_constraintVertical_bias="0.6"
-        app:srcCompat="@drawable/check" />
+        app:srcCompat="@drawable/check"
+        tools:ignore="ContentDescription" />
 
     <TextView
         android:id="@+id/adTextView"
@@ -150,6 +160,5 @@
         android:layout_height="50dp"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
-
-        app:srcCompat="@drawable/journal" />
+        tools:ignore="ContentDescription" />
 </RelativeLayout>

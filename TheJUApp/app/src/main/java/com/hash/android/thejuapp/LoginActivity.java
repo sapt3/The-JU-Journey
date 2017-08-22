@@ -6,8 +6,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.AppCompatDelegate;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -21,7 +21,7 @@ import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
 import android.widget.Toast;
 
-import com.hash.android.thejuapp.HelperClass.PreferenceManager;
+import com.hash.android.thejuapp.Utils.PreferenceManager;
 
 import java.util.ArrayList;
 
@@ -32,8 +32,12 @@ import static android.view.View.VISIBLE;
 
 public class LoginActivity extends AppCompatActivity {
 
-
     private static final String TAG = LoginActivity.class.getSimpleName();
+
+    static {
+        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
+    }
+
     EditText phoneET, yearOfPassingET, emailET;
     CheckBox promoCB, termsCB;
     RadioButton fetsuRB, artsRB, scienceRB;
@@ -86,7 +90,6 @@ public class LoginActivity extends AppCompatActivity {
         departmentSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                Log.d(TAG, "Department:: " + adapterView.getItemAtPosition(i));
                 department = adapterView.getItemAtPosition(i).toString();
             }
 
@@ -197,7 +200,6 @@ public class LoginActivity extends AppCompatActivity {
 
         if (TextUtils.isEmpty(phoneNumber)) {
             phoneET.setError("Required");
-//            Toast.makeText(this, "Please enter your phone number.", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -206,11 +208,10 @@ public class LoginActivity extends AppCompatActivity {
             return;
         }
 
-        if (TextUtils.isEmpty(yearOfPassing)) {
-            yearOfPassingET.setError("Required");
+        if (TextUtils.isEmpty(yearOfPassing) || yearOfPassing.length() != 4) {
+            yearOfPassingET.setError("Enter a valid year of joining.");
             return;
         }
-
 
         if (phoneNumber.length() != 10 && TextUtils.isDigitsOnly(phoneNumber)) {
             Toast.makeText(this, "Phone Number should be 10 digits", Toast.LENGTH_SHORT).show();
@@ -275,13 +276,4 @@ public class LoginActivity extends AppCompatActivity {
     }
 
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-    }
 }

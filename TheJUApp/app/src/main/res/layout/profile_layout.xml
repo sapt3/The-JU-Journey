@@ -64,7 +64,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="32dp"
-                android:background="@drawable/actionbar_gradient_dark"
+                android:background="#40000000"
                 android:padding="16dp"
                 android:visibility="visible"
                 app:layout_constraintHorizontal_bias="0.0"
@@ -95,10 +95,9 @@
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/profiletest" />
+                tools:ignore="ContentDescription" />
 
             <ImageView
-                android:id="@+id/imageView8"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:layout_marginBottom="4dp"
@@ -106,7 +105,8 @@
                 android:layout_marginRight="4dp"
                 app:layout_constraintBottom_toBottomOf="@+id/profileImageViewProfile"
                 app:layout_constraintRight_toRightOf="@+id/profileImageViewProfile"
-                app:srcCompat="@drawable/tick" />
+                app:srcCompat="@drawable/tick"
+                tools:ignore="ContentDescription" />
 
             <TextView
                 android:id="@+id/nameTextViewProfile"
@@ -147,7 +147,8 @@
                 android:layout_marginTop="8dp"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/facultyTextViewProfile"
-                app:srcCompat="@drawable/timeline" />
+                app:srcCompat="@drawable/timeline"
+                tools:ignore="ContentDescription" />
 
             <TextView
                 android:id="@+id/textView24"
@@ -199,7 +200,8 @@
                 app:layout_constraintLeft_toLeftOf="@+id/imageView12"
                 app:layout_constraintRight_toRightOf="@+id/imageView12"
                 app:layout_constraintTop_toBottomOf="@+id/statusEditTextProfile"
-                app:srcCompat="@drawable/academics" />
+                app:srcCompat="@drawable/academics"
+                tools:ignore="ContentDescription" />
 
             <TextView
                 android:id="@+id/yearOfJoiningTextViewProfile"
@@ -267,7 +269,8 @@
                 app:layout_constraintLeft_toLeftOf="@+id/imageView13"
                 app:layout_constraintRight_toRightOf="@+id/imageView12"
                 app:layout_constraintTop_toBottomOf="@+id/yearOfJoiningTextViewProfile"
-                app:srcCompat="@drawable/personal" />
+                app:srcCompat="@drawable/personal"
+                tools:ignore="ContentDescription" />
 
             <TextView
                 android:id="@+id/textView32"
@@ -292,7 +295,8 @@
                 app:layout_constraintBottom_toBottomOf="@+id/phoneNumberProfile"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/emailTextViewProfile"
-                app:srcCompat="@drawable/ic_lock_outline_black_24dp" />
+                app:srcCompat="@drawable/ic_lock_outline_black_24dp"
+                tools:ignore="ContentDescription" />
 
         </android.support.constraint.ConstraintLayout>
     </android.support.v4.widget.NestedScrollView>

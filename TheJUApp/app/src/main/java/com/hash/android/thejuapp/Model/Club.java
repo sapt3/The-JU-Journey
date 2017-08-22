@@ -19,7 +19,10 @@ public class Club implements Parcelable {
             return new Club[size];
         }
     };
-    public String clubName, clubLink, clubTag, clubImage;
+    public final String clubName;
+    public final String clubLink;
+    public final String clubTag;
+    public final String clubImage;
 
     public Club(String clubName, String clubLink, String clubTag, String clubImage) {
         this.clubName = clubName;
@@ -28,7 +31,7 @@ public class Club implements Parcelable {
         this.clubImage = clubImage;
     }
 
-    protected Club(Parcel in) {
+    private Club(Parcel in) {
         clubName = in.readString();
         clubLink = in.readString();
         clubTag = in.readString();

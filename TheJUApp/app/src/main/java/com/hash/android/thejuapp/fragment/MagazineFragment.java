@@ -4,6 +4,7 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -22,6 +23,10 @@ public class MagazineFragment extends Fragment {
     private static final String URL_4th_EDITION = "https://docs.google.com/gview?embedded=true&url=jux.jujournal.com/newsletter/4th_edition.pdf";
     private static final String URL_3rd_EDITION = "https://docs.google.com/gview?embedded=true&url=jux.jujournal.com/newsletter/3rd_edition.pdf";
     private static final String URL_2nd_EDITION = "https://docs.google.com/gview?embedded=true&url=http://jux.jujournal.com/newsletter/2nd_edition.pdf";
+
+    static {
+        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
+    }
 
     private ArrayList<Magazine> mArrayList = new ArrayList<>();
 

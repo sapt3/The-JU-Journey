@@ -1,37 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="8dp"
-    android:orientation="vertical">
+    android:background="@color/colorPrimary"
+    android:padding="8dp">
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/colorPrimary"
-        android:padding="8dp">
-
-
-        <ImageView
-            android:id="@+id/avatarImage"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentTop="true"
-            android:layout_marginEnd="4dp"
-            android:layout_marginRight="4dp"
-            android:layout_marginTop="4dp"
-            android:transitionName="profileTrans"
-            app:srcCompat="@drawable/com_facebook_profile_picture_blank_square" />
+    <ImageView
+        android:id="@+id/avatarImage"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginEnd="4dp"
+        android:layout_marginRight="4dp"
+        android:layout_marginTop="4dp"
+        android:transitionName="profileTrans"
+        app:srcCompat="@drawable/com_facebook_profile_picture_blank_square"
+        tools:ignore="ContentDescription" />
 
         <TextView
             android:id="@+id/textView15"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_above="@+id/linearLayout"
+            android:layout_marginLeft="4dp"
             android:layout_marginStart="4dp"
             android:layout_toEndOf="@+id/priorityTextView"
+            android:layout_toRightOf="@+id/priorityTextView"
             android:text="•"
             android:textColor="@color/colorAccent" />
 
@@ -40,6 +39,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_above="@+id/linearLayout"
+            android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:layout_marginLeft="30dp"
             android:layout_marginStart="30dp"
@@ -50,6 +50,7 @@
             android:id="@+id/linearLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:layout_below="@+id/avatarImage"
             android:layout_centerInParent="false"
@@ -64,7 +65,8 @@
                 android:layout_height="30dp"
                 android:layout_weight="0"
                 android:scaleType="fitXY"
-                app:srcCompat="@drawable/ic_keyboard_arrow_left_black_24dp" />
+                app:srcCompat="@drawable/ic_keyboard_arrow_left_black_24dp"
+                tools:ignore="ContentDescription" />
 
             <TextView
                 android:id="@+id/updateTextView"
@@ -81,19 +83,19 @@
                 android:layout_height="30dp"
                 android:layout_weight="0"
                 android:scaleType="fitXY"
-                app:srcCompat="@drawable/ic_keyboard_arrow_right_white_24px" />
+                app:srcCompat="@drawable/ic_keyboard_arrow_right_white_24px"
+                tools:ignore="ContentDescription" />
         </LinearLayout>
 
         <TextView
-            android:id="@+id/textView16"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignTop="@+id/textView15"
+            android:layout_marginLeft="4dp"
             android:layout_marginStart="4dp"
             android:layout_toEndOf="@+id/textView15"
+            android:layout_toRightOf="@+id/textView15"
             android:text="Updates"
             android:textColor="@android:color/white" />
 
     </RelativeLayout>
-
-</FrameLayout>

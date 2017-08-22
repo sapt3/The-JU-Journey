@@ -18,7 +18,7 @@ public class Canteen extends ArrayList<Parcelable> implements Parcelable {
         }
     };
     public String shortTimings;
-    public String longTimings;
+    private String longTimings;
     private String canteenName;
     private String campus;
     private float location;

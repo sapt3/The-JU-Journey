@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/bg_screen3">
@@ -14,8 +16,9 @@
         <ImageView
             android:layout_width="100dp"
             android:layout_height="100dp"
-            android:src="@drawable/ic_offline_pin_white_24px"
-            android:layout_marginBottom="32dp" />
+            android:layout_marginBottom="32dp"
+            app:srcCompat="@drawable/ic_offline_pin_white_24px"
+            tools:ignore="ContentDescription" />
 
         <TextView
             android:layout_width="wrap_content"

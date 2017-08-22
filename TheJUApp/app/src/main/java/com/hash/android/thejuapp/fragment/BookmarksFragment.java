@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.util.Pair;
+import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -25,13 +26,15 @@ import android.widget.TextView;
 import com.firebase.ui.database.FirebaseIndexRecyclerAdapter;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.hash.android.thejuapp.ClubActivity;
 import com.hash.android.thejuapp.DetailsFeedActivity;
-import com.hash.android.thejuapp.HelperClass.PreferenceManager;
 import com.hash.android.thejuapp.Model.Feed;
 import com.hash.android.thejuapp.R;
+import com.hash.android.thejuapp.Utils.PreferenceManager;
 import com.hash.android.thejuapp.ViewHolder.FeedHolder;
 
 import java.text.SimpleDateFormat;
@@ -44,8 +47,13 @@ import static com.hash.android.thejuapp.adapter.FeedRecyclerAdapter.INTENT_EXTRA
 public class BookmarksFragment extends Fragment {
 
     private static final String TAG = BookmarksFragment.class.getSimpleName();
+    private static final String journal = "https://firebasestorage.googleapis.com/v0/b/the-ju-app.appspot.com/o/club_logo%2Fjournal%20logo%20(Small).jpg?alt=media&token=2c5eba1a-8f55-43ec-8912-4b5373f4bb67";
+
+    static {
+        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
+    }
+
     private FirebaseIndexRecyclerAdapter<Feed, FeedHolder> mAdapter;
-    private String journal = "https://firebasestorage.googleapis.com/v0/b/the-ju-app.appspot.com/o/club_logo%2Fjournal%20logo%20(Small).jpg?alt=media&token=2c5eba1a-8f55-43ec-8912-4b5373f4bb67";
     private float px;
 
     public BookmarksFragment() {
@@ -121,6 +129,19 @@ public class BookmarksFragment extends Fragment {
         final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault());
         sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
 
+        keyRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.getChildrenCount() == 0) {
+                    pb.setVisibility(GONE);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
         mAdapter = new FirebaseIndexRecyclerAdapter<Feed, FeedHolder>(
                 Feed.class,
                 R.layout.recycler_child_new_feed,
@@ -133,11 +154,6 @@ public class BookmarksFragment extends Fragment {
                 if (type == EventType.ADDED) {
                     mRecyclerView.smoothScrollToPosition(mAdapter.getItemCount());
                 }
-            }
-
-            @Override
-            public void onDataChanged() {
-                super.onDataChanged();
             }
 
             @Override

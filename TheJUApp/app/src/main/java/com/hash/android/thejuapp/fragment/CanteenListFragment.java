@@ -14,6 +14,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -26,10 +27,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.hash.android.thejuapp.HelperClass.PreferenceManager;
-import com.hash.android.thejuapp.HelperClass.RuntimePermissionsActivity;
 import com.hash.android.thejuapp.Model.Canteen;
 import com.hash.android.thejuapp.R;
+import com.hash.android.thejuapp.Utils.PreferenceManager;
+import com.hash.android.thejuapp.Utils.RuntimePermissionsActivity;
 import com.hash.android.thejuapp.adapter.CanteenListRecyclerAdapter;
 
 import java.util.ArrayList;
@@ -50,10 +51,15 @@ public class CanteenListFragment extends RuntimePermissionsActivity implements L
     public static final String KEY_STUDENT = "stududent";
     private static final String TAG = CanteenListFragment.class.getSimpleName();
     private static final int REQUEST_PERMISSIONS = 33;
+
+    static {
+        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
+    }
+
+    private final ArrayList<Canteen> mCanteenArrayList = new ArrayList<>();
     private LocationManager locationManager;
     private String provider;
     private Location location;
-    private ArrayList<Canteen> mCanteenArrayList = new ArrayList<>();
     private CanteenListRecyclerAdapter adapter;
     private Snackbar snack;
 
@@ -395,7 +401,6 @@ public class CanteenListFragment extends RuntimePermissionsActivity implements L
             //                                          int[] grantResults)
             // to handle the case where the user grants the permission. See the documentation
             // for ActivityCompat#requestPermissions for more details.
-            return;
         }
     }
 

@@ -48,7 +48,8 @@
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toRightOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:srcCompat="@drawable/top" />
+                    app:srcCompat="@drawable/top"
+                    tools:ignore="ContentDescription" />
 
                 <TextView
                     android:id="@+id/timeTextView"

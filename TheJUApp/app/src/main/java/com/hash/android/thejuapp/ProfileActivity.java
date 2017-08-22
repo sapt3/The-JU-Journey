@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.MenuItem;
@@ -12,19 +13,23 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.hash.android.thejuapp.HelperClass.CircleTransform;
-import com.hash.android.thejuapp.HelperClass.PreferenceManager;
 import com.hash.android.thejuapp.Model.User;
+import com.hash.android.thejuapp.Utils.CircleTransform;
+import com.hash.android.thejuapp.Utils.PreferenceManager;
 
 import static com.hash.android.thejuapp.adapter.StudentProfileRecyclerAdapter.INTENT_EXTRA_USER;
 
 public class ProfileActivity extends AppCompatActivity {
 
+    static {
+        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
+    }
 
-    PreferenceManager mPrefsManager;
+    private PreferenceManager mPrefsManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,7 +78,7 @@ public class ProfileActivity extends AppCompatActivity {
             }
 
             TextView yearOfJoining = (TextView) findViewById(R.id.yearOfJoiningTextViewProfile);
-            yearOfJoining.setText("Class of " + user.getYearOfPassing());
+            yearOfJoining.setText("Year of Joining: " + user.getYearOfPassing());
 
             TextView emailTextView = (TextView) findViewById(R.id.emailTextViewProfile);
             emailTextView.setText(user.getEmail());
@@ -114,10 +119,13 @@ public class ProfileActivity extends AppCompatActivity {
             facebookButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Uri uriUrl = Uri.parse(user.getLink());
-                    //TODO: Convert to facebook uri
-                    Intent launchBrowser = new Intent(Intent.ACTION_VIEW, uriUrl);
-                    startActivity(launchBrowser);
+                    if (user.getLink() != null) {
+                        Uri uriUrl = Uri.parse(user.getLink());
+                        Intent launchBrowser = new Intent(Intent.ACTION_VIEW, uriUrl);
+                        startActivity(launchBrowser);
+                    } else {
+                        Toast.makeText(ProfileActivity.this, "Invalid link.", Toast.LENGTH_SHORT).show();
+                    }
                 }
             });
 

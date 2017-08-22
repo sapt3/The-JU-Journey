@@ -13,7 +13,6 @@
         tools:context="com.hash.android.thejuapp.DetailsFeedActivity">
 
         <android.support.design.widget.AppBarLayout
-            android:id="@+id/app_bar"
             android:layout_width="0dp"
             android:layout_height="250dp"
             android:background="@android:color/transparent"
@@ -45,7 +44,8 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/placeholder" />
+            app:srcCompat="@drawable/placeholder"
+            tools:ignore="ContentDescription" />
 
         <TextView
             android:id="@+id/headingTextView"
@@ -56,7 +56,6 @@
             android:layout_marginRight="16dp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="24dp"
-            android:text="New Student profile launched"
             android:textColor="@android:color/black"
             android:textSize="24sp"
             android:textStyle="bold"
@@ -73,7 +72,6 @@
             android:layout_marginRight="16dp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
-            android:text="Hello world my name is Saptarshi Ghosh. A pleasure to meet you."
             android:textColor="@android:color/black"
             android:textSize="16sp"
             app:layout_constraintHorizontal_bias="0.0"
@@ -88,7 +86,6 @@
             android:layout_marginLeft="16dp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
-            android:text="The JU Journal"
             android:textColor="@color/colorAccent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/headingTextView" />
@@ -113,7 +110,6 @@
             android:layout_marginEnd="16dp"
             android:layout_marginRight="16dp"
             android:layout_marginTop="8dp"
-            android:text="48 Favourites"
             android:textColor="@color/colorAccent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/feedImageView" />
@@ -127,7 +123,7 @@
             android:layout_marginRight="8dp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
-            android:text="CONTACT US"
+            android:text="@string/contact_us"
             android:textColor="@color/colorAccent"
             android:textStyle="bold"
             app:layout_constraintHorizontal_bias="0.0"
@@ -146,6 +142,19 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/contactUsTextView2" />
+
+        <TextView
+            android:id="@+id/dateTimeTextViewDetails"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="0dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginTop="0dp"
+            android:textColor="@android:color/black"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintLeft_toRightOf="@+id/authorTextView"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/authorTextView" />
 
     </android.support.constraint.ConstraintLayout>
 </android.support.v4.widget.NestedScrollView>

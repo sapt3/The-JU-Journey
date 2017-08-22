@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.util.Pair;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -16,8 +17,8 @@ import android.view.ViewGroup;
 import com.firebase.ui.database.FirebaseIndexRecyclerAdapter;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.hash.android.thejuapp.HelperClass.PreferenceManager;
 import com.hash.android.thejuapp.Model.Feed;
+import com.hash.android.thejuapp.Utils.PreferenceManager;
 import com.hash.android.thejuapp.ViewHolder.FeedHolder;
 
 import java.text.SimpleDateFormat;
@@ -29,6 +30,11 @@ import static com.hash.android.thejuapp.adapter.FeedRecyclerAdapter.INTENT_EXTRA
 public class TestActivity extends AppCompatActivity {
 
     private static final String TAG = TestActivity.class.getSimpleName();
+
+    static {
+        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
+    }
+
     private FirebaseIndexRecyclerAdapter<Feed, FeedHolder> mAdapter;
 
     @Override

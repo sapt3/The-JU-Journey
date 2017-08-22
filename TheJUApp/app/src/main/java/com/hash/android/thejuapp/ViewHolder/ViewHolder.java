@@ -8,19 +8,23 @@ import android.widget.TextView;
 import com.hash.android.thejuapp.Model.Canteen;
 import com.hash.android.thejuapp.R;
 
+import java.util.Locale;
+
 /**
  * Created by Spandita Ghosh on 6/27/2017.
  */
 
-public class ViewHolder extends RecyclerView.ViewHolder {
-    TextView canteenNameTextView, campusTextView, locationTextView;
-    Button naviagateButton;
+class ViewHolder extends RecyclerView.ViewHolder {
+    private final TextView canteenNameTextView;
+    private final TextView locationTextView;
+    private final Button naviagateButton;
+    private TextView campusTextView;
     private ViewHolder.ClickListener mClickListener;
 
     public ViewHolder(View itemView) {
         super(itemView);
         canteenNameTextView = itemView.findViewById(R.id.canteenNameTextView);
-        campusTextView = itemView.findViewById(R.id.campusTextView);
+//        campusTextView = itemView.findViewById(R.id.campusTextView);
         locationTextView = itemView.findViewById(R.id.locationTextView);
         naviagateButton = itemView.findViewById(R.id.navigateButton);
 
@@ -38,7 +42,7 @@ public class ViewHolder extends RecyclerView.ViewHolder {
         canteenNameTextView.setText(canteen.getCanteenName());
         campusTextView.setText(canteen.getCampus());
         try {
-            locationTextView.setText(String.format("%.1f", canteen.getLocation()) + " Km away");
+            locationTextView.setText(String.format(Locale.getDefault(), "%.1f", canteen.getLocation()) + " Km away");
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -2,6 +2,7 @@ package com.hash.android.thejuapp;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -12,6 +13,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.GestureDetector;
@@ -28,9 +30,11 @@ import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.iid.FirebaseInstanceId;
-import com.hash.android.thejuapp.HelperClass.CircleTransform;
-import com.hash.android.thejuapp.HelperClass.PreferenceManager;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.hash.android.thejuapp.Model.User;
+import com.hash.android.thejuapp.Utils.CircleTransform;
+import com.hash.android.thejuapp.Utils.ClubUtils;
+import com.hash.android.thejuapp.Utils.PreferenceManager;
 import com.hash.android.thejuapp.fragment.BookmarksFragment;
 import com.hash.android.thejuapp.fragment.DashboardFragment;
 import com.hash.android.thejuapp.fragment.InterestedEventsFragment;
@@ -43,7 +47,12 @@ public class DashboardActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private static final String TAG = "DashboardActivity";
-    boolean doubleBackToExitPressedOnce = false;
+
+    static {
+        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
+    }
+
+    private boolean doubleBackToExitPressedOnce = false;
     private Fragment fragment;
     private DrawerLayout drawer;
     private PreferenceManager mPrefs;
@@ -76,6 +85,7 @@ public class DashboardActivity extends AppCompatActivity
         toggle.syncState();
 
 
+        FirebaseMessaging.getInstance().subscribeToTopic("student");
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         View navHeader = navigationView.getHeaderView(0);
@@ -89,7 +99,13 @@ public class DashboardActivity extends AppCompatActivity
         txtName.setText(user.getName());
         emailTextView.setText(user.getEmail());
 
-        header.setImageResource(R.drawable.nav);
+        Glide.with(this)
+                .load(R.drawable.nav)
+                .crossFade()
+                .placeholder(R.color.placeholder)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .into(header);
+//        header.setImageResource(R.drawable.nav);
 
         Glide.with(this)
                 .load(user.getPhotoURL())
@@ -153,6 +169,7 @@ public class DashboardActivity extends AppCompatActivity
         fragment = null;
 
         switch (id) {
+
             case R.id.nav_logout:
                 AuthUI.getInstance()
                         .signOut(this)
@@ -178,35 +195,24 @@ public class DashboardActivity extends AppCompatActivity
                 fragment = new InterestedEventsFragment();
                 break;
 
-//            case R.id.nav_canteen:
-//                fragment = new CanteenListFragment();
-//                break;
-//
             case R.id.nav_profile:
                 fragment = new ProfileFragment();
                 break;
 
-//            case R.id.nav_eMagazine:
-//                fragment = new MagazineFragment();
-//                break;
-
-//            case R.id.nav_student_directory:
-//                Intent intent1 = new Intent(this, ExploreActivity.class);
-//                intent1.putExtra(EXTRA_CLASS_NAME, STUDENT_FRAGMENT);
-//                startActivity(intent1);
-//                break;
+            case R.id.nav_privacy:
+                String url = "http://jux.jujournal.com/privacy_policy_juX.pdf";
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                intent.setData(Uri.parse(url));
+                startActivity(intent);
+                break;
 
             case R.id.nav_settings:
                 fragment = new SettingsFragment();
                 break;
 
-//            case R.id.nav_events:
-//                fragment = new EventsTabsFragment();
-//                break;
-
             case R.id.nav_ecell:
                 Intent i = new Intent(this, ClubActivity.class);
-                i.putExtra("club", "@juecell");
+                i.putExtra("club", ClubUtils.ECELL);
                 startActivity(i);
                 DrawerLayout drawer0 = (DrawerLayout) findViewById(R.id.drawer_layout);
                 drawer0.closeDrawer(GravityCompat.START);
@@ -214,7 +220,7 @@ public class DashboardActivity extends AppCompatActivity
 
             case R.id.nav_journal:
                 Intent i1 = new Intent(this, ClubActivity.class);
-                i1.putExtra("club", "@jujournal");
+                i1.putExtra("club", ClubUtils.JOURNAL);
                 startActivity(i1);
                 DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
                 drawer.closeDrawer(GravityCompat.START);
@@ -222,11 +228,68 @@ public class DashboardActivity extends AppCompatActivity
 
             case R.id.nav_science:
                 Intent i2 = new Intent(this, ClubActivity.class);
-                i2.putExtra("club", "@jusc");
+                i2.putExtra("club", ClubUtils.SC);
                 startActivity(i2);
                 DrawerLayout drawer1 = (DrawerLayout) findViewById(R.id.drawer_layout);
                 drawer1.closeDrawer(GravityCompat.START);
                 return true;
+
+            case R.id.nav_ds:
+                Intent i3 = new Intent(this, ClubActivity.class);
+                i3.putExtra("club", ClubUtils.DS);
+                startActivity(i3);
+                ((DrawerLayout) findViewById(R.id.drawer_layout)).closeDrawer(GravityCompat.START);
+                return true;
+
+            case R.id.nav_pnc:
+                Intent i4 = new Intent(this, ClubActivity.class);
+                i4.putExtra("club", ClubUtils.PNC);
+                startActivity(i4);
+                ((DrawerLayout) findViewById(R.id.drawer_layout)).closeDrawer(GravityCompat.START);
+                return true;
+
+            case R.id.nav_mc:
+                Intent i5 = new Intent(this, ClubActivity.class);
+                i5.putExtra("club", ClubUtils.MC);
+                startActivity(i5);
+                ((DrawerLayout) findViewById(R.id.drawer_layout)).closeDrawer(GravityCompat.START);
+                return true;
+
+            case R.id.nav_jupc:
+                Intent i6 = new Intent(this, ClubActivity.class);
+                i6.putExtra("club", ClubUtils.PC);
+                startActivity(i6);
+                ((DrawerLayout) findViewById(R.id.drawer_layout)).closeDrawer(GravityCompat.START);
+                return true;
+
+            case R.id.nav_qc:
+                Intent i7 = new Intent(this, ClubActivity.class);
+                i7.putExtra("club", ClubUtils.QC);
+                startActivity(i7);
+                ((DrawerLayout) findViewById(R.id.drawer_layout)).closeDrawer(GravityCompat.START);
+                return true;
+
+            case R.id.nav_mhc:
+                Intent i8 = new Intent(this, ClubActivity.class);
+                i8.putExtra("club", ClubUtils.MHC);
+                startActivity(i8);
+                ((DrawerLayout) findViewById(R.id.drawer_layout)).closeDrawer(GravityCompat.START);
+                return true;
+
+            case R.id.nav_dc:
+                Intent i9 = new Intent(this, ClubActivity.class);
+                i9.putExtra("club", ClubUtils.DC);
+                startActivity(i9);
+                ((DrawerLayout) findViewById(R.id.drawer_layout)).closeDrawer(GravityCompat.START);
+                return true;
+
+            case R.id.nav_df:
+                Intent i10 = new Intent(this, ClubActivity.class);
+                i10.putExtra("club", ClubUtils.DF);
+                startActivity(i10);
+                ((DrawerLayout) findViewById(R.id.drawer_layout)).closeDrawer(GravityCompat.START);
+                return true;
+
         }
 
         if (fragment != null) {
@@ -247,8 +310,8 @@ public class DashboardActivity extends AppCompatActivity
     public static class RecyclerItemClickListener implements RecyclerView.OnItemTouchListener {
 
 
-        GestureDetector mGestureDetector;
-        private OnItemClickListener mListener;
+        final GestureDetector mGestureDetector;
+        private final OnItemClickListener mListener;
 
         public RecyclerItemClickListener(Context context, final RecyclerView recyclerView, OnItemClickListener listener) {
             mListener = listener;

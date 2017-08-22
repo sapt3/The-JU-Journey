@@ -15,7 +15,7 @@ import com.hash.android.thejuapp.R;
 import java.util.ArrayList;
 
 public class CanteenMenuRecyclerAdapter extends RecyclerView.Adapter<CanteenMenuRecyclerAdapter.ViewHolder> {
-    ArrayList<com.hash.android.thejuapp.Model.MenuItem> menuItemArrayList = new ArrayList<>();
+    private ArrayList<com.hash.android.thejuapp.Model.MenuItem> menuItemArrayList = new ArrayList<>();
 
     public CanteenMenuRecyclerAdapter(ArrayList<MenuItem> menuItemArrayList) {
         this.menuItemArrayList = menuItemArrayList;
@@ -75,7 +75,7 @@ public class CanteenMenuRecyclerAdapter extends RecyclerView.Adapter<CanteenMenu
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         if (!TextUtils.isEmpty(menuItemArrayList.get(position).itemPrice)) {
-            holder.itemPriceTV.setText("rs. " + menuItemArrayList.get(position).itemPrice);
+            holder.itemPriceTV.setText("Rs. " + menuItemArrayList.get(position).itemPrice);
         } else {
             holder.itemPriceTV.setVisibility(View.INVISIBLE);
         }
@@ -100,8 +100,9 @@ public class CanteenMenuRecyclerAdapter extends RecyclerView.Adapter<CanteenMenu
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        TextView itemPriceTV, itemNameTV;
-        ImageView image;
+        final TextView itemPriceTV;
+        final TextView itemNameTV;
+        final ImageView image;
 
         public ViewHolder(View itemView) {
             super(itemView);

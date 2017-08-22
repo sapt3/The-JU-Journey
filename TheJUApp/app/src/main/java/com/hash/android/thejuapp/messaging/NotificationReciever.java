@@ -9,8 +9,8 @@ import android.widget.Toast;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.hash.android.thejuapp.HelperClass.PreferenceManager;
 import com.hash.android.thejuapp.Model.Feed;
+import com.hash.android.thejuapp.Utils.PreferenceManager;
 
 import static com.hash.android.thejuapp.adapter.FeedRecyclerAdapter.INTENT_EXTRA_FEED;
 import static com.hash.android.thejuapp.messaging.MyFirebaseMessagingService.NOTIIFICATION_ID_EXTRA;
@@ -56,7 +56,7 @@ public class NotificationReciever extends BroadcastReceiver {
         Intent sendIntent = new Intent();
         sendIntent.setAction(Intent.ACTION_SEND);
         sendIntent.putExtra(Intent.EXTRA_TEXT, feed.getHeading() + "\n" + "By " + feed.getAuthor() + "-  \n"
-                + "\n\n" + feed.getShortDesc() + "\n" + "To know more download the app at https//www.play.google.com?apps+dasd\n");
+                + "\n\n" + feed.getShortDesc() + "\n" + "To know more download juX from the Play Store\n");
         sendIntent.setType("text/plain");
         context.startActivity(sendIntent);
     }

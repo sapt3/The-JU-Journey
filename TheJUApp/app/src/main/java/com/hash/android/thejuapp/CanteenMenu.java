@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -32,6 +33,11 @@ import static com.hash.android.thejuapp.fragment.CanteenListFragment.KEY_SURUCHI
 public class CanteenMenu extends AppCompatActivity {
 
     private static final String TAG = CanteenMenu.class.getSimpleName();
+
+    static {
+        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
+    }
+
     private ArrayList<com.hash.android.thejuapp.Model.MenuItem> mArrayList = new ArrayList<>();
     private String key;
     private CanteenMenuRecyclerAdapter adapter;

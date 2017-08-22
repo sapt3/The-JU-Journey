@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -17,6 +18,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -32,10 +34,16 @@ import com.hash.android.thejuapp.adapter.StudentProfileRecyclerAdapter;
 import java.util.ArrayList;
 
 public class StudentProfileFragment extends Fragment {
+
     private static final String TAG = StudentProfileFragment.class.getSimpleName();
-    Query query = FirebaseDatabase.getInstance().getReference("users").orderByChild("name");
-    ProgressBar progressBar;
-    private ArrayList<User> mArrayList = new ArrayList<>();
+
+    static {
+        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
+    }
+
+    private final Query query = FirebaseDatabase.getInstance().getReference("users").orderByChild("name");
+    private final ArrayList<User> mArrayList = new ArrayList<>();
+    private ProgressBar progressBar;
     private StudentProfileRecyclerAdapter mAdapter;
 
 
@@ -49,14 +57,17 @@ public class StudentProfileFragment extends Fragment {
         final MenuItem item = menu.findItem(R.id.action_search);
 
         final SearchView searchView = new SearchView(((ExploreActivity) getActivity()).getSupportActionBar().getThemedContext());
-        searchView.setQueryHint("Search anyone...");
+        searchView.setQueryHint("Search for anyone...");
         MenuItemCompat.setShowAsAction(item, MenuItemCompat.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW);
         MenuItemCompat.setActionView(item, searchView);
         MenuItemCompat.expandActionView(item);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-
+                if (mAdapter.getItemCount() == 0) {
+                    progressBar.setVisibility(View.GONE);
+                    Toast.makeText(getActivity(), "Oops! No user matching " + query + " found.", Toast.LENGTH_SHORT).show();
+                }
                 return false;
 
             }
@@ -66,6 +77,7 @@ public class StudentProfileFragment extends Fragment {
 
                 mArrayList.clear();
                 if (!TextUtils.isEmpty(newText)) {
+                    progressBar.setVisibility(View.VISIBLE);
 
                     final String queryString = String.valueOf(newText).toLowerCase();
 
@@ -97,6 +109,9 @@ public class StudentProfileFragment extends Fragment {
 
                     });
 
+                } else {
+                    mArrayList.clear();
+                    mAdapter.notifyDataSetChanged();
                 }
                 return true;
             }
@@ -104,11 +119,13 @@ public class StudentProfileFragment extends Fragment {
         MenuItemCompat.setOnActionExpandListener(item, new MenuItemCompat.OnActionExpandListener() {
             @Override
             public boolean onMenuItemActionExpand(MenuItem menuItem) {
+                progressBar.setVisibility(View.VISIBLE);
                 return true;
             }
 
             @Override
             public boolean onMenuItemActionCollapse(MenuItem menuItem) {
+
                 searchView.setIconified(true);
                 mArrayList.clear();
                 mAdapter.notifyDataSetChanged();
@@ -154,45 +171,6 @@ public class StudentProfileFragment extends Fragment {
         DatabaseReference mRef = FirebaseDatabase.getInstance().getReference();
         mRef.keepSynced(true);
         progressBar = rootView.findViewById(R.id.progressBar3);
-
-//        searchET.addTextChangedListener(new TextWatcher() {
-//            @Override
-//            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-//
-//            }
-//
-//            @Override
-//            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-//
-
-//                searchET.setOnKeyListener(new View.OnKeyListener()
-//
-//                {
-//                    @Override
-//                    public boolean onKey(View view, int i, KeyEvent keyEvent) {
-//                        if ((keyEvent.getAction() == KeyEvent.ACTION_DOWN) &&
-//                                (i == KeyEvent.KEYCODE_ENTER)) {
-//                            View view1 = getActivity().getCurrentFocus();
-//                            if (view1 != null) {
-//                                InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-//                                imm.hideSoftInputFromWindow(view1.getWindowToken(), 0);
-//                            }
-//                            if (mArrayList.size() == 0) {
-//                                Toast.makeText(getActivity(), "No user matching the given name.", Toast.LENGTH_SHORT).show();
-//                            }
-//                        }
-//                        return false;
-//                    }
-//                });
-//
-//            }
-//
-//            @Override
-//            public void afterTextChanged(Editable editable) {
-//
-//            }
-//        });
-
         return rootView;
 
     }

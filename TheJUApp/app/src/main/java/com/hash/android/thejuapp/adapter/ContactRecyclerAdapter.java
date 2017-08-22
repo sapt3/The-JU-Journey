@@ -117,8 +117,10 @@ public class ContactRecyclerAdapter extends RecyclerView.Adapter<ContactRecycler
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        TextView name, number;
-        ImageView avatar, call;
+        final TextView name;
+        final TextView number;
+        final ImageView avatar;
+        final ImageView call;
 
         public ViewHolder(View itemView) {
             super(itemView);

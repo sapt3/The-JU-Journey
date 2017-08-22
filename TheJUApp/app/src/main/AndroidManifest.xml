@@ -16,19 +16,50 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <meta-data
+            android:name="asset_statements"
+            android:resource="@string/asset_statements" />
+        <meta-data
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id"
             tools:replace="android:value" />
 
         <activity
             android:name=".WelcomeActivity"
+            android:launchMode="singleTop"
             android:theme="@style/splashScreenTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="jux.jujournal.com"
+                    android:pathPrefix="/posts/"
+                    android:scheme="http" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="jux.jujournal.com"
+                    android:pathPrefix="/events/"
+                    android:scheme="http" />
+            </intent-filter>
         </activity>
+
+        <activity
+            android:name=".fragment.EventsDetailsActivity"
+            android:label="Event Details"
+            android:theme="@style/AppTheme" />
+
         <activity
             android:name=".LoginActivityPre"
             android:windowSoftInputMode="adjustPan" />
@@ -37,7 +68,9 @@
             android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".DashboardActivity"
-            android:label="@string/title_activity_dashboard"
+            android:label="juX"
+            android:launchMode="singleTop"
+            android:screenOrientation="locked"
             android:theme="@style/AppTheme" />
         <activity
             android:name=".DetailsFeedActivity"
@@ -81,6 +114,7 @@
             android:name=".CanteenMenu"
             android:label="@string/title_activity_canteen_menu"
             android:parentActivityName=".ExploreActivity"
+            android:screenOrientation="locked"
             android:theme="@style/AppTheme">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -99,17 +133,18 @@
             android:name=".ProfileActivity"
             android:label="@string/title_activity_profile"
             android:parentActivityName=".ExploreActivity"
+            android:screenOrientation="locked"
             android:theme="@style/AppTheme">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.hash.android.thejuapp.ExploreActivity" />
         </activity>
         <activity android:name=".FacebookLogin" />
-        <activity android:name=".PhoneNumberAuth" />
         <activity
             android:name=".ClubActivity"
             android:label="@string/title_activity_club"
             android:parentActivityName=".DashboardActivity"
+            android:screenOrientation="locked"
             android:theme="@style/AppTheme">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -119,6 +154,7 @@
             android:name=".EventsDetailsActivity"
             android:label="@string/title_activity_events_details"
             android:parentActivityName=".ExploreActivity"
+            android:screenOrientation="locked"
             android:theme="@style/AppTheme">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

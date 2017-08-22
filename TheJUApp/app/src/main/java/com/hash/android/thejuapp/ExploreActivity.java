@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
@@ -25,6 +26,9 @@ public class ExploreActivity extends AppCompatActivity {
     public static final String EVENTS_FRAGMENT = "events";
     public static final String PROFILE = "profile";
 
+    static {
+        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -53,30 +57,32 @@ public class ExploreActivity extends AppCompatActivity {
         }
 
         Fragment fragment = null;
-        switch (fragmentName) {
-            case CANTEEN_FRAGMENT:
-                fragment = new CanteenListFragment();
-                break;
+        if (fragmentName != null) {
+            switch (fragmentName) {
+                case CANTEEN_FRAGMENT:
+                    fragment = new CanteenListFragment();
+                    break;
 
-            case MAGAZINE_FRAGMENT:
-                fragment = new MagazineFragment();
-                break;
+                case MAGAZINE_FRAGMENT:
+                    fragment = new MagazineFragment();
+                    break;
 
-            case STUDENT_FRAGMENT:
-                fragment = new StudentProfileFragment();
-                break;
+                case STUDENT_FRAGMENT:
+                    fragment = new StudentProfileFragment();
+                    break;
 
-            case LEADERBOARD_FRAGMENT:
-                fragment = new LeaderBoardFragment();
-                break;
+                case LEADERBOARD_FRAGMENT:
+                    fragment = new LeaderBoardFragment();
+                    break;
 
-            case EVENTS_FRAGMENT:
-                fragment = new EventsTabsFragment();
-                break;
+                case EVENTS_FRAGMENT:
+                    fragment = new EventsTabsFragment();
+                    break;
 
-            case PROFILE:
-                fragment = new ProfileFragment();
-                break;
+                case PROFILE:
+                    fragment = new ProfileFragment();
+                    break;
+            }
         }
 
         if (fragment != null) {

@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.AppCompatDelegate;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -19,7 +20,7 @@ import com.firebase.ui.auth.IdpResponse;
 import com.firebase.ui.auth.ResultCodes;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.hash.android.thejuapp.HelperClass.PreferenceManager;
+import com.hash.android.thejuapp.Utils.PreferenceManager;
 
 import org.json.JSONObject;
 
@@ -29,9 +30,13 @@ public class FacebookLogin extends AppCompatActivity implements View.OnClickList
 
     private static final int RC_SIGN_IN = 12344;
     private static final int RC_SIGN_IN_PHONE = 1234;
-
     private static final String TAG = FacebookLogin.class.getSimpleName();
     private static AccessToken token;
+
+    static {
+        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
+    }
+
     ImageView loginWithFacebook;
     private ProgressDialog pd;
     private PreferenceManager mPrefs;
@@ -60,10 +65,6 @@ public class FacebookLogin extends AppCompatActivity implements View.OnClickList
         }
     }
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-    }
 
     @Override
     protected void onStart() {

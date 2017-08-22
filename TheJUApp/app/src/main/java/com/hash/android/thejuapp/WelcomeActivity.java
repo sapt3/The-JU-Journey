@@ -3,11 +3,13 @@ package com.hash.android.thejuapp;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.AppCompatDelegate;
 import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,11 +20,24 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
-import com.hash.android.thejuapp.HelperClass.PreferenceManager;
+import com.google.firebase.database.ValueEventListener;
+import com.hash.android.thejuapp.Model.Event;
+import com.hash.android.thejuapp.Model.Feed;
+import com.hash.android.thejuapp.Utils.PreferenceManager;
+
+import static com.hash.android.thejuapp.adapter.FeedRecyclerAdapter.INTENT_EXTRA_FEED;
 
 public class WelcomeActivity extends AppCompatActivity {
+
+    static {
+        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
+    }
 
     private ImageView imgView;
     private ViewPager viewPager;
@@ -38,7 +53,9 @@ public class WelcomeActivity extends AppCompatActivity {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
         if (!new PreferenceManager(this).isFirstTimeLaunch()) {
+            handleIntent(getIntent());
             startActivity(new Intent(this, FacebookLogin.class));
             WelcomeActivity.this.overridePendingTransition(0, 0);
             finish();
@@ -140,6 +157,101 @@ public class WelcomeActivity extends AppCompatActivity {
                 }
             }
         });
+        // ATTENTION: This was auto-generated to handle app links.
+
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        handleIntent(intent);
+    }
+
+    private void handleIntent(Intent appLinkIntent) {
+        Uri appLinkData = appLinkIntent.getData();
+        if (appLinkData != null && FirebaseAuth.getInstance().getCurrentUser() != null && new PreferenceManager(this).isFlowCompleted()) {
+            String type = appLinkData.getPathSegments().get(0);
+            String key = appLinkData.getLastPathSegment();
+            if (key != null) {
+                switch (type) {
+                    case "posts":
+                        FirebaseDatabase.getInstance().getReference("posts").child(key).addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                try {
+                                    if (dataSnapshot.getChildrenCount() == 0) {
+                                        launchHomeScreen();
+                                        Toast.makeText(WelcomeActivity.this, "Invalid post.", Toast.LENGTH_SHORT).show();
+                                    } else {
+                                        String key = dataSnapshot.getKey();
+                                        Feed feed = dataSnapshot.getValue(Feed.class);
+                                        Intent i = new Intent(getApplicationContext(), FacebookLogin.class);
+                                        if (FirebaseAuth.getInstance().getCurrentUser() != null && new PreferenceManager(WelcomeActivity.this).isFlowCompleted()) {
+                                            i = new Intent(getApplicationContext(), DetailsFeedActivity.class);
+                                            i.putExtra(INTENT_EXTRA_FEED, feed);
+                                            i.putExtra(Intent.EXTRA_TEXT, key);
+                                        }
+                                        i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                                        startActivity(i);
+                                    }
+
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+
+                            }
+                        });
+                        break;
+
+                    case "events":
+                        FirebaseDatabase.getInstance().
+
+                                getReference("events").
+
+                                child(key).
+
+                                addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(DataSnapshot dataSnapshot) {
+                                        try {
+                                            if (dataSnapshot.getChildrenCount() == 0) {
+                                                launchHomeScreen();
+                                                Toast.makeText(WelcomeActivity.this, "Invalid event.", Toast.LENGTH_SHORT).show();
+                                            } else {
+                                                String key = dataSnapshot.getKey();
+                                                Event event = dataSnapshot.getValue(Event.class);
+                                                Intent i = new Intent(getApplicationContext(), FacebookLogin.class);
+                                                if (FirebaseAuth.getInstance().getCurrentUser() != null && new PreferenceManager(WelcomeActivity.this).isFlowCompleted()) {
+                                                    i = new Intent(getApplicationContext(), EventsDetailsActivity.class);
+                                                    i.putExtra("KEY", key);
+                                                    i.putExtra("EVENT", event);
+                                                    i.putExtra(Intent.EXTRA_TEXT, key);
+                                                }
+                                                i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                                                startActivity(i);
+                                            }
+
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onCancelled(DatabaseError databaseError) {
+
+                                    }
+                                });
+                        break;
+                    default:
+
+                }
+
+            }
+        }
     }
 
     private void launchHomeScreen() {

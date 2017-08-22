@@ -3,6 +3,7 @@ package com.hash.android.thejuapp;
 import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.AppCompatDelegate;
 import android.util.Log;
 import android.view.View;
 import android.webkit.WebView;
@@ -10,6 +11,10 @@ import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
 
 public class MagazineActivity extends AppCompatActivity {
+
+    static {
+        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
+    }
 
     private ProgressBar progressbar;
 

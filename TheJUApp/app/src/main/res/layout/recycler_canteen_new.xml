@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:clickable="true"
@@ -15,7 +16,8 @@
         android:layout_marginTop="0dp"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/location" />
+        app:srcCompat="@drawable/location"
+        tools:ignore="ContentDescription" />
 
     <TextView
         android:id="@+id/canteenNameTextView"
@@ -23,20 +25,18 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="32dp"
         android:layout_marginStart="32dp"
-        android:text="Staff Canteen"
         android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toRightOf="@+id/frameLayout"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/textView26"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="4dp"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
-        android:text="Directions"
+        android:text="@string/directions"
         android:textColor="@android:color/white"
         android:textSize="10sp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -69,12 +69,11 @@
         app:layout_constraintVertical_bias="1.0">
 
         <TextView
-            android:id="@+id/textView25"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/locationTextView"
             android:layout_centerHorizontal="true"
-            android:text="away"
+            android:text="@string/km_away"
             android:textSize="10sp" />
 
         <TextView
@@ -83,7 +82,6 @@
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
-            android:text="8.4"
             android:textSize="20sp" />
     </RelativeLayout>
 </android.support.constraint.ConstraintLayout>

@@ -2,23 +2,30 @@ package com.hash.android.thejuapp.fragment;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AppCompatDelegate;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Switch;
 
-import com.hash.android.thejuapp.HelperClass.PreferenceManager;
 import com.hash.android.thejuapp.R;
+import com.hash.android.thejuapp.Utils.PreferenceManager;
 
-/**
- * Created by Spandita Ghosh on 7/27/2017.
- */
 
 public class SettingsFragment extends android.support.v4.app.Fragment {
 
     private static final String TAG = "SettingsFragment";
-    Switch news, classUpdate, universityUpdate, departmentUpdate;
+
+    static {
+        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
+    }
+
+    private Switch news;
+    private Switch classUpdate;
+    private Switch universityUpdate;
+    private Switch departmentUpdate;
+    private Switch eventsUpdate;
     private PreferenceManager mPrefs;
 
     public SettingsFragment() {
@@ -76,7 +83,7 @@ public class SettingsFragment extends android.support.v4.app.Fragment {
         classUpdate = rootView.findViewById(R.id.classNotification);
         departmentUpdate = rootView.findViewById(R.id.departmentNotification);
         universityUpdate = rootView.findViewById(R.id.universityNotification);
-
+        eventsUpdate = rootView.findViewById(R.id.eventsNotification);
         updateUI();
 
         return rootView;
@@ -88,12 +95,13 @@ public class SettingsFragment extends android.support.v4.app.Fragment {
         boolean notificationClass = mPrefs.getPrefsUserNotificationClass();
         boolean notificationUniversity = mPrefs.getPrefsUserNotificationUniversity();
         boolean notficationDepartment = mPrefs.getPrefsUserNotificationDepartment();
-
+        boolean notificationEvents = mPrefs.getPrefsUserEvents();
 
         news.setChecked(notificationNews);
         classUpdate.setChecked(notificationClass);
         departmentUpdate.setChecked(notficationDepartment);
         universityUpdate.setChecked(notificationUniversity);
+        eventsUpdate.setChecked(notificationEvents);
     }
 
     @Override
@@ -103,6 +111,7 @@ public class SettingsFragment extends android.support.v4.app.Fragment {
         mPrefs.setPrefsUserNotificationClass(classUpdate.isChecked());
         mPrefs.setPrefsUserNotificationDepartment(departmentUpdate.isChecked());
         mPrefs.setPrefsUserNotificationUniversity(universityUpdate.isChecked());
+        mPrefs.setPrefsUserEvents(eventsUpdate.isChecked());
         Log.d(TAG, "onPause:: Called");
     }
 }

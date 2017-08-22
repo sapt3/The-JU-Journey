@@ -13,10 +13,11 @@ import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.hash.android.thejuapp.Model.User;
 import com.hash.android.thejuapp.R;
 
-public class UserViewHolder extends RecyclerView.ViewHolder {
-    private TextView nameTV, departmentTV;
-    private ImageView profileIV;
-    private View view;
+class UserViewHolder extends RecyclerView.ViewHolder {
+    private final TextView nameTV;
+    private final TextView departmentTV;
+    private final ImageView profileIV;
+    private final View view;
 
     public UserViewHolder(View itemView) {
         super(itemView);

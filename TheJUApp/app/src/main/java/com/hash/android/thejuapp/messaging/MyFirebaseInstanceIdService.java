@@ -4,7 +4,7 @@ import android.util.Log;
 
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.FirebaseInstanceIdService;
-import com.hash.android.thejuapp.HelperClass.PreferenceManager;
+import com.hash.android.thejuapp.Utils.PreferenceManager;
 
 
 public class MyFirebaseInstanceIdService extends FirebaseInstanceIdService {
@@ -23,5 +23,6 @@ public class MyFirebaseInstanceIdService extends FirebaseInstanceIdService {
     private void sendTokenToServer(String token) {
 
         new PreferenceManager(this).setNotificationKey(token);
+
     }
 }

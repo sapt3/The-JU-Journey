@@ -6,6 +6,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
@@ -15,15 +16,16 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.bumptech.glide.Glide;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.hash.android.thejuapp.DetailsFeedActivity;
 import com.hash.android.thejuapp.EventsDetailsActivity;
-import com.hash.android.thejuapp.FacebookLogin;
-import com.hash.android.thejuapp.HelperClass.PreferenceManager;
 import com.hash.android.thejuapp.Model.Event;
 import com.hash.android.thejuapp.Model.Feed;
 import com.hash.android.thejuapp.R;
+import com.hash.android.thejuapp.Utils.PreferenceManager;
+import com.hash.android.thejuapp.WelcomeActivity;
 
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
@@ -77,42 +79,46 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 boolean isClassEnabled = mPrefs.getPrefsUserNotificationClass();
                 boolean isDepartmentEnabled = mPrefs.getPrefsUserNotificationDepartment();
                 boolean isUniversityEnabled = mPrefs.getPrefsUserNotificationUniversity();
-                long timeOfExpiry = Long.parseLong(data.get("timeOfExpiry"));
 
                 switch (priority) {
                     case 0:
-                        if (isClassEnabled) sendUpdate(priority, title, timeOfExpiry);
-                        else Log.d(TAG, "Notification disabled");
+                        if (isClassEnabled) sendUpdate(priority, title);
+                        else Log.i(TAG, "Notification disabled");
                         break;
 
                     case 1:
-                        if (isDepartmentEnabled) sendUpdate(priority, title, timeOfExpiry);
-                        else Log.d(TAG, "Notification disabled");
+                        if (isDepartmentEnabled) sendUpdate(priority, title);
+                        else Log.i(TAG, "Notification disabled");
                         break;
 
                     case 3:
-                        if (isUniversityEnabled) sendUpdate(priority, title, timeOfExpiry);
-                        else Log.d(TAG, "Notification disabled");
+                        if (isUniversityEnabled) sendUpdate(priority, title);
+                        else Log.i(TAG, "Notification disabled");
                         break;
 
                     default:
 
                 }
-
-            case 2:
-                //TODO: Add check for notifications enabled.
-                String club = data.get("club");
-                String contact = data.get("contact");
-                long endDate = Long.parseLong(data.get("endDate"));
-                String event = data.get("event");
-                String longDesc = data.get("longDesc");
-                String organisation = data.get("organisation");
-                long startDate = Long.parseLong(data.get("startDate"));
-                Event finalEvent = new Event(startDate, endDate, organisation, longDesc, event, club, contact);
-                String key = data.get("key");
-                sendEvent(finalEvent, key);
                 break;
 
+            case 2:
+                //COMPLETED: Add check for notifications enabled.
+                if (mPrefs.getPrefsUserEvents()) {
+                    String club = data.get("club");
+                    String contact = data.get("contact");
+                    long endDate = Long.parseLong(data.get("endDate"));
+                    String event = data.get("event");
+                    String longDesc = data.get("longDesc");
+                    String organisation = data.get("organisation");
+                    long startDate = Long.parseLong(data.get("startDate"));
+                    Event finalEvent = new Event(startDate, endDate, organisation, longDesc, event, club, contact);
+                    String key = data.get("key");
+                    sendEvent(finalEvent, key);
+
+                } else {
+                    Log.i(TAG, "Notification disabled");
+                }
+                break;
         }
 
 
@@ -122,23 +128,27 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         PreferenceManager mPrefs = new PreferenceManager(this);
         int id = mPrefs.getNotificationId();
         int pendingIntentId = new PreferenceManager(this).getPendingIntentId();
-        Intent i = new Intent(getApplicationContext(), EventsDetailsActivity.class);
-        i.putExtra("KEY", key);
-        i.putExtra("EVENT", finalEvent);
-
+        Intent i = new Intent(getApplicationContext(), WelcomeActivity.class);
+        if (FirebaseAuth.getInstance().getCurrentUser() != null && new PreferenceManager(this).isFlowCompleted()) {
+            i = new Intent(getApplicationContext(), EventsDetailsActivity.class);
+            i.putExtra("KEY", key);
+            i.putExtra("EVENT", finalEvent);
+        }
         i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
 
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
         stackBuilder.addParentStack(DetailsFeedActivity.class);
         stackBuilder.addNextIntent(i);
-        PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(pendingIntentId, PendingIntent.FLAG_UPDATE_CURRENT);
         Uri sound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
 
         NotificationCompat.Builder notificationBuilded = new NotificationCompat.Builder(this)
-                .setSmallIcon(R.drawable.icon)
-                .setContentTitle(finalEvent.organisation + " is organising " + finalEvent.event + ".")
+                .setSmallIcon(R.drawable.ic_action_name_close)
+                .setContentTitle(finalEvent.organisation + ": " + finalEvent.event + ".")
                 .setContentText("Click to know more.")
                 .setAutoCancel(true)
+                .setLargeIcon(BitmapFactory.decodeResource(this.getResources(),
+                        R.drawable.icon))
                 .setSound(sound)
                 .setColor(ContextCompat.getColor(this, R.color.colorAccent))
                 .setPriority(PRIORITY_HIGH)
@@ -150,23 +160,19 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
     }
 
-    private void sendUpdate(int priority, String title, long timeOfExpiry) {
+    private void sendUpdate(int priority, String title) {
         PreferenceManager mPrefs = new PreferenceManager(this);
         int id = mPrefs.getNotificationId();
         int pendingIntentId = mPrefs.getPendingIntentId();
-        Intent i = new Intent(getApplicationContext(), FacebookLogin.class);
+        Intent i = new Intent(getApplicationContext(), WelcomeActivity.class);
         i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
-        // Adds the back stack
-        stackBuilder.addParentStack(DetailsFeedActivity.class);
-        // Adds the Intent to the top of the stack
-        stackBuilder.addNextIntent(i);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, pendingIntentId, i, PendingIntent.FLAG_ONE_SHOT);
+
         // Gets a PendingIntent containing the entire back stack
-        PendingIntent resultPendingIntent =
-                stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+
         Uri sound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
 
-        String visiblity = "";
+        String visiblity;
         switch (priority) {
             case 0:
                 visiblity = "Class Updates";
@@ -175,25 +181,26 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 visiblity = "Department Updates";
                 break;
             case 2:
-                visiblity = "Campus Updates";
+                visiblity = "Faculty Updates";
                 break;
-
             case 3:
                 visiblity = "University Updates";
                 break;
             default:
-                return;
+                visiblity = "Updates";
         }
         NotificationCompat.Builder notificationBuilded = new NotificationCompat.Builder(this)
-                .setSmallIcon(R.drawable.artboard)
+                .setSmallIcon(R.drawable.ic_action_name_close)
                 .setContentTitle(visiblity)
                 .setContentText(title)
                 .setAutoCancel(true)
+                .setLargeIcon(BitmapFactory.decodeResource(this.getResources(),
+                        R.drawable.icon))
                 .setSound(sound)
                 .setColor(ContextCompat.getColor(this, R.color.colorAccent))
                 .setPriority(PRIORITY_HIGH)
                 .setVisibility(VISIBILITY_PUBLIC)
-                .setContentIntent(resultPendingIntent);
+                .setContentIntent(pendingIntent);
 
         NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.notify(id, notificationBuilded.build());
@@ -206,11 +213,12 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         PreferenceManager mPrefs = new PreferenceManager(this);
         int id = mPrefs.getNotificationId();
         int pendingIntentId = new PreferenceManager(this).getPendingIntentId();
-
-        Intent i = new Intent(getApplicationContext(), DetailsFeedActivity.class);
-        i.putExtra(INTENT_EXTRA_FEED, f);
-        i.putExtra(Intent.EXTRA_TEXT, key);
-
+        Intent i = new Intent(getApplicationContext(), WelcomeActivity.class);
+        if (FirebaseAuth.getInstance().getCurrentUser() != null && new PreferenceManager(this).isFlowCompleted()) {
+            i = new Intent(getApplicationContext(), DetailsFeedActivity.class);
+            i.putExtra(INTENT_EXTRA_FEED, f);
+            i.putExtra(Intent.EXTRA_TEXT, key);
+        }
         i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
 
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
@@ -245,11 +253,13 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
 
             Notification notification = new NotificationCompat.Builder(this)
-                    .setSmallIcon(R.mipmap.ic_launcher_round)
+                    .setSmallIcon(R.drawable.ic_action_name_close)
                     .setContentTitle(title)
                     .setContentText(body)
                     .setAutoCancel(true)
                     .setSound(sound)
+                    .setLargeIcon(BitmapFactory.decodeResource(this.getResources(),
+                            R.drawable.icon))
                     .setColor(ContextCompat.getColor(this, R.color.colorAccent))
                     .setStyle(new NotificationCompat.BigPictureStyle()
                             .bigPicture(theBitmap)
@@ -287,11 +297,13 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
 
             NotificationCompat.Builder notificationBuilded = new NotificationCompat.Builder(this)
-                    .setSmallIcon(R.drawable.artboard)
+                    .setSmallIcon(R.drawable.ic_action_name_close)
                     .setContentTitle(title)
                     .setContentText(body)
                     .setAutoCancel(true)
                     .setSound(sound)
+                    .setLargeIcon(BitmapFactory.decodeResource(this.getResources(),
+                            R.drawable.icon))
                     .setColor(ContextCompat.getColor(this, R.color.colorAccent))
                     .setPriority(PRIORITY_HIGH)
                     .setVisibility(VISIBILITY_PUBLIC)
@@ -305,7 +317,5 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
 
         }
-
-
     }
 }

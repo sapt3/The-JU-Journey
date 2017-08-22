@@ -1,4 +1,4 @@
-package com.hash.android.thejuapp.HelperClass;
+package com.hash.android.thejuapp.Utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -40,8 +40,7 @@ public class PreferenceManager {
     private final static String PREFS_FACEBOOK_TOKEN = "fbtoken";
 
 
-
-    private SharedPreferences mPrefs;
+    private final SharedPreferences mPrefs;
     private SharedPreferences.Editor mEditor;
 
     public PreferenceManager(Context context) {
@@ -98,6 +97,16 @@ public class PreferenceManager {
     public void setPrefsUserNotificationNews(boolean name) {
         mEditor = mPrefs.edit();
         mEditor.putBoolean(PREFS_USER_NOTIFICATION_NEWS, name);
+        mEditor.apply();
+    }
+
+    public boolean getPrefsUserEvents() {
+        return mPrefs.getBoolean(PREFS_USER_NOTIFICATION_EVENTS, true);
+    }
+
+    public void setPrefsUserEvents(boolean name) {
+        mEditor = mPrefs.edit();
+        mEditor.putBoolean(PREFS_USER_NOTIFICATION_EVENTS, name);
         mEditor.apply();
     }
 

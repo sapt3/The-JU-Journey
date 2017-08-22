@@ -1,11 +1,15 @@
 package com.hash.android.thejuapp;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.graphics.drawable.VectorDrawableCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -30,22 +34,34 @@ import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
-import com.hash.android.thejuapp.HelperClass.PreferenceManager;
 import com.hash.android.thejuapp.Model.Feed;
 import com.hash.android.thejuapp.Model.User;
+import com.hash.android.thejuapp.Utils.PreferenceManager;
 import com.hash.android.thejuapp.adapter.ContactRecyclerAdapter;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
+
+import uk.co.samuelwall.materialtaptargetprompt.MaterialTapTargetPrompt;
 
 import static com.hash.android.thejuapp.adapter.FeedRecyclerAdapter.INTENT_EXTRA_FEED;
 
 public class DetailsFeedActivity extends AppCompatActivity {
+
     private static final String TAG = DetailsFeedActivity.class.getSimpleName();
     private static boolean isBookmarked = false;
-    TextView favouritesTextView;
-    DatabaseReference starPostRef;
-    DatabaseReference globalPostRef;
-    ValueEventListener valueEventListener = new ValueEventListener() {
+
+    static {
+        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
+    }
+
+    private final ArrayList<User> mArrayListUser = new ArrayList<>();
+    TextView contactUsTextView;
+    private TextView favouritesTextView;
+    private final ValueEventListener valueEventListener = new ValueEventListener() {
         @Override
         public void onDataChange(DataSnapshot dataSnapshot) {
             try {
@@ -63,9 +79,8 @@ public class DetailsFeedActivity extends AppCompatActivity {
 
         }
     };
-    TextView contactUsTextView;
-    private ArrayList<User> mArrayListUser = new ArrayList<>();
-    private String key;
+    private DatabaseReference starPostRef;
+    private DatabaseReference globalPostRef;
     private String uid;
     private Feed feed;
     private DatabaseReference bookmarksRef;
@@ -93,10 +108,12 @@ public class DetailsFeedActivity extends AppCompatActivity {
                 Boolean isFav = (Boolean) dataSnapshot.getValue();
                 if (isFav != null) {
                     isBookmarked = true;
-                    item.setIcon(R.drawable.ic_bookmark_white_24px);
+                    VectorDrawableCompat vectorDrawableCompat = VectorDrawableCompat.create(getResources(), R.drawable.ic_bookmark_white_24px, null);
+                    item.setIcon(vectorDrawableCompat);
                 } else {
                     isBookmarked = false;
-                    item.setIcon(R.drawable.ic_bookmark_border_white_24px);
+                    VectorDrawableCompat vectorDrawableCompat = VectorDrawableCompat.create(getResources(), R.drawable.ic_bookmark_border_white_24px, null);
+                    item.setIcon(vectorDrawableCompat);
                 }
             }
 
@@ -123,7 +140,23 @@ public class DetailsFeedActivity extends AppCompatActivity {
         Intent i = getIntent();
         feed = i.getParcelableExtra(INTENT_EXTRA_FEED);
 
-        key = i.getStringExtra(Intent.EXTRA_TEXT);
+        String key = i.getStringExtra(Intent.EXTRA_TEXT);
+
+        final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault());
+
+        sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+        try {
+            TextView timeTextView = (TextView) findViewById(R.id.dateTimeTextViewDetails);
+            long timeNow = sdf.parse(feed.getTime()).getTime();
+            Date date = new Date(timeNow);
+//            String dateDisplay = new SimpleDateFormat("dd", Locale.getDefault()).format(date);
+//            String month = new SimpleDateFormat("MMMM", Locale.getDefault()).format(date);
+            String time = new SimpleDateFormat("dd MMMM, YYYY", Locale.getDefault()).format(date);
+            timeTextView.setText(time);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         RecyclerView contactRecyclerView = (RecyclerView) findViewById(R.id.contactRecyclerView);
         contactRecyclerView.setHasFixedSize(true);
@@ -177,8 +210,32 @@ public class DetailsFeedActivity extends AppCompatActivity {
         bookmarksRef = FirebaseDatabase.getInstance().getReference().child("users").child(uid).child("bookmarks").child(key).getRef();
 
 
+        final SharedPreferences.Editor editor = getSharedPreferences("myPrefs", 0).edit();
+        boolean hasShown = getSharedPreferences("myPrefs", 0).getBoolean("hasShown", false);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.floatingActionButton3);
+        if (!hasShown) {
+            new MaterialTapTargetPrompt.Builder(this)
+                    .setTarget(fab)
+                    .setPrimaryText("Like this article?")
+                    .setBackButtonDismissEnabled(true)
+                    .setAutoFinish(true)
+                    .setFocalColour(ContextCompat.getColor(DetailsFeedActivity.this, R.color.prompt))
+                    .setSecondaryText("Favourite this article by clicking here.")
+                    .setPromptStateChangeListener(new MaterialTapTargetPrompt.PromptStateChangeListener() {
+                        @Override
+                        public void onPromptStateChanged(MaterialTapTargetPrompt prompt, int state) {
+                            if (state == MaterialTapTargetPrompt.STATE_FOCAL_PRESSED || state == MaterialTapTargetPrompt.STATE_DISMISSED) {
+                                editor.putBoolean("hasShown", true);
+                                editor.apply();
+                                // User has pressed the prompt target
+                            }
+                        }
+                    })
+                    .show();
+
+        }
+
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -256,7 +313,7 @@ public class DetailsFeedActivity extends AppCompatActivity {
             Intent sendIntent = new Intent();
             sendIntent.setAction(Intent.ACTION_SEND);
             sendIntent.putExtra(Intent.EXTRA_TEXT, feed.getHeading() + "\n" + "By " + feed.getAuthor() + "-  \n"
-                    + "\n\n" + feed.getShortDesc() + "\n" + "To know more download the app at https//www.play.google.com?apps+dasd\n");
+                    + "\n\n" + feed.getShortDesc() + "\n" + "To know more download the app at the Google Play Store\n");
             sendIntent.setType("text/plain");
             startActivity(sendIntent);
 
@@ -284,7 +341,7 @@ public class DetailsFeedActivity extends AppCompatActivity {
         @Override
         protected Void doInBackground(String... strings) {
             for (final String string : strings) {
-                //TODO: Index data properly
+                //COMPLETED: Index data properly
                 String formattedString = string.trim();
                 Query mRef = FirebaseDatabase.getInstance().getReference("users").orderByChild("phoneNumber").equalTo(formattedString);
                 mRef.addListenerForSingleValueEvent(new ValueEventListener() {

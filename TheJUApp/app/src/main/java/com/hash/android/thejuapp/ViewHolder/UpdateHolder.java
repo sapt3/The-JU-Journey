@@ -8,15 +8,17 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.hash.android.thejuapp.HelperClass.CircleTransform;
 import com.hash.android.thejuapp.Model.Update;
 import com.hash.android.thejuapp.R;
+import com.hash.android.thejuapp.Utils.CircleTransform;
 
 public class UpdateHolder extends RecyclerView.ViewHolder {
 
-    public TextView priorityTV, updateTV;
-    public ImageView avatar;
-    public ImageView leftNav, rightNav;
+    public final ImageView avatar;
+    public final ImageView leftNav;
+    public final ImageView rightNav;
+    private final TextView priorityTV;
+    private final TextView updateTV;
 
     public UpdateHolder(View itemView) {
         super(itemView);

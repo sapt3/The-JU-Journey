@@ -3,17 +3,23 @@ package com.hash.android.thejuapp.fragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.hash.android.thejuapp.EventsDetailsActivity;
 import com.hash.android.thejuapp.Model.Event;
 import com.hash.android.thejuapp.R;
@@ -21,7 +27,13 @@ import com.hash.android.thejuapp.ViewHolder.EventViewHolder;
 
 import java.util.Date;
 
+import static android.view.View.GONE;
+
 public class EventsFragment extends android.support.v4.app.Fragment {
+
+    static {
+        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
+    }
 
     int key;
     private FirebaseRecyclerAdapter<Event, EventViewHolder> mAdapter;
@@ -77,6 +89,8 @@ public class EventsFragment extends android.support.v4.app.Fragment {
         Query mRef = FirebaseDatabase.getInstance().getReference("events").orderByChild("startDate");
         LinearLayoutManager manager = new LinearLayoutManager(getActivity());
         final ProgressBar pb = rootView.findViewById(R.id.progressBarBookmark);
+        final ImageView img = rootView.findViewById(R.id.bookmarkImageViewPlaceHolder);
+        final TextView txt = rootView.findViewById(R.id.bookmarkTextViewPlaceHolder);
 
         if (getArguments() != null) {
             key = getArguments().getInt("KEY", -1);
@@ -88,6 +102,21 @@ public class EventsFragment extends android.support.v4.app.Fragment {
                 manager.setReverseLayout(true);
             }
         }
+
+        mRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.getChildrenCount() == 0)
+                    pb.setVisibility(GONE);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+
         RecyclerView mRecyclerView = rootView.findViewById(R.id.eventsRecyclerView);
         mRecyclerView.setLayoutManager(manager);
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -99,7 +128,9 @@ public class EventsFragment extends android.support.v4.app.Fragment {
         ) {
             @Override
             protected void populateViewHolder(final EventViewHolder viewHolder, Event model, int position) {
-                pb.setVisibility(View.GONE);
+                pb.setVisibility(GONE);
+                img.setVisibility(GONE);
+                txt.setVisibility(GONE);
                 viewHolder.bind(model);
                 viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override

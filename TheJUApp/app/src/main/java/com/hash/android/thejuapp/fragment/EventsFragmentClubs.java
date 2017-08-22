@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -16,40 +17,24 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.hash.android.thejuapp.DashboardActivity;
 import com.hash.android.thejuapp.EventsDetailsActivity;
-import com.hash.android.thejuapp.HelperClass.ClubUtils;
 import com.hash.android.thejuapp.Model.Club;
 import com.hash.android.thejuapp.Model.Event;
 import com.hash.android.thejuapp.R;
+import com.hash.android.thejuapp.Utils.ClubUtils;
 import com.hash.android.thejuapp.ViewHolder.EventViewHolder;
 
 
 public class EventsFragmentClubs extends Fragment {
+
+    static {
+        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
+    }
+
     private FirebaseRecyclerAdapter<Event, EventViewHolder> mAdapter;
 
     public EventsFragmentClubs() {
     }
 
-    /**
-     * Called to do initial creation of a fragment.  This is called after
-     * and before
-     * {@link #onCreateView(LayoutInflater, ViewGroup, Bundle)}.
-     * <p>
-     * <p>Note that this can be called while the fragment's activity is
-     * still in the process of being created.  As such, you can not rely
-     * on things like the activity's content view hierarchy being initialized
-     * at this point.  If you want to do work once the activity itself is
-     * created, see {@link #onActivityCreated(Bundle)}.
-     * <p>
-     * <p>Any restored child fragments will be created before the base
-     * <code>Fragment.onCreate</code> method returns.</p>
-     *
-     * @param savedInstanceState If the fragment is being re-created from
-     *                           a previous saved state, this is the state.
-     */
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
 
     /**
      * Called to have the fragment instantiate its user interface view.

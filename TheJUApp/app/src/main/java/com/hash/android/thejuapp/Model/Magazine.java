@@ -5,10 +5,10 @@ package com.hash.android.thejuapp.Model;
  */
 
 public class Magazine {
-    public String editionName;
-    public int coverPage;
-    public String editionDate;
-    public String downloadURL;
+    public final String editionName;
+    public final int coverPage;
+    public final String editionDate;
+    public final String downloadURL;
 
 
     public Magazine(String editionName, int coverPage, String editionDate, String downloadURL) {

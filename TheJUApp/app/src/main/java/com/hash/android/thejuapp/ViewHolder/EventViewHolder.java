@@ -14,8 +14,12 @@ import java.util.Locale;
 
 
 public class EventViewHolder extends RecyclerView.ViewHolder {
-    public TextView eventName, date, month, timeRange, generalEvent;
-    View view;
+    public final TextView month;
+    public final TextView timeRange;
+    public final TextView generalEvent;
+    final View view;
+    private final TextView eventName;
+    private final TextView date;
 //    private final ConstraintLayout layout;
 //    final ConstraintLayout.LayoutParams params;
 

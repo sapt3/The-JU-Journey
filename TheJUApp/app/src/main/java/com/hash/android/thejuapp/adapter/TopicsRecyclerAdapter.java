@@ -17,7 +17,7 @@ import java.util.ArrayList;
 
 public class TopicsRecyclerAdapter extends RecyclerView.Adapter<TopicsRecyclerAdapter.ViewHolder> {
 
-    private ArrayList<Topic> mArrayList;
+    private final ArrayList<Topic> mArrayList;
 
     public TopicsRecyclerAdapter(ArrayList<Topic> mArrayList) {
         this.mArrayList = mArrayList;
@@ -84,9 +84,9 @@ public class TopicsRecyclerAdapter extends RecyclerView.Adapter<TopicsRecyclerAd
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        ImageView image;
-        TextView topicName;
-        View view;
+        final ImageView image;
+        final TextView topicName;
+        final View view;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -98,7 +98,7 @@ public class TopicsRecyclerAdapter extends RecyclerView.Adapter<TopicsRecyclerAd
         public void bind(int postion) {
             Glide.with(image.getContext())
                     .load(mArrayList.get(postion).getImage())
-                    .placeholder(R.drawable.placeholder)
+                    .placeholder(R.color.placeholder)
                     .fitCenter()
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .into(image);

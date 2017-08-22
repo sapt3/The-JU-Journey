@@ -1,19 +1,20 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="#ffffffff">
+    android:orientation="vertical">
 
     <ImageView
         android:id="@+id/a"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
         android:layout_marginEnd="6dp"
+        android:layout_marginRight="6dp"
+        android:contentDescription="qr"
         android:gravity="center"
-        android:scaleType="fitCenter"
-        android:src="@drawable/qrcodesample" />
+        android:scaleType="fitCenter" />
 
 
     <Button
@@ -21,12 +22,12 @@
         style="@style/Widget.AppCompat.Button.Borderless.Colored"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/a"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="8dp"
         android:gravity="center_vertical|center_horizontal"
         android:text="OK"
         android:textSize="15sp"
-        android:textStyle="bold"
-        android:layout_below="@+id/a"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="8dp"/>
+        android:textStyle="bold" />
 
 </RelativeLayout>

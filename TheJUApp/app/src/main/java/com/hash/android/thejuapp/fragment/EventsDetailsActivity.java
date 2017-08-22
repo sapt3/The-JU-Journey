@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.provider.CalendarContract;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -14,7 +15,6 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 
 import com.google.firebase.database.DataSnapshot;
@@ -36,8 +36,13 @@ import java.util.Locale;
 public class EventsDetailsActivity extends AppCompatActivity {
 
     private static final String TAG = EventsDetailsActivity.class.getSimpleName();
+
+    static {
+        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
+    }
+
+    private final ArrayList<User> mArrayListUser = new ArrayList<>();
     private ContactRecyclerAdapter mAdapter;
-    private ArrayList<User> mArrayListUser = new ArrayList<>();
     private TextView contactUsTextView;
 
     @Override
@@ -54,7 +59,7 @@ public class EventsDetailsActivity extends AppCompatActivity {
         TextView eventNameTextView = (TextView) findViewById(R.id.eventsNameTextView);
         TextView organisationTextView = (TextView) findViewById(R.id.eventsOrganisationTextView);
         TextView eventsDateTextView = (TextView) findViewById(R.id.eventsDateTextView);
-        Button addToCalendar = (Button) findViewById(R.id.addToCalendarButton);
+//        Button addToCalendar = (Button) findViewById(R.id.addToCalendarButton);
 
 
         Typeface typeface = Typeface.createFromAsset(getAssets(), "fonts/opensans.ttf");

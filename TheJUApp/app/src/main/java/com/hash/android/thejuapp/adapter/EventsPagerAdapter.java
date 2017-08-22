@@ -13,7 +13,7 @@ import com.hash.android.thejuapp.fragment.PostsClubFragment;
 public class EventsPagerAdapter extends FragmentStatePagerAdapter {
 
 
-    private String tag;
+    private final String tag;
 
     public EventsPagerAdapter(FragmentManager fm, String club) {
         super(fm);

@@ -17,7 +17,6 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="16dp"
         android:layout_marginTop="4dp"
-        android:text="Chicken Roll"
         app:layout_constraintLeft_toRightOf="@+id/itemImage"
         app:layout_constraintTop_toTopOf="@+id/itemImage" />
 
@@ -31,7 +30,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/cone" />
+        app:srcCompat="@drawable/cone"
+        tools:ignore="ContentDescription" />
 
     <TextView
         android:id="@+id/foodItemPrice"

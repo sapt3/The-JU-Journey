@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
@@ -17,10 +18,14 @@ public class ClubActivity extends AppCompatActivity {
 
     public final static int ITEM_COUNT = 3;
     private static final String TAG = ClubActivity.class.getSimpleName();
-    public TabLayout tabLayout;
-    public ViewPager viewPager;
+
+    static {
+        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
+    }
+
+    private TabLayout tabLayout;
+    private ViewPager viewPager;
     private FirebaseRecyclerAdapter<Feed, FeedHolder> mAdapter;
-    private float px;
     private String journal = "https://firebasestorage.googleapis.com/v0/b/the-ju-app.appspot.com/o/club_logo%2Fjournal%20logo%20(Small).jpg?alt=media&token=2c5eba1a-8f55-43ec-8912-4b5373f4bb67";
 
     @Override

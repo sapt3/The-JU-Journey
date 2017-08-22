@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -15,13 +16,15 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.hash.android.thejuapp.HelperClass.CircleTransform;
-import com.hash.android.thejuapp.HelperClass.PreferenceManager;
 import com.hash.android.thejuapp.Model.User;
 import com.hash.android.thejuapp.R;
+import com.hash.android.thejuapp.Utils.CircleTransform;
+import com.hash.android.thejuapp.Utils.PreferenceManager;
+import com.hash.android.thejuapp.Utils.ViewDialog;
 
 
 public class ProfileFragment extends android.support.v4.app.Fragment {
@@ -29,8 +32,20 @@ public class ProfileFragment extends android.support.v4.app.Fragment {
     private static final String TAG = ProfileFragment.class.getSimpleName();
     private boolean isEditing = true;
     private PreferenceManager mPrefsManager;
+    private ViewDialog dialog;
 
     public ProfileFragment() {
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.nav_qr) {
+            dialog = new ViewDialog(getActivity());
+            dialog.showDialog(getActivity(), new PreferenceManager(getActivity()).getUID());
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+
     }
 
     /**
@@ -55,26 +70,24 @@ public class ProfileFragment extends android.support.v4.app.Fragment {
 
         super.onCreate(savedInstanceState);
         getActivity().setTitle("My Profile");
-        this.setHasOptionsMenu(false);
+        this.setHasOptionsMenu(true);
 
     }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-//        super.onCreateOptionsMenu(menu, inflater);
-//        inflater.inflate(R.menu.menu_profile, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.menu_profile, menu);
     }
 
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        int id = item.getItemId();
-//        if (id == R.id.nav_edit) {
-
-//
-//        }
-//
-//        return super.onOptionsItemSelected(item);
-//    }
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (dialog != null) {
+            if (dialog.isShowing())
+                dialog.dismiss();
+        }
+    }
 
     /**
      * Called to have the fragment instantiate its user interface view.
@@ -99,7 +112,6 @@ public class ProfileFragment extends android.support.v4.app.Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-//        return super.onCreateView(inflater, container, savedInstanceState);
         View rootView = inflater.inflate(R.layout.self_profile_layout, container, false);
 
         mPrefsManager = new PreferenceManager(getActivity());
@@ -165,7 +177,7 @@ public class ProfileFragment extends android.support.v4.app.Fragment {
 
         phoneTextView.setText(user.getPhoneNumber());
         facultyTextView.setText(user.getFaculty());
-        yearOfJoiningTextView.setText(user.getYearOfPassing());
+        yearOfJoiningTextView.setText("Year of Joining: " + user.getYearOfPassing());
         emailTextView.setText(user.getEmail());
         privateButton.setImageResource((user.isPrivate()) ? R.drawable.ic_lock_outline_black_24dp : R.drawable.ic_lock_open_black_24dp);
         privacyMessage.setVisibility((user.isPrivate()) ? View.VISIBLE : View.INVISIBLE);
@@ -177,14 +189,14 @@ public class ProfileFragment extends android.support.v4.app.Fragment {
                 if (user.isPrivate()) {
                     privateButton.setImageResource(R.drawable.ic_lock_open_black_24dp);
                     user.setPrivate(false);
-                    privacyTV.setText("Your phone number is public");
+                    privacyTV.setText(R.string.public_message);
                     privacyMessage.setVisibility(View.INVISIBLE);
                     mPrefsManager.setPrivate(false);
                     mPrefsManager.saveUser();
                 } else {
                     privateButton.setImageResource(R.drawable.ic_lock_outline_black_24dp);
                     user.setPrivate(true);
-                    privacyTV.setText("Your phone number is private");
+                    privacyTV.setText(R.string.private_message);
                     privacyMessage.setVisibility(View.VISIBLE);
                     mPrefsManager.setPrivate(true);
                     mPrefsManager.saveUser();
@@ -195,10 +207,13 @@ public class ProfileFragment extends android.support.v4.app.Fragment {
         facebook.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Uri uriUrl = Uri.parse(user.getLink());
-                //TODO: Convert to facebook uri
-                Intent launchBrowser = new Intent(Intent.ACTION_VIEW, uriUrl);
-                startActivity(launchBrowser);
+                if (user.getLink() != null) {
+                    Uri uriUrl = Uri.parse(user.getLink());
+                    Intent launchBrowser = new Intent(Intent.ACTION_VIEW, uriUrl);
+                    startActivity(launchBrowser);
+                } else {
+                    Toast.makeText(getActivity(), "Invalid link.", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 //        mTextView.setError("Your phone number is private.");

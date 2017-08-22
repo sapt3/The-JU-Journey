@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.util.Pair;
+import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
@@ -36,13 +37,13 @@ import com.hash.android.thejuapp.ClubActivity;
 import com.hash.android.thejuapp.DashboardActivity;
 import com.hash.android.thejuapp.DetailsFeedActivity;
 import com.hash.android.thejuapp.ExploreActivity;
-import com.hash.android.thejuapp.HelperClass.PreferenceManager;
 import com.hash.android.thejuapp.Model.Feed;
 import com.hash.android.thejuapp.Model.Topic;
 import com.hash.android.thejuapp.Model.Update;
 import com.hash.android.thejuapp.Model.User;
 import com.hash.android.thejuapp.ProfileActivity;
 import com.hash.android.thejuapp.R;
+import com.hash.android.thejuapp.Utils.PreferenceManager;
 import com.hash.android.thejuapp.ViewHolder.FeedHolder;
 import com.hash.android.thejuapp.ViewHolder.UpdateHolder;
 import com.hash.android.thejuapp.adapter.TopicsRecyclerAdapter;
@@ -73,14 +74,17 @@ public class DashboardFragment extends Fragment {
     private static final int TAG_STUDENT = 3;
     private static final int TAG_MAGAZINE = 4;
     private static final int TAG_EVENTS = 5;
-    private static final String BUNDLE_RECYCLER_LAYOUT = "classname.recycler.layout";
     private static final int TAG_LEADERBOARD = 6;
+
+    static {
+        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
+    }
+
     private final String TAG = DashboardActivity.class.getSimpleName();
-    private final String URL_NAV_BACKGROUND = "http://api.androidhive.info/images/nav-menu-header-bg.jpg";
-    public FirebaseIndexRecyclerAdapter<Feed, FeedHolder> mAdapter;
-    public FirebaseIndexRecyclerAdapter<Update, UpdateHolder> updatesAdapter;
     ArrayList<Feed> mFeedList = new ArrayList<>();
-    PreferenceManager mPrefsManager;
+    private FirebaseIndexRecyclerAdapter<Feed, FeedHolder> mAdapter;
+    private FirebaseIndexRecyclerAdapter<Update, UpdateHolder> updatesAdapter;
+    private PreferenceManager mPrefsManager;
     private String journal = "https://firebasestorage.googleapis.com/v0/b/the-ju-app.appspot.com/o/club_logo%2Fjournal%20logo%20(Small).jpg?alt=media&token=2c5eba1a-8f55-43ec-8912-4b5373f4bb67";
     private ArrayList<Topic> topicsArrayList = new ArrayList<>();
     private CardView cardView;
@@ -114,21 +118,36 @@ public class DashboardFragment extends Fragment {
     }
 
     @Override
+    public void onPause() {
+        super.onPause();
+        Log.d(TAG, "onPause::");
+
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        Log.d(TAG, "onStop::");
+
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
-        if (updatesAdapter != null) {
+        Log.d(TAG, "onResume::");
+//        if (updatesAdapter != null) {
             updatesAdapter.notifyDataSetChanged();
-        }
+//        }
     }
 
     private void updateData() {
         topicsArrayList = new ArrayList<>();
         topicsArrayList.clear();
-        topicsArrayList.add(new Topic(R.drawable.canteen, "Canteen", TAG_CANTEEN));
-        topicsArrayList.add(new Topic(R.drawable.student, "Student Profile", TAG_STUDENT));
-        topicsArrayList.add(new Topic(R.drawable.events4, "Events", TAG_EVENTS));
-        topicsArrayList.add(new Topic(R.drawable.magazine, "e-Magazine", TAG_MAGAZINE));
         topicsArrayList.add(new Topic(R.drawable.leaderboard, "Leaderboard", TAG_LEADERBOARD));
+        topicsArrayList.add(new Topic(R.drawable.student, "Student Profile", TAG_STUDENT));
+        topicsArrayList.add(new Topic(R.drawable.magazine, "e-Magazine", TAG_MAGAZINE));
+        topicsArrayList.add(new Topic(R.drawable.events4, "Events", TAG_EVENTS));
+        topicsArrayList.add(new Topic(R.drawable.canteen, "Canteen", TAG_CANTEEN));
 
     }
 
@@ -155,6 +174,7 @@ public class DashboardFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 //        return super.onCreateView(inflater, container, savedInstanceState);
         View rootView = inflater.inflate(R.layout.fragment_dashboard, container, false);
+        Log.d(TAG, "onCreate::");
 
         Resources r = getResources();
         px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 180, r.getDisplayMetrics());
@@ -243,6 +263,7 @@ public class DashboardFragment extends Fragment {
 
         final RecyclerView announcementsRecyclerView = rootView.findViewById(R.id.announcementsRV);
         LinearLayoutManager layoutmanager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
+        announcementsRecyclerView.setHasFixedSize(false);
         layoutmanager.setStackFromEnd(true);
         layoutmanager.setReverseLayout(true);
         announcementsRecyclerView.setLayoutManager(layoutmanager);
@@ -280,6 +301,7 @@ public class DashboardFragment extends Fragment {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+
                 viewHolder.avatar.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -313,19 +335,22 @@ public class DashboardFragment extends Fragment {
             }
 
             @Override
-            public void onDataChanged() {
-                super.onDataChanged();
-                int size = updatesAdapter.getItemCount();
-                try {
-                    announcementsRecyclerView.smoothScrollToPosition(size);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                Log.d(TAG, "position item:: " + updatesAdapter.getItemCount());
-                if (size == 0) {
+            public void onChildChanged(EventType type, DataSnapshot snapshot, int index, int oldIndex) {
+                super.onChildChanged(type, snapshot, index, oldIndex);
+                if (type == EventType.REMOVED && updatesAdapter.getItemCount() == 0) {
                     mLayout.setVisibility(View.VISIBLE);
                 }
             }
+            //            @Override
+//            public void onDataChanged() {
+//                super.onDataChanged();
+//                int size = updatesAdapter.getItemCount();
+//
+//                Log.d(TAG, "position item:: " + updatesAdapter.getItemCount());
+//                if (size == 0) {
+//
+//                }
+//            }
         };
 
         updatesAdapter.notifyDataSetChanged();
@@ -339,13 +364,11 @@ public class DashboardFragment extends Fragment {
         feedRecyclerView.setItemAnimator(new DefaultItemAnimator());
         feedRecyclerView.setNestedScrollingEnabled(false);
         feedRecyclerView.addItemDecoration(new DividerItemDecoration(feedRecyclerView.getContext(), DividerItemDecoration.VERTICAL));
-        //2017-06-19T14:13:24.100Z
         final DatabaseReference mRef = FirebaseDatabase.getInstance().getReference();
         DatabaseReference ref = mRef.child("posts").getRef();
         ref.keepSynced(true);
         final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault());
         sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
-        String uid = new PreferenceManager(getActivity()).getUID();
         DatabaseReference keyRef2 = mRef.child("postKeys").getRef();
 
 
@@ -363,10 +386,6 @@ public class DashboardFragment extends Fragment {
                 }
             }
 
-            @Override
-            public void onDataChanged() {
-                super.onDataChanged();
-            }
 
             @Override
             protected void populateViewHolder(final FeedHolder viewHolder, final Feed model, int position) {
@@ -374,9 +393,8 @@ public class DashboardFragment extends Fragment {
                 viewHolder.setAd(false);
                 if (position == mAdapter.getItemCount())
                     progressBar.setVisibility(GONE);
-                viewHolder.setLogo((model.getLogo() != null) ? model.getLogo() : journal, getActivity());
-                viewHolder.setTag((model.getClub() != null) ? model.getClub() : "@jujournal");
-                Log.d(TAG, "populateViewHolder:: " + model.getHeading());
+                viewHolder.setLogo((model.getLogo() != null) ? model.getLogo() : "", getActivity());
+                viewHolder.setTag((model.getClub() != null) ? model.getClub() : "");
                 viewHolder.setAuthor(model.getAuthor());
                 if (model.getImageURL().length() > 0) {
                     viewHolder.image.requestLayout();
@@ -414,7 +432,6 @@ public class DashboardFragment extends Fragment {
                     @Override
                     public void onClick(View view) {
                         int position = viewHolder.getAdapterPosition();
-//                        Club club = new Club(mAdapter.getItem(position).getAuthor(), "https://www.facebook.com/juecell/", model.getClub(), model.getLogo());
                         Intent i = new Intent(getActivity(), ClubActivity.class);
                         i.putExtra("club", mAdapter.getItem(position).getClub());
                         startActivity(i);
@@ -466,7 +483,7 @@ public class DashboardFragment extends Fragment {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.menu_login, menu);
         MenuItem item = menu.getItem(0);
-        item.setIcon(R.drawable.ic_person_white_24dp);
+        item.setIcon(R.drawable.ic_action_name_person_white);
 
     }
 
@@ -476,10 +493,18 @@ public class DashboardFragment extends Fragment {
     //
 //    }
 
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        Log.d(TAG, "onStart::");
+    }
+
     @Override
     public void onDestroy() {
 
         super.onDestroy();
+        Log.d(TAG, "onDestroy::");
         mAdapter.cleanup();
         updatesAdapter.cleanup();
 

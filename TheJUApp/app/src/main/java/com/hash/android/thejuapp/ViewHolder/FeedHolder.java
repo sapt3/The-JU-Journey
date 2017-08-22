@@ -19,8 +19,14 @@ import java.util.Locale;
 
 
 public class FeedHolder extends RecyclerView.ViewHolder {
-    public ImageView image, logo;
-    public TextView author, time, heading, shortDesc, ad, tag;
+    public final ImageView image;
+    public final ImageView logo;
+    public final TextView author;
+    public final TextView time;
+    public final TextView heading;
+    public final TextView shortDesc;
+    public final TextView ad;
+    public final TextView tag;
     public FeedHolder.ClickListener mClickListener;
 
 
@@ -52,7 +58,7 @@ public class FeedHolder extends RecyclerView.ViewHolder {
     public void setLogo(String url, Context context) {
         Glide.with(context)
                 .load(url)
-                .placeholder(R.drawable.placeholder)
+                .placeholder(R.color.placeholder)
                 .crossFade()
                 .thumbnail(0.5f)
                 .centerCrop()
@@ -71,7 +77,7 @@ public class FeedHolder extends RecyclerView.ViewHolder {
     public void setImage(String string, Context context) {
         Glide.with(context)
                 .load(string)
-                .placeholder(R.drawable.placeholder)
+                .placeholder(R.color.placeholder)
                 .crossFade()
                 .fitCenter()
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
