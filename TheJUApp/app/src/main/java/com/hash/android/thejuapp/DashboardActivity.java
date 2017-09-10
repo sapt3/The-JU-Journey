@@ -99,14 +99,15 @@ public class DashboardActivity extends AppCompatActivity
         txtName.setText(user.getName());
         emailTextView.setText(user.getEmail());
 
-        //Git test
+        //Git test - II
         Glide.with(this)
                 .load(R.drawable.nav)
                 .crossFade()
                 .placeholder(R.color.placeholder)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(header);
-//        header.setImageResource(R.drawable.nav);
+
+
 
         Glide.with(this)
                 .load(user.getPhotoURL())
