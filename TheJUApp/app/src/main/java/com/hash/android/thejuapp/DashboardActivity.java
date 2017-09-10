@@ -99,7 +99,7 @@ public class DashboardActivity extends AppCompatActivity
         txtName.setText(user.getName());
         emailTextView.setText(user.getEmail());
 
-        //Git test
+        //Git tes - II
         Glide.with(this)
                 .load(R.drawable.nav)
                 .crossFade()
