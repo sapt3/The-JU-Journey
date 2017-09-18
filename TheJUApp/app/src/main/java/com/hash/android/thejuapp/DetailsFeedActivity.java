@@ -14,13 +14,13 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.text.Html;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
+import android.webkit.WebView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -169,15 +169,16 @@ public class DetailsFeedActivity extends AppCompatActivity {
 
         updateList();
 
-        TextView tx = (TextView) findViewById(R.id.contentTextView);
+        WebView webView = (WebView) findViewById(R.id.contentTextView);
         Typeface custom_font = Typeface.createFromAsset(getAssets(), "fonts/opensans.ttf");
 
         //COMPLETED: REPLACE THIS WITH ORIGINAL CONTENT.
         //tx.setText(feed.getLongDesc());
+        webView.getSettings().setJavaScriptEnabled(true);
+        webView.loadData(feed.getLongDesc(), "text/html", "UTF-8");
+//        tx.setText(Html.fromHtml(feed.getLongDesc()));
 
-        tx.setText(Html.fromHtml(feed.getLongDesc()));
-
-        tx.setTypeface(custom_font);
+//        tx.setTypeface(custom_font);
 
         ImageView feedImage = (ImageView) findViewById(R.id.feedImageView);
         TextView heading = (TextView) findViewById(R.id.headingTextView);
@@ -191,11 +192,11 @@ public class DetailsFeedActivity extends AppCompatActivity {
 
 
         if (!TextUtils.isEmpty(feed.getImageURL()))
-        Glide.with(this)
-                .load(feed.getImageURL())
-                .crossFade()
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .into(feedImage);
+            Glide.with(this)
+                    .load(feed.getImageURL())
+                    .crossFade()
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .into(feedImage);
 
         else feedImage.setImageResource(R.drawable.banner);
 
