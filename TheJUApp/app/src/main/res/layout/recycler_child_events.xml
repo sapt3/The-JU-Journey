@@ -15,8 +15,7 @@
         android:layout_marginLeft="0dp"
         android:layout_marginTop="0dp"
         android:text="SEP"
-        android:textColor="@color/colorAccent"
-        android:textSize="18sp"
+        android:textColor="@color/accent_material_light"        android:textSize="18sp"
         app:layout_constraintLeft_toLeftOf="@+id/dateTV"
         app:layout_constraintTop_toBottomOf="@+id/dateTV" />
 
@@ -31,7 +30,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="0dp"
         android:text="28"
-        android:textColor="@color/colorAccent"
+        android:textColor="@color/accent_material_light"
         android:textSize="24sp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -44,7 +43,6 @@
         android:layout_marginRight="0dp"
         android:layout_marginStart="24dp"
         android:orientation="vertical"
-        app:cardBackgroundColor="#106892"
         app:cardCornerRadius="6dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toRightOf="@+id/monthTV"
@@ -65,7 +63,6 @@
                 android:layout_marginTop="6dp"
                 android:paddingBottom="8dp"
                 android:text="2:30 PM - 4:30 PM"
-                android:textColor="@android:color/white"
                 android:textSize="14sp"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintLeft_toLeftOf="@+id/generalEvent"
@@ -79,19 +76,18 @@
                 android:layout_marginLeft="0dp"
                 android:layout_marginTop="4dp"
                 android:text="CIIPPUS"
-                android:textColor="@android:color/white"
+                android:textColor="@android:color/black"
                 android:textSize="12sp"
                 app:layout_constraintLeft_toLeftOf="@+id/eventTV"
                 app:layout_constraintTop_toBottomOf="@+id/eventTV" />
 
             <View
                 android:layout_width="0dp"
-                android:layout_height="1.5dp"
+                android:layout_height="1dp"
                 android:layout_marginBottom="0dp"
                 android:layout_marginLeft="0dp"
                 android:layout_marginRight="0dp"
-                android:background="@color/colorAccent"
-                app:layout_constraintBottom_toBottomOf="parent"
+                android:background="@color/accent_material_light"                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent" />
@@ -106,8 +102,9 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
                 android:text="Football Match IT v/s Instrumentation"
-                android:textColor="@android:color/white"
+                android:textColor="@android:color/black"
                 android:textSize="14sp"
+                android:textStyle="bold"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />

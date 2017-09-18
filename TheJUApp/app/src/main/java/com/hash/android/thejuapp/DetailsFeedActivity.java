@@ -171,8 +171,10 @@ public class DetailsFeedActivity extends AppCompatActivity {
 
         TextView tx = (TextView) findViewById(R.id.contentTextView);
         Typeface custom_font = Typeface.createFromAsset(getAssets(), "fonts/opensans.ttf");
+
         //COMPLETED: REPLACE THIS WITH ORIGINAL CONTENT.
-//        tx.setText(feed.getLongDesc());
+        //tx.setText(feed.getLongDesc());
+
         tx.setText(Html.fromHtml(feed.getLongDesc()));
 
         tx.setTypeface(custom_font);

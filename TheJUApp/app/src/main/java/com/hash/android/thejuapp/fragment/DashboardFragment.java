@@ -284,7 +284,7 @@ public class DashboardFragment extends Fragment {
             @Override
             protected void populateViewHolder(final UpdateHolder viewHolder, final Update model, final int position) {
                 mLayout.setVisibility(GONE);
-                Log.d(TAG, "populateViewHolder:: " + model.title);
+//                Log.d(TAG, "populateViewHolder:: " + model.title);
                 viewHolder.bind(model, getActivity());
                 final int size = updatesAdapter.getItemCount();
 

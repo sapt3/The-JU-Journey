@@ -4,10 +4,14 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v4.util.Pair;
 import android.support.v7.widget.RecyclerView;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -113,6 +117,7 @@ public class StudentProfileRecyclerAdapter extends RecyclerView.Adapter<StudentP
         final ImageView profileIV;
         final View view;
         TextView emailTV;
+
         public ViewHolder(View itemView) {
             super(itemView);
             nameTV = itemView.findViewById(R.id.nameTextView);
@@ -123,7 +128,11 @@ public class StudentProfileRecyclerAdapter extends RecyclerView.Adapter<StudentP
 
         public void bind(int position) {
             nameTV.setText(mArrayList.get(position).getName());
-            departmentTV.setText(mArrayList.get(position).getDepartment());
+            SpannableString spannableString = new SpannableString(mArrayList.get(position).getDepartment() + " • " + mArrayList.get(position).getYearOfPassing());
+            ForegroundColorSpan span = new ForegroundColorSpan(ContextCompat.getColor(nameTV.getContext(), R.color.teal));
+            int start = mArrayList.get(position).getDepartment().length() + 1;
+            spannableString.setSpan(span, start, start+2, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            departmentTV.setText(spannableString);
             Glide.with(profileIV.getContext())
                     .load(mArrayList.get(position).getPhotoURL())
                     .asBitmap()

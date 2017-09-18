@@ -1,16 +1,16 @@
 package com.hash.android.thejuapp.fragment;
 
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
-import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -18,18 +18,24 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
-import android.widget.Toast;
+import android.widget.TextView;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
+import com.algolia.search.saas.AlgoliaException;
+import com.algolia.search.saas.Client;
+import com.algolia.search.saas.CompletionHandler;
+import com.algolia.search.saas.Index;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
-import com.google.firebase.database.ValueEventListener;
+import com.google.gson.Gson;
 import com.hash.android.thejuapp.ExploreActivity;
 import com.hash.android.thejuapp.Model.User;
 import com.hash.android.thejuapp.R;
 import com.hash.android.thejuapp.adapter.StudentProfileRecyclerAdapter;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -45,6 +51,8 @@ public class StudentProfileFragment extends Fragment {
     private final ArrayList<User> mArrayList = new ArrayList<>();
     private ProgressBar progressBar;
     private StudentProfileRecyclerAdapter mAdapter;
+    private Index index;
+    private TextView queryTextView, noUsersFoundTV;
 
 
     public StudentProfileFragment() {
@@ -52,6 +60,7 @@ public class StudentProfileFragment extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.menu_canteen, menu);
         final MenuItem item = menu.findItem(R.id.action_search);
@@ -63,11 +72,46 @@ public class StudentProfileFragment extends Fragment {
         MenuItemCompat.expandActionView(item);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
-            public boolean onQueryTextSubmit(String query) {
-                if (mAdapter.getItemCount() == 0) {
-                    progressBar.setVisibility(View.GONE);
-                    Toast.makeText(getActivity(), "Oops! No user matching " + query + " found.", Toast.LENGTH_SHORT).show();
-                }
+            public boolean onQueryTextSubmit(final String query) {
+//                if (mAdapter.getItemCount() == 0) {
+//                    progressBar.setVisibility(View.GONE);
+//                    Toast.makeText(getActivity(), "Oops! No user matching " + query + " found.", Toast.LENGTH_SHORT).show();
+//                }
+                mArrayList.clear();
+                progressBar.setVisibility(View.VISIBLE);
+                index.searchAsync(new com.algolia.search.saas.Query(query), new CompletionHandler() {
+                    @Override
+                    public void requestCompleted(JSONObject jsonObject, AlgoliaException e) {
+                        try {
+//                            Log.d(TAG, "requestCompleted: " + jsonObject.toString(2));
+                            String nbHits = jsonObject.getString("nbHits");
+                            String ms = jsonObject.getString("processingTimeMS");
+                            if (Integer.valueOf(nbHits) == 0) {
+                                queryTextView.setVisibility(View.GONE);
+                                noUsersFoundTV.setText("No users matching \"" + query + "\" found.");
+                                noUsersFoundTV.setVisibility(View.VISIBLE);
+                            }
+                            else {
+                                queryTextView.setVisibility(View.VISIBLE);
+                                noUsersFoundTV.setVisibility(View.GONE);
+                            }
+                            queryTextView.setText("Showing " + nbHits + " results (" + ms + "ms)");
+                            progressBar.setVisibility(View.GONE);
+                            JSONArray jsonArray = jsonObject.getJSONArray("hits");
+                            for (int i = 0; i < jsonArray.length(); i++) {
+                                Gson gson = new Gson();
+                                User user = gson.fromJson(String.valueOf(((JSONObject) jsonArray.get(i)).get("user")), User.class);
+                                Log.d(TAG, "requestCompleted: " + user.getName());
+                                mArrayList.add(user);
+                                mAdapter.notifyDataSetChanged();
+
+                            }
+//                    Log.d(TAG, "requestCompleted: " + jsonObject.toString(2));
+                        } catch (JSONException e1) {
+                            e1.printStackTrace();
+                        }
+                    }
+                });
                 return false;
 
             }
@@ -75,63 +119,63 @@ public class StudentProfileFragment extends Fragment {
             @Override
             public boolean onQueryTextChange(String newText) {
 
-                mArrayList.clear();
-                if (!TextUtils.isEmpty(newText)) {
-                    progressBar.setVisibility(View.VISIBLE);
 
-                    final String queryString = String.valueOf(newText).toLowerCase();
-
-                    query.addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-                            for (DataSnapshot snapShot : dataSnapshot.getChildren()) {
-                                try {
-                                    User user = snapShot.getValue(User.class);
-                                    if (user.getName().toLowerCase().startsWith(queryString)) {
-                                        mArrayList.add(user);
-                                        progressBar.setVisibility(View.GONE);
-                                    }
-                                    mAdapter.notifyDataSetChanged();
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                            }
-
-                            if (mAdapter.getItemCount() == 0)
-                                progressBar.setVisibility(View.VISIBLE);
-                            else progressBar.setVisibility(View.GONE);
-                        }
-
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
-
-                        }
-
-                    });
-
-                } else {
-                    mArrayList.clear();
-                    mAdapter.notifyDataSetChanged();
-                }
+//                if (!TextUtils.isEmpty(newText)) {
+//                    progressBar.setVisibility(View.VISIBLE);
+//
+//                    final String queryString = String.valueOf(newText).toLowerCase();
+//
+//                    query.addListenerForSingleValueEvent(new ValueEventListener() {
+//                        @Override
+//                        public void onDataChange(DataSnapshot dataSnapshot) {
+//                            for (DataSnapshot snapShot : dataSnapshot.getChildren()) {
+//                                try {
+//                                    User user = snapShot.getValue(User.class);
+//                                    if (user.getName().toLowerCase().startsWith(queryString)) {
+//                                        mArrayList.add(user);
+//                                        progressBar.setVisibility(View.GONE);
+//                                    }
+//                                    mAdapter.notifyDataSetChanged();
+//                                } catch (Exception e) {
+//                                    e.printStackTrace();
+//                                }
+//                            }
+//
+//                            if (mAdapter.getItemCount() == 0)
+//                                progressBar.setVisibility(View.VISIBLE);
+//                            else progressBar.setVisibility(View.GONE);
+//                        }
+//
+//                        @Override
+//                        public void onCancelled(DatabaseError databaseError) {
+//
+//                        }
+//
+//                    });
+//
+//                } else {
+//                    mArrayList.clear();
+//                    mAdapter.notifyDataSetChanged();
+//                }
                 return true;
             }
         });
-        MenuItemCompat.setOnActionExpandListener(item, new MenuItemCompat.OnActionExpandListener() {
-            @Override
-            public boolean onMenuItemActionExpand(MenuItem menuItem) {
-                progressBar.setVisibility(View.VISIBLE);
-                return true;
-            }
-
-            @Override
-            public boolean onMenuItemActionCollapse(MenuItem menuItem) {
-
-                searchView.setIconified(true);
-                mArrayList.clear();
-                mAdapter.notifyDataSetChanged();
-                return true;
-            }
-        });
+//        MenuItemCompat.setOnActionExpandListener(item, new MenuItemCompat.OnActionExpandListener() {
+//            @Override
+//            public boolean onMenuItemActionExpand(MenuItem menuItem) {
+//                progressBar.setVisibility(View.VISIBLE);
+//                return true;
+//            }
+//
+//            @Override
+//            public boolean onMenuItemActionCollapse(MenuItem menuItem) {
+//
+//                searchView.setIconified(true);
+//                mArrayList.clear();
+//                mAdapter.notifyDataSetChanged();
+//                return true;
+//            }
+//        });
 
     }
 
@@ -159,11 +203,21 @@ public class StudentProfileFragment extends Fragment {
 
         View rootView = inflater.inflate(R.layout.layout_student_profile, container, false);
 
+        Typeface custom_font = Typeface.createFromAsset(getActivity().getAssets(), "fonts/opensans.ttf");
+        queryTextView = rootView.findViewById(R.id.response);
+        noUsersFoundTV = rootView.findViewById(R.id.noUsersFoundTextView);
+        noUsersFoundTV.setTypeface(custom_font);
+        queryTextView.setTypeface(custom_font);
+
+        Client client = new Client("TXBD9WWLH0", "933b378c91e407426dd6bee014eff479");
+        index = client.getIndex("users");
+        index.enableSearchCache();
+
         RecyclerView mRecyclerView = rootView.findViewById(R.id.studentRecyclerView);
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL));
+//        mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL));
 
         mAdapter = new StudentProfileRecyclerAdapter(mArrayList);
         mRecyclerView.setAdapter(mAdapter);
